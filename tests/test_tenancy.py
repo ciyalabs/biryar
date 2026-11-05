@@ -114,12 +114,33 @@ def test_the_tenant_setting_does_not_outlive_its_transaction(
     assert current in (None, "")
 
 
-def test_setting_the_tenant_without_local_is_refused(factory: SessionFactory) -> None:
-    """The dangerous spelling is rejected rather than documented against."""
+def test_setting_the_tenant_for_the_whole_session_is_refused(
+    factory: SessionFactory,
+) -> None:
+    """A bare SET outlives its transaction, so it is rejected."""
     session = factory()
     try:
-        with pytest.raises(TenantContextError, match="SET LOCAL"):
+        with pytest.raises(TenantContextError, match="whole session"):
             session.execute(text(f"SET {TENANT_GUC} = '{uuid.uuid4()}'"))
+    finally:
+        session.rollback()
+        session.close()
+
+
+def test_set_config_without_the_local_flag_is_refused(factory: SessionFactory) -> None:
+    """The same mistake in the function spelling, which is easier to make.
+
+    ``set_config`` takes the LOCAL flag as a third positional argument. It is
+    one token, it is easy to get wrong, and getting it wrong is invisible
+    until two tenants share a pooled connection.
+    """
+    session = factory()
+    try:
+        with pytest.raises(TenantContextError, match="third"):
+            session.execute(
+                text("SELECT set_config(:guc, :tenant, false)"),
+                {"guc": TENANT_GUC, "tenant": str(uuid.uuid4())},
+            )
     finally:
         session.rollback()
         session.close()

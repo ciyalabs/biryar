@@ -56,9 +56,16 @@ nothing.
 kind of property that is true on the day it is written and quietly false
 after someone debugs a permissions problem at midnight.
 
-**`SET LOCAL`, never `SET`.** A session-lifetime setting outlives its
-transaction and rides the pooled connection into the next request. The engine
-rejects the plain spelling rather than relying on anyone remembering.
+**Transaction-local, never session-wide.** A setting that outlives its
+transaction rides the pooled connection into the next request. The engine
+rejects both spellings of that mistake — a bare `SET`, and `set_config` with
+`false` as its third argument — rather than relying on anyone remembering.
+
+The setting is made with `set_config(name, value, true)` rather than
+`SET LOCAL`. `SET` is a utility statement, so PostgreSQL will not plan it and
+it cannot take a bind parameter: `SET LOCAL app.tenant_id = $1` is a syntax
+error. Interpolating the uuid into the string would work, and would also be
+the only place in the codebase assembling SQL by concatenation.
 
 ## Default-deny
 

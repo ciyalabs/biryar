@@ -25,12 +25,22 @@ Two things keep it honest, both checked by the tests:
   **no** ``BYPASSRLS``. PostgreSQL exempts a table's owner from its own
   policies unless ``FORCE ROW LEVEL SECURITY`` is set, so the migration sets
   that too, and belt-and-braces beats either alone.
-* ``SET LOCAL`` is used rather than ``SET``, so the value cannot outlive its
+* The setting is made transaction-local, so it cannot outlive its
   transaction and leak into whatever the pooled connection serves next.
+
+``set_config(name, value, is_local)`` is used rather than ``SET LOCAL``.
+``SET`` is a utility statement: PostgreSQL does not plan it, so it cannot
+take a bind parameter, and ``SET LOCAL app.tenant_id = $1`` is a syntax
+error. Interpolating the uuid into the string instead would work and would
+also be the one place in the codebase building SQL by concatenation, which
+is not a habit worth starting for the sake of one statement. ``set_config``
+is an ordinary function, takes parameters, and its third argument is exactly
+the ``LOCAL`` flag.
 """
 
 from __future__ import annotations
 
+import re
 import uuid
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -85,10 +95,10 @@ def tenant_session(
 ) -> Iterator[Session]:
     """Open a transaction scoped to one tenant.
 
-    The tenant is set with ``SET LOCAL``, so it is bound to this transaction
-    and gone when the transaction ends, whether it commits or rolls back. The
-    connection can then be returned to the pool without carrying one tenant's
-    identity into the next request that borrows it.
+    The tenant is set transaction-locally, so it is gone when the transaction
+    ends, whether it commits or rolls back. The connection can then be
+    returned to the pool without carrying one tenant's identity into the next
+    request that borrows it.
     """
     if not isinstance(tenant_id, uuid.UUID):                 # pragma: no cover
         raise TenantContextError(
@@ -97,10 +107,11 @@ def tenant_session(
 
     session = factory()
     try:
-        # begin() is implicit on first use; issue the SET LOCAL inside it.
+        # begin() is implicit on first use, so this lands inside the
+        # transaction. The third argument is the LOCAL flag.
         session.execute(
-            text(f"SET LOCAL {TENANT_GUC} = :tenant"),
-            {"tenant": str(tenant_id)},
+            text("SELECT set_config(:guc, :tenant, true)"),
+            {"guc": TENANT_GUC, "tenant": str(tenant_id)},
         )
         yield session
         session.commit()
@@ -132,25 +143,44 @@ def admin_session(factory: SessionFactory) -> Iterator[Session]:
         session.close()
 
 
-def _forbid_stray_tenant_setting(engine: Engine) -> None:
-    """Refuse a session-lifetime ``SET`` of the tenant GUC.
+#: ``set_config(..., false)`` in any spacing. The third argument is the LOCAL
+#: flag, and false makes the setting last for the whole session.
+_SESSION_SCOPED_SET_CONFIG = re.compile(
+    r"set_config\s*\([^)]*,\s*(?:false|'f'|0)\s*\)", re.IGNORECASE
+)
 
-    ``SET app.tenant_id`` without ``LOCAL`` survives the transaction and rides
-    the pooled connection into the next request, which is a cross-tenant read
-    waiting to happen. It is easy to write by accident and invisible in
-    review, so it is rejected here rather than documented against.
+
+def _forbid_stray_tenant_setting(engine: Engine) -> None:
+    """Refuse any session-lifetime setting of the tenant GUC.
+
+    A tenant id that survives its transaction rides the pooled connection
+    into whatever request borrows it next, which is a cross-tenant read
+    waiting to happen. Both spellings of the mistake are easy to write and
+    invisible in review, so both are rejected here rather than documented
+    against:
+
+    * ``SET app.tenant_id = ...`` without ``LOCAL``
+    * ``set_config('app.tenant_id', ..., false)``
     """
 
     @event.listens_for(engine, "before_cursor_execute")
     def _check(conn, cursor, statement, parameters, context, executemany):  # type: ignore[no-untyped-def]
         normalised = " ".join(statement.lower().split())
-        if (
-            TENANT_GUC in normalised
-            and normalised.startswith("set ")
-            and not normalised.startswith("set local ")
-        ):
+        mentions_tenant = TENANT_GUC in normalised or (
+            parameters is not None and TENANT_GUC in str(parameters)
+        )
+        if not mentions_tenant:
+            return
+
+        if normalised.startswith("set ") and not normalised.startswith("set local "):
             raise TenantContextError(
-                f"{TENANT_GUC} must be set with SET LOCAL so it cannot "
-                "outlive its transaction and leak across pooled "
-                "connections. Use tenant_session()."
+                f"{TENANT_GUC} must not be set for the whole session: it would "
+                "outlive its transaction and leak across pooled connections. "
+                "Use tenant_session()."
+            )
+        if _SESSION_SCOPED_SET_CONFIG.search(normalised):
+            raise TenantContextError(
+                f"set_config for {TENANT_GUC} must pass true as its third "
+                "argument so the setting is transaction-local. "
+                "Use tenant_session()."
             )
