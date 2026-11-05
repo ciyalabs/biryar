@@ -100,7 +100,14 @@ def app_engine(schema: None) -> Iterator[Engine]:
     from biryar.db.session import engine_for
 
     url = make_url(_admin_url()).set(username=APP_ROLE, password=APP_PASSWORD)
-    engine = engine_for(Settings(database_url=str(url)))
+    # render_as_string, not str(). SQLAlchemy's URL.__str__ masks the password
+    # as literal asterisks so a URL cannot be logged by accident, which means
+    # str() of a URL you built yourself silently throws the password away and
+    # the connection fails authentication for reasons that look like anything
+    # but this.
+    engine = engine_for(
+        Settings(database_url=url.render_as_string(hide_password=False))
+    )
     try:
         yield engine
     finally:
