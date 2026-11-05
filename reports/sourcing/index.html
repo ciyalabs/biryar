@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biryar Sourcing</title>
+<meta name="description" content="How Biryar, the decision platform of Samani Ventures, finds the handful of German retail products worth reselling on Amazon. Harvesting at a polite pace, screening for errors before profit, measuring demand, and why one product in eight and a half thousand survives.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --p1:#0f8a7e; --p1s:#dcf0ed; --p2:#b7791f; --p2s:#f6ebd6; --p3:#7b52b8; --p3s:#ebe3f6; --p4:#2a6fc9; --p4s:#dfe9f8; --p5:#c4472f; --p5s:#f7e1dc;
+  --bg:#f6f7f5; --bg-2:#eceeeb; --bg-3:#e2e6e3;
+  --ink:#182220; --ink-2:#55615e; --ink-3:#8a9490; --rule:#d7dcd9;
+  --accent:#1e4d8c; --accent-soft:#dfe8f4;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#8a5cc7;
+  --seq1:#cde2fb; --seq2:#9ec5f4; --seq3:#6da7ec; --seq4:#3987e5; --seq5:#1c5cab;
+  --good:#1a7f4b; --warn:#b26a00;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --p1:#3cc2b2; --p1s:#163430; --p2:#e0aa3c; --p2s:#35291a; --p3:#a98ae0; --p3s:#2a2240; --p4:#6aa5f0; --p4s:#1c2a40; --p5:#ec8a73; --p5s:#3a221d;
+    --bg:#121614; --bg-2:#1b201e; --bg-3:#242a28;
+    --ink:#e6eae8; --ink-2:#aeb6b3; --ink-3:#7d8683; --rule:#2c3331;
+    --accent:#8db3ea; --accent-soft:#1d2a3c;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9b74d4;
+    --seq1:#184f95; --seq2:#1c5cab; --seq3:#256abf; --seq4:#3987e5; --seq5:#6da7ec;
+    --good:#4fc47f; --warn:#e0a03a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --p1:#3cc2b2; --p1s:#163430; --p2:#e0aa3c; --p2s:#35291a; --p3:#a98ae0; --p3s:#2a2240; --p4:#6aa5f0; --p4s:#1c2a40; --p5:#ec8a73; --p5s:#3a221d;
+  --bg:#121614; --bg-2:#1b201e; --bg-3:#242a28;
+  --ink:#e6eae8; --ink-2:#aeb6b3; --ink-3:#7d8683; --rule:#2c3331;
+  --accent:#8db3ea; --accent-soft:#1d2a3c;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9b74d4;
+  --seq1:#184f95; --seq2:#1c5cab; --seq3:#256abf; --seq4:#3987e5; --seq5:#6da7ec;
+  --good:#4fc47f; --warn:#e0a03a;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,"Times New Roman",serif;font-size:18px;line-height:1.6;padding-block:0 96px;padding-inline:16px}
+.page{max-width:700px;margin:0 auto}
+.col{max-width:100%;margin:0 auto}
+h1,h2,h3,h4{font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;text-wrap:balance;line-height:1.2;color:var(--ink);font-weight:600}
+h1{font-size:clamp(34px,6vw,52px);margin:24px 0 8px;letter-spacing:-0.01em}
+h2{font-size:26px;margin:64px 0 16px;padding-top:24px;border-top:1px solid var(--rule)}
+h3{font-size:20px;margin:36px 0 10px}
+h4{font-size:16px;margin:24px 0 6px;color:var(--ink-2)}
+p{margin:0 0 18px}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-family:"IBM Plex Sans",sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-2)}
+.byline{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0 28px}
+.lede{font-size:21px;line-height:1.5;color:var(--ink-2);margin:0 0 20px;font-style:italic}
+.abstract{background:var(--bg-2);border-left:3px solid var(--accent);padding:18px 22px;margin:28px 0;font-size:17px}
+.abstract .eyebrow{margin-bottom:8px;display:block}
+.toc{font-family:"IBM Plex Sans",sans-serif;font-size:14px;background:var(--bg-2);padding:18px 22px;margin:28px 0;columns:2;column-gap:32px}
+.toc ol{margin:0;padding-left:20px}
+.toc li{margin:3px 0;break-inside:avoid}
+.toc a{text-decoration:none}
+.hero{margin:20px 0 8px;aspect-ratio:21/9;max-width:100%;background:linear-gradient(135deg,var(--bg-3),var(--bg-2));display:grid;place-items:center;text-align:center;color:var(--ink-2);font-family:"IBM Plex Sans",sans-serif;font-size:14px;padding:0;border:none}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+figure{margin:32px 0}
+figure.wide{margin-inline:0;max-width:100%}
+figcaption{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);line-height:1.5;margin-top:10px;max-width:100%}
+figcaption b{color:var(--ink);font-weight:600}
+.chart,.diagram{width:100%;height:auto;display:block;background:var(--bg);font-family:"IBM Plex Sans",sans-serif;color:var(--ink)}
+.chart .grid{stroke:var(--rule);stroke-width:1}
+.chart .axis{stroke:var(--ink-3);stroke-width:1}
+.chart .refline{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 4}
+.chart .tick{fill:var(--ink-3);font-size:11px}
+.chart .label{fill:var(--ink-2);font-size:12px}
+.chart .value{fill:var(--ink);font-size:12px;font-weight:600}
+.chart .value-in{fill:#fff;font-size:12px;font-weight:600}
+.chart .line-1{fill:none;stroke:var(--s1);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.chart .line-low{fill:none;stroke:var(--s4);stroke-width:6;stroke-opacity:.45;stroke-linejoin:round}
+.chart .zone{fill:var(--s2);fill-opacity:.08}
+.chart .track{fill:var(--bg-2)}
+.chart .on{fill:var(--s2)}
+.chart .lost{fill:var(--s2);fill-opacity:.28}
+.chart .line-ref{fill:none;stroke:var(--s3);stroke-width:2;stroke-dasharray:6 4}
+.chart .bar-1{fill:var(--s1)} .chart .bar-2{fill:var(--s2)} .chart .bar-3{fill:var(--s3)} .chart .bar-acc{fill:var(--accent)}
+.chart .seg-1{fill:var(--ink-3)} .chart .seg-2{fill:var(--s1)} .chart .seg-3{fill:var(--s4)} .chart .seg-4{fill:var(--s5)} .chart .seg-5{fill:var(--s2)} .chart .seg-6{fill:var(--good)}
+.chart .ann{fill:var(--ink-2);font-size:11.5px}
+.chart .bracket{stroke:var(--ink-2);stroke-width:1.2;fill:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:"IBM Plex Sans",sans-serif;font-size:13px;color:var(--ink-2);margin:6px 0 0}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--sw)}
+.diagram text{fill:currentColor;font-size:12px}
+.diagram .title{font-weight:600;font-size:13px}
+.diagram .muted{fill:var(--ink-3);font-size:11px}
+.diagram .small{font-size:11px;fill:var(--ink-2)}
+.diagram .box{fill:var(--bg-2);stroke:currentColor;stroke-width:1}
+.diagram .box-acc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+.diagram .box-res{fill:var(--bg);stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 3}
+.diagram .band{fill:var(--bg-3);stroke:none}
+.diagram .edge{stroke:currentColor;stroke-width:1.2;fill:none}
+.diagram .edge-dash{stroke:currentColor;stroke-width:1.2;fill:none;stroke-dasharray:4 3}
+.tablewrap{overflow-x:auto;margin:24px 0}
+table{border-collapse:collapse;width:100%;font-family:"IBM Plex Sans",sans-serif;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--ink-2);font-size:13px;letter-spacing:0.02em}
+td.num,th.num{text-align:right;white-space:nowrap}
+tr.hl td{background:var(--accent-soft)}
+caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--ink-2);padding:8px 0 0}
+.callout{background:var(--bg-2);border:1px solid var(--rule);padding:14px 18px;margin:22px 0;font-family:"IBM Plex Sans",sans-serif;font-size:15px}
+.callout .eyebrow{display:block;margin-bottom:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;margin:24px 0;background:var(--rule)}
+.stat{background:var(--bg-2);padding:14px 16px;font-family:"IBM Plex Sans",sans-serif}
+.stat .k{font-size:12px;color:var(--ink-2);letter-spacing:0.06em;text-transform:uppercase}
+.stat .v{font-size:26px;font-weight:600;line-height:1.1;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .s{font-size:12px;color:var(--ink-3);margin-top:4px}
+.shot{border:1px solid var(--rule);background:var(--bg-2)}
+.shot img{width:100%;height:auto;display:block}
+.shot.missing{aspect-ratio:16/9;display:grid;place-items:center;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;font-size:14px;text-align:center;padding:16px}
+.shot.missing img{display:none}
+.shot.missing::after{content:attr(data-placeholder)}
+.refs{font-size:15px;padding-left:28px}
+.refs li{margin:0 0 10px}
+details.deep{background:var(--bg-2);border:1px solid var(--rule);padding:12px 18px;margin:22px 0;font-size:16px}
+details.deep summary{font-family:"IBM Plex Sans",sans-serif;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink-2)}
+details.deep[open] summary{margin-bottom:10px}
+.sc{font-variant:small-caps;letter-spacing:0.04em}
+@media (prefers-reduced-motion: no-preference){a{transition:color .15s}}
+@media (max-width:600px){.toc{columns:1} body{font-size:17px} h2{margin-top:48px}}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:20;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--rule);border-radius:999px;background:var(--bg-2);color:var(--ink-2);font-family:"IBM Plex Sans",sans-serif;font-size:13px;cursor:pointer;line-height:1}
+.themetoggle:hover{color:var(--ink);border-color:var(--ink-3)}
+.themetoggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.themetoggle svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.themetoggle .sun{display:none}
+:root[data-theme="dark"] .themetoggle .sun,:root[data-theme="dark"] .themetoggle .lbl-l{display:inline}
+:root[data-theme="dark"] .themetoggle .moon,:root[data-theme="dark"] .themetoggle .lbl-d{display:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .themetoggle .sun{display:inline}:root:not([data-theme="light"]) .themetoggle .moon{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-d{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-l{display:inline}}
+.themetoggle .lbl-l{display:none}
+@media print{.themetoggle{display:none}}
+
+.arch{font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;width:100%;height:auto;display:block;color:var(--ink)}
+.arch text{fill:currentColor;font-size:12px}
+.arch .t{font-weight:600;font-size:13px}
+.arch .s{font-size:11px;fill:var(--ink-2)}
+.arch .h{font-size:11px;letter-spacing:.12em;fill:var(--ink-2);font-weight:600}
+.arch .num{fill:#fff;font-size:11px;font-weight:700}
+.arch .edge{stroke:var(--ink-2);stroke-width:1.3;fill:none}
+.arch .fb{stroke:var(--ink-2);stroke-width:1.3;fill:none;stroke-dasharray:5 4}
+.arch .db{fill:var(--bg-2);stroke:var(--ink-3);stroke-width:1.4}
+.arch .grid{stroke:var(--rule);stroke-width:1}
+.arch .axis{stroke:var(--ink-3);stroke-width:1.2}
+.arch .tick{fill:var(--ink-3);font-size:11px}
+.arch .row{fill:var(--bg-2)}
+.arch .path{stroke:var(--ink);stroke-width:1.4;stroke-dasharray:3 3}
+.arch .b1{fill:var(--p1s);stroke:var(--p1);stroke-width:1.6} .arch .c1{fill:var(--p1s);stroke:var(--p1);stroke-width:1} .arch .f1{fill:var(--p1)}
+.arch .b2{fill:var(--p2s);stroke:var(--p2);stroke-width:1.6} .arch .c2{fill:var(--p2s);stroke:var(--p2);stroke-width:1} .arch .f2{fill:var(--p2)}
+.arch .b3{fill:var(--p3s);stroke:var(--p3);stroke-width:1.6} .arch .c3{fill:var(--p3s);stroke:var(--p3);stroke-width:1} .arch .f3{fill:var(--p3)}
+.arch .b4{fill:var(--p4s);stroke:var(--p4);stroke-width:1.6} .arch .c4{fill:var(--p4s);stroke:var(--p4);stroke-width:1} .arch .f4{fill:var(--p4)}
+.arch .b5{fill:var(--p5s);stroke:var(--p5);stroke-width:1.6} .arch .c5{fill:var(--p5s);stroke:var(--p5);stroke-width:1} .arch .f5{fill:var(--p5)}
+.hero-credit{font-size:0.8rem;color:var(--ink-3);font-style:italic;text-align:right;margin-top:8px}
+</style>
+</head>
+<body>
+<button class="themetoggle" id="themetoggle" type="button" aria-label="Switch between light and dark theme">
+<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+<span class="lbl-d">Dark</span><span class="lbl-l">Light</span>
+</button>
+<div class="page">
+<div class="col">
+<div class="eyebrow">Technical report · Biryar, part 1 · Sourcing</div>
+<h1>Finding the Few. How Biryar Decides What Is Worth Buying</h1>
+<p class="lede">Nearly nine hundred thousand retail products went in and one hundred and three deals came out. This report explains what happens in between, and why most of the work of finding a bargain turns out to be the work of not being fooled by one.</p>
+<div class="byline"><span>Loghman Samani</span><span>Ciya Labs</span><span>October 2026</span></div>
+</div>
+
+<figure class="wide">
+  <div class="hero"><img src="fig/header1.jpeg" alt="" width="1584" height="672"></div>
+  <figcaption class="hero-credit">Generated with OpenAI DALL·E</figcaption>
+</figure>
+
+<div class="col">
+<div class="abstract"><span class="eyebrow">Abstract</span>
+This report describes the sourcing agent of <b>Biryar</b>, the decision platform behind <b>Samani Ventures</b>, a small German business that resells consumer goods on Amazon. Sourcing answers one question, namely which products sold by ordinary German retailers can be bought, sent to an Amazon warehouse and resold at a profit within a reasonable time. The agent harvests the public catalogues of seven retailers at a deliberately slow pace, matches each product to an Amazon listing through its barcode, and then removes in turn everything that is not listed, cannot be sold by this account, comes in a different pack size, has no genuine market price or has never sold. What survives is watched for price changes, measured for demand and costed under the German small-business VAT regime. In seven weeks of continuous operation the agent harvested 875,963 products. Of these, 632,844 exist on Amazon, two thirds of those are restricted for this account, 55,698 pass every screen, and 103 reached the buy list at least once. One deal per roughly 8,500 products is the central fact of the problem. At such a base rate the dominant risk is a false deal rather than a missed one, and most of the design follows from treating the pipeline as a filter for measurement error rather than as a search for profit. Ninety-nine of the 103 deals concern used goods, which make up less than a third of the harvest, a pattern that fits the economics of search costs and quality uncertainty. The report closes with the agent's present limits, chief among them the gap between how many products it can watch and how often it can afford to look at each one.
+</div>
+
+<nav class="toc" aria-label="Contents">
+<ol>
+<li><a href="#intro">Introduction</a></li>
+<li><a href="#problem">The problem in plain terms</a></li>
+<li><a href="#background">Background and related work</a></li>
+<li><a href="#design">System design</a></li>
+<li><a href="#results">What seven weeks of operation show</a></li>
+<li><a href="#discussion">Discussion</a></li>
+<li><a href="#limits">Limitations</a></li>
+<li><a href="#future">Future work</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#glossary">Glossary</a></li>
+<li><a href="#refs">References</a></li>
+</ol>
+</nav>
+
+<h2 id="intro">1. Introduction</h2>
+<p><b>Biryar is the Kurdish word for decision</b>, and the name describes the platform's job quite literally. It is a private operations system built for one Amazon seller, Samani Ventures, and it consists of several cooperating agents. Each agent watches one part of the business, gathers evidence and proposes an action. None of them acts on its own. A purchase, a price change, a message to a customer or a claim against Amazon is written into an approval queue and waits there until a person with the right to approve it has looked at the evidence. The platform drafts and the owner decides. This report is the first of a series on Biryar, published by <b>Ciya Labs</b>, in which each agent is described on its own before a final report puts them together.</p>
+<p>Sourcing is the natural place to start, because it is where the business began and because every other agent depends on it. A reseller earns nothing until it owns stock that someone wants, and sourcing is the agent that decides which stock that should be. The idea is old and simple. Some products are sold more cheaply in a high-street or online shop than they sell for on Amazon, and the difference, once fees and costs are paid, is a margin. Practitioners call this <b>retail arbitrage</b>.</p>
+<p>The simplicity is misleading. Three questions turn out to be hard, and they structure the rest of the report. Where can stock come from, given that the only practical sources are other people's websites and that those websites owe the business nothing? Which of the products found there could this particular account actually sell at a profit, once every legal, commercial and physical restriction has been applied? And how can that answer be kept current, when prices change daily and the polite way of reading a shop's catalogue takes weeks?</p>
+<p>The system described here answers all three, imperfectly but measurably. Its first version targeted American retailers, which turned out to be the wrong market for a business that si registered in Germany! and was replaced. The current version reads seven German retailers and has been running around the clock on a small server since mid-August 2026. All counts in this report come from that live system on 2 October 2026.</p>
+
+<h2 id="problem">2. The problem in plain terms</h2>
+<p>Picture a book that a shop sells for €8 and that sells on Amazon for €20. It looks like €12 of profit. In practice Amazon keeps a referral fee of around fifteen percent and charges a few euros to store and ship the book, the book has to be labelled, packed and sent to an Amazon warehouse, and a small German business that does not charge VAT on its sales pays VAT on all of those services without being able to reclaim it. Section 4.6 works through the numbers. The €12 shrinks to about €3, which is still a deal, but a thinner one than it first appeared.</p>
+<p>Fees are the visible part of the problem. The invisible part is a list of ways in which the two prices being compared can turn out to describe different things. Each item on the list below was learned the expensive way, through a deal that looked excellent and was not.</p>
+
+<div class="tablewrap"><table>
+<thead><tr><th>Question</th><th>Why it matters</th><th>What happens if it is ignored</th></tr></thead>
+<tbody>
+<tr><td>Does Amazon sell this product at all?</td><td>Without a listing there is nothing to sell into.</td><td>Stock with no market.</td></tr>
+<tr><td>May this account sell it?</td><td>Amazon restricts many brands and categories to approved sellers.</td><td>Stock that cannot be listed, however profitable it looks.</td></tr>
+<tr><td>Is it the same pack?</td><td>A barcode identifies a product, not a quantity.</td><td>A buyer orders 250 filing strips and receives 25.</td></tr>
+<tr><td>Is it the same condition?</td><td>A shop's "very good" used copy is not a new one.</td><td>Profit computed against a price the goods can never fetch.</td></tr>
+<tr><td>Has anyone paid the Amazon price?</td><td>A lone seller can ask any price on a slow listing.</td><td>Profit computed against a wish.</td></tr>
+<tr><td>Does it sell, and how fast?</td><td>Unsold stock pays storage and ties up cash.</td><td>A year of inventory for a product that sells twice a month.</td></tr>
+<tr><td>Is the shop price still true?</td><td>Clearance lasts days, not months.</td><td>A deal that was gone before anyone looked.</td></tr>
+</tbody>
+<caption>Table 1. The questions every candidate has to survive before it becomes a deal.</caption>
+</table></div>
+
+<p>Every one of those questions can be answered automatically, but each answer costs something. Some cost a request to a retailer, which has to be spaced out of courtesy. Some cost a call to Amazon's seller interface, which is free but rate-limited. Some cost a token from <b>Keepa</b>, a commercial service that records Amazon price and sales-rank history, which is paid for. The design problem is therefore one of ordering and budgeting as much as one of judgement. Ask the cheap questions first, spend the expensive ones only on the survivors, and keep everything that has been learned so that no question is paid for twice.</p>
+
+<h2 id="background">3. Background and related work</h2>
+<h3>3.1 Why price gaps exist, and why they are rare</h3>
+<p>Stigler [1] argued that price dispersion is a measure of ignorance. Buyers do not know every price, searching is costly, and so identical goods sell at different prices in different places. Bakos [2] predicted that electronic marketplaces would lower those search costs and push prices towards the competitive level. Brynjolfsson and Smith [3] found that online prices were indeed lower than offline ones, but that substantial dispersion persisted online all the same. Retail arbitrage lives in that residual dispersion. It also lives under the constraints that Shleifer and Vishny [4] described for financial arbitrage in general. Real arbitrage needs capital, carries risk and is performed by specialists with limited resources, which is why apparent mispricings can survive. A reseller with a few thousand euros of working capital and one pair of hands is exactly such a specialist.</p>
+<p>The economic reading leads to a clear expectation. Gaps should be largest where comparison is hardest. New, branded, barcoded goods sold by large chains are the easiest products in the world to compare, and the gaps there should be small and short-lived. Used goods, whose condition varies copy by copy, are harder to compare, and Akerlof [5] showed that quality uncertainty of exactly that kind thins and distorts markets for used goods. Section 5 shows that the data agree with this expectation rather strongly.</p>
+
+<h3>3.2 The optimizer's curse</h3>
+<p>Any system that estimates the value of many options and picks the best ones will be disappointed on average, even if every individual estimate is unbiased. The options at the top of a ranking are disproportionately those whose value was overestimated. Petroleum engineers noticed this in oil-lease auctions [6], and Smith and Winkler [7] gave the general statement and called it the optimizer's curse. Sourcing is a pure instance. When 875,963 candidates are ranked by apparent margin, the largest margins are dominated by errors, by the wrong pack, the wrong condition or a price nobody pays, because a genuine gap of 300 percent is far rarer than a data error that produces one. Combined with a tiny base rate of true deals, which Bar-Hillel [8] showed people routinely neglect, this means that even a very small false-positive rate at each stage would fill the buy list with mistakes. Much of the design in Section 4 is best read as a defence against this curse.</p>
+
+<h3>3.3 Matching records across catalogues</h3>
+<p>Deciding that a shop's product and an Amazon listing are the same thing is a record-linkage problem, formalised by Fellegi and Sunter [9] and surveyed by Christen [10]. Biryar relies on the strongest identifier available, the European Article Number printed as a barcode on the product, which makes most of the problem disappear. Most, not all. Barcodes are occasionally reused or mistyped in catalogues, and the same barcode can describe a single item on one site and a multipack on another. The remaining checks therefore compare titles, pack sizes and price ratios, which is classical record linkage applied to the cases the identifier cannot settle.</p>
+
+<h3>3.4 Crawling politely, and staying fresh</h3>
+<p>Reading other people's websites at scale is governed by convention. The Robots Exclusion Protocol, standardised as RFC 9309 [11], lets a site declare what automated readers may fetch, and the crawling literature [12] treats politeness, meaning a limited request rate per host, as a first-class constraint alongside coverage and freshness. Cho and Garcia-Molina [13] studied how a crawler with a fixed budget should revisit pages to keep a local copy fresh. One of their results is counter-intuitive and relevant here. Revisiting pages in proportion to how often they change can be worse than revisiting all of them equally, because a page that changes very often goes stale again almost immediately and the visits spent on it are largely wasted. Freshness has to be bought where it pays.</p>
+
+<h3>3.5 Reading demand on Amazon</h3>
+<p>Amazon publishes no sales figures, only a sales rank per category. Chevalier and Goolsbee [14] and Brynjolfsson, Hu and Smith [15] showed that rank can be mapped to approximate sales quantities, but the mapping differs between categories and has to be estimated for each. Chen, Mislove and Wilson [16] studied the Amazon marketplace directly and documented the role of the featured offer, often called the <b>Buy Box</b>. Most purchases go through it, it is usually but not always held by the cheapest offer, and sellers who price algorithmically win it more often. Any estimate of how many units a new seller will move on a listing has to account for that offer and for the competitors sharing it.</p>
+
+<h3>3.6 Markdowns</h3>
+<p>Retail prices fall for different reasons. Varian [17] modelled temporary sales as a deliberate randomisation of price aimed at buyers who shop around, and Pashigian [18] linked permanent markdowns to demand uncertainty, with goods marked down because they did not sell. The distinction matters to a reseller. A temporary sale is a window to buy in, while a permanent markdown may be followed by further cuts that undercut whatever was bought at the first one.</p>
+
+<h2 id="design">4. System design</h2>
+<h3>4.1 Overview</h3>
+<p>The agent is not one program but five cooperating parts, connected through a shared database on the server called the watchlist. Three of them run continuously as independent services, each owning one scarce resource. The retail service reads shops, the Amazon service screens products against Amazon, and the demand service measures how fast they sell. The fourth part, the buy list, is rebuilt every hour from what the three services have stored, and the fifth is the Deals page on which the owner reads it and decides. Figure 1 numbers and colours the five parts, shows how a product travels between them, and lays out on a single time axis how long each of them takes.</p>
+
+<figure class="wide">
+<svg viewBox="0 0 700 640" role="img" aria-label="The sourcing agent in two panels. Panel A shows five parts, each in its own colour, around one shared database called the watchlist. Part one, the retail service, harvests shop catalogues and watches shelf prices. Part two, the Amazon service, screens each new product. Part three, the demand service, measures sales rates. Part four, the buy list, is rebuilt every hour from the database. Part five, the Deals page, is where the owner decides, and the verdict is written back to the database. Panel B is a logarithmic time ruler from half a second to two months, showing how long each part's single step and full loop take. A product page takes five to eight seconds, a full shop catalogue eight to fifteen days, the watch re-checks a product after six hours, screening takes under a second per product and is repeated after thirty days, a sales rate costs one token about every three seconds and is refreshed after thirty days, the buy list is rebuilt every hour and accepts shelf prices up to 48 hours old and Amazon prices up to 21 days old, and the Deals page refreshes every two minutes. A markdown can reach the Deals page about seven hours after the shelf price falls." class="arch">
+<defs>
+<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-2)"/></marker>
+</defs>
+<text class="h" x="10" y="16">A · FIVE PARTS AND ONE SHARED DATABASE</text>
+
+<rect class="b1" x="10" y="30" width="236" height="128" rx="8"/>
+<circle class="f1" cx="30" cy="50" r="9"/><text class="num" x="30" y="54" text-anchor="middle">1</text><text class="t" x="46" y="54">Retail service</text><text class="s" x="46" y="70">owns retailer goodwill</text>
+<rect class="c1" x="22" y="82" width="104" height="64" rx="5"/><text class="t" x="74" y="106" text-anchor="middle">Harvest</text><text class="s" x="74" y="122" text-anchor="middle">reads shop</text><text class="s" x="74" y="135" text-anchor="middle">catalogues</text>
+<rect class="c1" x="134" y="82" width="100" height="64" rx="5"/><text class="t" x="184" y="106" text-anchor="middle">Watch</text><text class="s" x="184" y="122" text-anchor="middle">re-checks price</text><text class="s" x="184" y="135" text-anchor="middle">and stock</text>
+
+<rect class="b2" x="10" y="176" width="236" height="88" rx="8"/>
+<circle class="f2" cx="30" cy="196" r="9"/><text class="num" x="30" y="200" text-anchor="middle">2</text><text class="t" x="46" y="200">Amazon service</text><text class="s" x="46" y="216">owns one Amazon rate limit</text>
+<rect class="c2" x="22" y="226" width="212" height="28" rx="5"/><text class="s" x="128" y="244" text-anchor="middle" style="fill:var(--ink)">Screening · five checks per product</text>
+
+<rect class="b3" x="10" y="282" width="236" height="88" rx="8"/>
+<circle class="f3" cx="30" cy="302" r="9"/><text class="num" x="30" y="306" text-anchor="middle">3</text><text class="t" x="46" y="306">Demand service</text><text class="s" x="46" y="322">owns the Keepa token budget</text>
+<rect class="c3" x="22" y="332" width="212" height="28" rx="5"/><text class="s" x="128" y="350" text-anchor="middle" style="fill:var(--ink)">Velocity · units a week, 90-day price</text>
+
+<path class="db" d="M282,152 v114 a63,13 0 0 0 126,0 v-114"/>
+<ellipse class="db" cx="345" cy="152" rx="63" ry="13"/>
+<text class="t" x="345" y="196" text-anchor="middle">Watchlist</text>
+<text class="s" x="345" y="213" text-anchor="middle">shared database</text>
+<text class="s" x="345" y="229" text-anchor="middle">every verdict</text>
+<text class="s" x="345" y="243" text-anchor="middle">and every price</text>
+
+<rect class="b4" x="456" y="168" width="106" height="92" rx="8"/>
+<circle class="f4" cx="474" cy="188" r="9"/><text class="num" x="474" y="192" text-anchor="middle">4</text><text class="t" x="490" y="192">Buy list</text><text class="s" x="468" y="216">rebuilt hourly</text><text class="s" x="468" y="231">a query, it</text><text class="s" x="468" y="245">fetches nothing</text>
+<rect class="b5" x="576" y="168" width="116" height="92" rx="8"/>
+<circle class="f5" cx="594" cy="188" r="9"/><text class="num" x="594" y="192" text-anchor="middle">5</text><text class="t" x="610" y="192">Deals page</text><text class="s" x="588" y="216">the owner reads</text><text class="s" x="588" y="231">the evidence</text><text class="s" x="588" y="245">and decides</text>
+
+<path class="edge" d="M22,124 H15 V240 H20" marker-end="url(#ah)"/><text class="s" x="46" y="171">new products go to screening</text>
+<path class="edge" d="M234,240 H262 V226 H280" marker-end="url(#ah)"/>
+<path class="edge" d="M234,114 H345 V137" marker-start="url(#ah)" marker-end="url(#ah)"/>
+<path class="edge" d="M234,346 H345 V281" marker-start="url(#ah)" marker-end="url(#ah)"/>
+<path class="edge" d="M408,214 H454" marker-end="url(#ah)"/>
+<path class="edge" d="M562,214 H574" marker-end="url(#ah)"/>
+<path class="fb" d="M634,260 V300 H372 V281" marker-end="url(#ah)"/>
+<text class="s" x="505" y="318" text-anchor="middle">bought, rejected or skipped, written back</text>
+<text class="s" x="505" y="332" text-anchor="middle">so a judged deal stays off later lists</text>
+
+<text class="h" x="10" y="400">B · HOW LONG EACH PART'S STEP AND LOOP TAKE</text>
+<line class="grid" x1="182.3" y1="412" x2="182.3" y2="594"/><text class="tick" x="182.3" y="608" text-anchor="middle">1 s</text>
+<line class="grid" x1="314.1" y1="412" x2="314.1" y2="594"/><text class="tick" x="314.1" y="608" text-anchor="middle">1 min</text>
+<line class="grid" x1="445.9" y1="412" x2="445.9" y2="594"/><text class="tick" x="445.9" y="608" text-anchor="middle">1 h</text>
+<line class="grid" x1="548.2" y1="412" x2="548.2" y2="594"/><text class="tick" x="548.2" y="608" text-anchor="middle">1 day</text>
+<line class="grid" x1="610.8" y1="412" x2="610.8" y2="594"/><text class="tick" x="610.8" y="608" text-anchor="middle">1 week</text>
+<line class="grid" x1="657.7" y1="412" x2="657.7" y2="594"/><text class="tick" x="657.7" y="608" text-anchor="middle">1 month</text>
+<circle class="f1" cx="16" cy="424" r="5"/><text class="s" x="26" y="428" style="fill:var(--ink)">Retail service</text>
+<circle class="f2" cx="16" cy="462" r="5"/><text class="s" x="26" y="466" style="fill:var(--ink)">Amazon service</text>
+<circle class="f3" cx="16" cy="500" r="5"/><text class="s" x="26" y="504" style="fill:var(--ink)">Demand service</text>
+<circle class="f4" cx="16" cy="538" r="5"/><text class="s" x="26" y="542" style="fill:var(--ink)">Buy list</text>
+<circle class="f5" cx="16" cy="576" r="5"/><text class="s" x="26" y="580" style="fill:var(--ink)">Deals page</text>
+<rect class="f1" x="234.1" y="419" width="15.1" height="9" rx="2"/><text class="s" x="230.1" y="416" text-anchor="start">one page, 5 to 8 s</text>
+<path class="f1" d="M503.6,417 l6,6.5 l-6,6.5 l-6,-6.5 z"/><text class="s" x="503.6" y="443" text-anchor="middle">watch again after 6 h</text>
+<rect class="f1" x="615.1" y="419" width="20.3" height="9" rx="2"/><text class="s" x="643.4" y="417" text-anchor="end">whole shop, 8 to 15 days</text>
+<circle class="f2" cx="175.1" cy="461.5" r="5"/><text class="s" x="184.1" y="465" text-anchor="start">screen one product, 0.8 s</text>
+<path class="f2" d="M657.7,455 l6,6.5 l-6,6.5 l-6,-6.5 z"/><text class="s" x="648.7" y="465" text-anchor="end">screen again after 30 days</text>
+<circle class="f3" cx="217.7" cy="499.5" r="5"/><text class="s" x="226.7" y="503" text-anchor="start">one product per token, 3 s</text>
+<path class="f3" d="M657.7,493 l6,6.5 l-6,6.5 l-6,-6.5 z"/><text class="s" x="648.7" y="503" text-anchor="end">measure again after 30 days</text>
+<path class="f4" d="M445.9,531 l6,6.5 l-6,6.5 l-6,-6.5 z"/><text class="s" x="436.9" y="541" text-anchor="end">rebuilt every hour</text>
+<line x1="570.5" y1="529" x2="570.5" y2="545" stroke="var(--p4)" stroke-width="2"/><text class="s" x="565.5" y="557" text-anchor="end">shelf price at most 48 h old</text><line x1="646.2" y1="529" x2="646.2" y2="545" stroke="var(--p4)" stroke-width="2"/><text class="s" x="680" y="527" text-anchor="end">Amazon price at most 21 days old</text>
+<circle class="f5" cx="336.4" cy="575.5" r="5"/><text class="s" x="345.4" y="579" text-anchor="start">view refreshes every 2 min</text>
+<line class="axis" x1="160" y1="594" x2="680" y2="594"/>
+<path d="M508.5,595 l-6,11 h12 z" fill="var(--ink)"/><text class="s" x="508.5" y="632" text-anchor="middle" style="fill:var(--ink);font-weight:600">a markdown reaches the Deals page within about 7 h</text>
+</svg>
+<figcaption><b>Figure 1.</b> The sourcing agent. Panel A shows the five parts, each in its own colour, and the one thing they share, the watchlist database. Parts 1 to 3 are always-on services, each owning one scarce resource, part 4 is an hourly query over what they have learned, and part 5 is where a person decides. Panel B puts every part on one logarithmic time axis. A single step takes seconds, a full sweep takes days to weeks, and at its target pace the watch carries a markdown from the shelf to the Deals page in about seven hours. Section 7 explains why it ran slower than that in October.</figcaption>
+</figure>
+
+<p>Two clocks run through this picture, and separating them is the single most important design decision in the agent. Whether a product exists on Amazon, whether this account may sell it and whether anyone buys it change slowly, over weeks or months. The shelf price changes daily. So the expensive, slow questions are asked once and remembered, and only the cheap, fast question is asked again and again. Coverage becomes a one-time cost and freshness becomes the recurring one, which is the right way round, because a product's existence is stable and its price is not.</p>
+
+<h3>4.2 Harvesting</h3>
+<p>The harvest reads each retailer's sitemap, a machine-readable index that shops publish precisely so that search engines and other crawlers can find their product pages without walking the navigation. It then fetches product pages one at a time and extracts what it needs, which is the name, the price, the barcode, the category, the availability and, where the shop states it, the condition of the goods. Most of this comes from structured product data that shops embed for search engines. The rest is read from the page text.</p>
+<p>Three rules govern the harvest and none of them is negotiable. It obeys each site's robots file, and when a site answers a request for that file with a refusal rather than an error, the whole site is treated as off limits. It spaces its requests to each host by several seconds, and slows down further for any host that starts refusing, so that one shop is fetched every eight seconds after it declined about fifteen percent of requests at a five-second spacing. And it announces itself as an automated reader instead of posing as a browser. A consequence of these rules is that reading a catalogue of 80,000 pages takes most of a week, which is the reason the two clocks of Section 4.1 exist at all.</p>
+<p>Condition deserves a paragraph of its own, because it was the most expensive lesson in the agent's history. One retailer sells remaindered books, new books with small cosmetic damage that by the shop's own definition no longer count as new. The early pipeline compared them against Amazon's price for new copies. On one day this produced a buy list of ninety deals worth a projected €11,131, and when the same books were priced against Amazon's used offers instead, the eight best deals all turned into losses. The harvest now records condition for every page that states it, maps each shop grade to the lowest Amazon grade it could honestly be sold under, and treats a page that says nothing as unknown rather than as new. Overstating condition risks a customer complaint, which costs more than a missed margin, so the mapping errs downward.</p>
+<p>Seven retailers are harvested in parallel lanes, one per shop. Because politeness is enforced per host, the lanes do not slow each other down. They do compete for something downstream, however. Every harvested row has to be screened against Amazon, and screening shares a single rate limit. Six lanes running flat out would produce rows faster than screening can consume them. Each lane is therefore weighted by its measured yield of deals per thousand rows harvested, so that the shops that produce deals run at full speed and the shops that rarely do run at a trickle.</p>
+
+<h3>4.3 Screening</h3>
+<p>Screening decides whether a harvested product belongs on the watchlist, and revisits that verdict about once a month. It asks a fixed sequence of questions and stops at the first one that rules the product out, so that no expensive question is asked about a product a cheaper one has already disqualified. Table 2 lists the sequence with the number of products each step removed in live operation.</p>
+
+<div class="tablewrap"><table>
+<thead><tr><th>Step</th><th>Question</th><th>Answered by</th><th class="num">Removed</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Is there an Amazon.de listing with this barcode?</td><td>Amazon catalogue lookup</td><td class="num">181,278</td></tr>
+<tr><td>2</td><td>May this account sell it?</td><td>Amazon listing-restrictions check</td><td class="num">416,678</td></tr>
+<tr><td>3</td><td>Do both sides sell the same quantity?</td><td>Comparison of the two titles</td><td class="num">4,209</td></tr>
+<tr><td>4</td><td>For new goods, is the Amazon price a featured offer?</td><td>Amazon pricing data</td><td class="num">7,847</td></tr>
+<tr><td>5</td><td>Has it ever sold, with a rank inside a real market?</td><td>Sales rank</td><td class="num">148,412</td></tr>
+<tr class="hl"><td></td><td>Passed every step and watched</td><td></td><td class="num">55,698</td></tr>
+</tbody>
+<caption>Table 2. Screening, in the order it runs, over 814,122 products with a barcode and a price. Counts as of 2 October 2026.</caption>
+</table></div>
+
+<p>Step 2 is the largest single filter, and it is worth explaining for readers outside the trade. Amazon requires approval before a seller may list many brands and some whole categories, such as books or food. Approval is usually granted on the strength of an invoice from the manufacturer or an authorised distributor, never on a till receipt from a shop. For a young account this means that two thirds of everything found on Amazon is closed to it. Screening records the reason for each restriction rather than discarding the product, because those records are the raw material of a different strategy, choosing which brands to apply for, that a later report in this series describes.</p>
+<p>Step 3 implements the rule that silence is not agreement. The titles on both sides are read for counts such as "25 Stück" or "12er-Pack", volumes and weights, with litres and millilitres normalised so that "1,5 L" equals "1500 ml". If the two sides state different quantities the product is rejected. If one side states a quantity and the other says nothing, the product is also rejected, because that is exactly what a multipack looks like from the outside. The rule costs a few genuine deals and buys a guarantee that the agent never ships the wrong amount. The asymmetry of the two errors justifies it.</p>
+<p>Step 4 guards against a price that is only one seller's hope. On a slow listing a single merchant can ask almost anything, and Amazon will display it. When nobody holds the featured offer, the displayed price is evidence of nothing, so new goods without one are set aside. Used goods are judged differently, against the comparable used offers, because the featured offer on a listing belongs to the new market.</p>
+<p>Gating has one more subtlety. Approval moves in both directions, and the two directions cost different amounts when they are missed. A product that becomes sellable because the owner won an approval is an opportunity missed if the system does not notice, which is recoverable. A product that becomes restricted because Amazon changed a rule is stock that cannot be listed, which is not. The cache of restriction verdicts therefore expires allowed verdicts sooner than restricted ones, and verdicts are reset at once whenever a new approval is imported.</p>
+
+<h3>4.4 Watching for markdowns</h3>
+<p>The watch re-reads the shop page of every watched product, notes the price and the stock, and compares the price with a reference. A fall of five percent or more against the reference raises the alarm. The choice of reference is subtle, and it decides what the watch can see. Comparing with yesterday's price makes a slow slide invisible, since a shop that cuts four percent at a time never trips a five percent threshold, however far the price falls in total. Comparing with the lowest price ever seen is worse in a different way, because the reference sinks with every cut and a sale that returns after a recovery looks like nothing new. The watch therefore uses the highest price at which the product has been seen as its regular price, and the reference only ever moves up. Figure 2 runs all three rules on the same price.</p>
+
+<figure class="wide">
+<svg viewBox="0 0 700 410" role="img" aria-label="Two aligned panels over sixty days. Top, an illustrative shelf price of 20 euros falls in five cuts of four percent between days 10 and 30, to 16.31 euros, eighteen percent in all, recovers to 20 euros on day 36, and repeats the same sale from day 46 to day 54. The highest price seen stays at 20 euros, the lowest price seen follows the price down and stays at 16.31 euros. The zone more than five percent below the highest price is shaded as the alarm zone. Bottom, when each rule raises the alarm. Compared with yesterday, the alarm fires only on day 46. Compared with the lowest price seen, it never fires. Compared with the highest price seen, it fires from day 15 to day 35 and again from day 46 to day 53." class="chart">
+<rect class="zone" x="70" y="100.0" width="600" height="105.0"/>
+<line class="grid" x1="70" y1="40" x2="670" y2="40"/><text class="tick" x="62" y="44" text-anchor="end">€21</text><line class="grid" x1="70" y1="70" x2="670" y2="70"/><text class="tick" x="62" y="74" text-anchor="end">€20</text><line class="grid" x1="70" y1="130" x2="670" y2="130"/><text class="tick" x="62" y="134" text-anchor="end">€18</text><line class="grid" x1="70" y1="190" x2="670" y2="190"/><text class="tick" x="62" y="194" text-anchor="end">€16</text><line class="grid" x1="170" y1="40" x2="170" y2="205"/><line class="grid" x1="270" y1="40" x2="270" y2="205"/><line class="grid" x1="370" y1="40" x2="370" y2="205"/><line class="grid" x1="470" y1="40" x2="470" y2="205"/><line class="grid" x1="570" y1="40" x2="570" y2="205"/>
+<path class="line-low" d="M70,70 H170 V94.0 H220 V117.1 H270 V139.3 H320 V160.3 H370 V180.7 H670"/>
+<path class="line-ref" d="M70,70 H670"/>
+<path class="line-1" d="M70,70 H170 V94.0 H220 V117.1 H270 V139.3 H320 V160.3 H370 V180.7 H430 V70 H530 V180.7 H610 V70 H670"/>
+<text class="ann" x="84" y="163.0">five cuts of 4%,</text><text class="ann" x="84" y="178.0">each under the alarm,</text><text class="ann" x="84" y="193.0">18% in all</text>
+<text class="ann" x="436" y="62">recovers</text>
+<text class="ann" x="536" y="197.7">the same sale again</text>
+<line class="axis" x1="70" y1="205.0" x2="670" y2="205.0"/>
+<text class="label" x="70" y="240" style="font-weight:600">When does each rule raise the alarm?</text>
+<text class="ann" x="70" y="262">Compared with yesterday's price</text>
+<rect class="track" x="70" y="268" width="600" height="12" rx="2"/>
+<rect class="on" x="530" y="268" width="10" height="12" rx="2"/>
+<text class="ann" x="522" y="279" text-anchor="end">only the sudden sale, never the slide</text>
+<text class="ann" x="70" y="304">Compared with the lowest price seen</text>
+<rect class="track" x="70" y="310" width="600" height="12" rx="2"/>
+<text class="ann" x="78" y="320">never fires, a repeat of a known sale looks like nothing new</text>
+<text class="ann" x="70" y="346" style="font-weight:600;fill:var(--ink)">Compared with the highest price seen, Biryar's rule</text>
+<rect class="track" x="70" y="352" width="600" height="12" rx="2"/>
+<rect class="on" x="220" y="352" width="210" height="12" rx="2"/>
+<rect class="on" x="530" y="352" width="80" height="12" rx="2"/>
+<line class="axis" x1="70" y1="380" x2="670" y2="380"/>
+<text class="tick" x="70" y="398" text-anchor="middle">day 0</text><text class="tick" x="170" y="398" text-anchor="middle">10</text><text class="tick" x="270" y="398" text-anchor="middle">20</text><text class="tick" x="370" y="398" text-anchor="middle">30</text><text class="tick" x="470" y="398" text-anchor="middle">40</text><text class="tick" x="570" y="398" text-anchor="middle">50</text><text class="tick" x="670" y="398" text-anchor="middle">60</text>
+</svg>
+<div class="legend"><span style="--sw:var(--s1)">Shelf price, illustrative</span><span style="--sw:var(--s3)">Highest price seen, the reference</span><span style="--sw:var(--s4)">Lowest price seen</span><span style="--sw:var(--s2)">Alarm raised</span><span style="--sw:color-mix(in srgb, var(--s2) 18%, var(--bg))">Alarm zone, 5% or more below the highest price</span></div>
+<figcaption><b>Figure 2.</b> Three ways to define a markdown, tested on one illustrative price over sixty days, with the watch's real alarm threshold of five percent. Comparing with yesterday misses the slow slide, because every single cut is below the threshold. Comparing with the lowest price seen misses the repeated sale, because the reference has already fallen to that price. Comparing with the highest price seen catches both, falls silent while the price is back at its regular level, and fires again when the sale returns.</figcaption>
+</figure>
+
+<p>The five percent threshold is low on purpose, because markdowns at the shops in question are typically twenty to fifty percent and the five percent margin only filters out rounding and display noise. The watch also records when a product goes out of stock, which turns out to be the more common observation, and Section 7 returns to it.</p>
+<p>The watch makes no calls to Amazon at all. That sounds like a detail and it shaped the architecture. An early version placed it with the other Amazon work because it is about prices, and it then spent long turns of the Amazon service's time while using none of its quota. It now lives with the harvest, because the resource it actually competes for is the retailers' patience.</p>
+
+<h3>4.5 Measuring demand</h3>
+<p>A low price on a product nobody buys is not a deal, it is a storage bill. The velocity service measures how fast each watched product sells, using the history of its sales rank as recorded by Keepa. Every meaningful improvement in rank corresponds to at least one sale, so counting those improvements over a window gives a count of sales events rather than an estimate inferred from the rank's level [14, 15]. The count is a floor, because two sales between rank updates look like one, and that is the right direction to be wrong in when the number decides how much stock to buy.</p>
+<p>Two windows are measured, thirty and ninety days, and decisions use the lower of the two rates. The thirty-day rate is current but noisy, the ninety-day rate is stable but may include weeks before a product existed, and taking the smaller one overstates how long a purchase will take to clear. The reason for not simply using the rank is visible in a single comparison from the live data. A pack of baby wipes at rank 3,871, a video game at rank 12,338 and a DVD at rank 916 look as if they could be put in order, the DVD fastest and the game slowest. They cannot, because each rank is a position within a different category, and a category with many sellers and many sales pushes even a fast product to a large number. The three ranks are measured on three different scales and say nothing about one another. What they could not show is what the counted sales did. The game, the most attractive of the three by margin, sells about two copies a month.</p>
+<p>The rate measured this way is the whole listing's. A new seller gets only part of it. Biryar assumes that, at roughly equal prices, a listing's sales are shared evenly among its sellers, so with N competing offers the account's share is one in N plus one. This is a deliberate simplification, and Section 7 discusses where it fails. The same velocity response also carries Keepa's ninety-day average price for the listing, which costs nothing extra and supports one of the buy-list checks below.</p>
+
+<h3>4.6 The money</h3>
+<p>Profit is computed for each candidate by subtracting every modelled cost from the Amazon price. The business is registered under the German small-business rule, the Kleinunternehmerregelung of §19 of the VAT Act, confirmed in writing by its tax office. Under that rule no VAT is charged on sales, so the whole Amazon price is revenue. In exchange, the VAT inside a shop's shelf price cannot be reclaimed and is a real cost, and the VAT owed under the reverse-charge rule on Amazon's fees, which are invoiced from Luxembourg, must be paid with no deduction. The cost model applies that charge conservatively to all handling costs. Figure 3 shows where the €20 of the opening example goes.</p>
+
+<figure class="wide">
+<svg viewBox="0 0 700 120" role="img" aria-label="Stacked bar dividing a 20 euro Amazon price into shelf cost 8 euros, referral fee 3 euros, fulfilment fee 3 euros, prep and inbound freight 1.30 euros, reverse-charge VAT 1.39 euros and profit 3.31 euros." class="chart">
+<rect class="seg-1" x="20" y="30" width="264" height="44"/>
+<rect class="seg-2" x="284" y="30" width="99" height="44"/>
+<rect class="seg-3" x="383" y="30" width="99" height="44"/>
+<rect class="seg-4" x="482" y="30" width="42.9" height="44"/>
+<rect class="seg-5" x="524.9" y="30" width="45.8" height="44"/>
+<rect class="seg-6" x="570.7" y="30" width="109.3" height="44"/>
+<text class="value-in" x="152" y="57" text-anchor="middle">Shelf price €8.00</text>
+<text class="value-in" x="333.5" y="57" text-anchor="middle">€3.00</text>
+<text class="value-in" x="432.5" y="57" text-anchor="middle">€3.00</text>
+<text class="value-in" x="625.4" y="57" text-anchor="middle">€3.31</text>
+<line class="axis" x1="20" y1="82" x2="680" y2="82"/>
+<text class="tick" x="20" y="98" text-anchor="middle">€0</text>
+<text class="tick" x="185" y="98" text-anchor="middle">€5</text>
+<text class="tick" x="350" y="98" text-anchor="middle">€10</text>
+<text class="tick" x="515" y="98" text-anchor="middle">€15</text>
+<text class="tick" x="680" y="98" text-anchor="middle">€20</text>
+<text class="label" x="20" y="20">Where an illustrative €20 sale goes</text>
+</svg>
+<div class="legend"><span style="--sw:var(--ink-3)">Shelf price, VAT not reclaimable €8.00</span><span style="--sw:var(--s1)">Amazon referral fee €3.00</span><span style="--sw:var(--s4)">Fulfilment fee €3.00</span><span style="--sw:var(--s5)">Prep and inbound freight €1.30</span><span style="--sw:var(--s2)">Reverse-charge VAT €1.39</span><span style="--sw:var(--good)">Profit €3.31</span></div>
+<figcaption><b>Figure 3.</b> The cost stack for one unit, with the default parameters of the model. Return on the €8 outlay is 41 percent, which clears both thresholds the agent applies, at least €3 of profit and at least 25 percent return. A €10 item at 30 percent return would earn €3, and about half of that would go on handling, which is why an absolute floor matters as much as a percentage.</figcaption>
+</figure>
+
+<details class="deep"><summary>The cost model in detail</summary>
+<p>Profit equals the Amazon price minus the referral fee, the fulfilment fee, preparation, inbound freight, reverse-charge VAT on those services, and the gross shelf price. The referral fee is taken as fifteen percent, the conservative end of Amazon.de's range of roughly seven to fifteen percent depending on category. The fulfilment fee is a flat €3.00 per unit, which overstates the true fee for small, light items, so profit at the bottom of the price range is understated rather than overstated. Preparation is costed at €0.60 per unit, of which most is labour valued at what an assistant would be paid, and inbound freight at €0.70 per unit, covering a share of the carton and the parcel into Amazon's warehouse. Return on investment is profit divided by the money actually paid at the till.</p>
+<p>The model also knows the alternative, standard VAT registration, under which purchase VAT is reclaimed and sales VAT is remitted. Switching between the two changes reported profit more than any other single parameter, and the choice is a legal status rather than a setting, so the agent refuses to run with a regime it does not recognise rather than falling back silently to no VAT at all.</p>
+<p>Delivery from the shop to the business is charged per order and waived above a basket threshold, so it is reported per shop basket rather than folded into the per-unit cost. A buy that clears a free-delivery threshold costs less per unit than the same buy made one item at a time.</p>
+</details>
+
+<h3>4.7 The buy list</h3>
+<p>Once an hour a job rebuilds the buy list from the watchlist. It fetches nothing. Every input it needs is already kept fresh by one of the three services, so building the list is a ranking query, cheap enough to repeat hourly. What the job enforces itself is freshness and consistency, through the rules in Table 3. Each rule exists because the agent once produced a deal that broke it.</p>
+
+<div class="tablewrap"><table>
+<thead><tr><th>Rule</th><th>Setting</th><th>Failure it prevents</th></tr></thead>
+<tbody>
+<tr><td>Shelf price re-checked recently</td><td>within 48 hours</td><td>Goods gone, or a price long since changed</td></tr>
+<tr><td>Amazon price recent and in the same condition as the shelf</td><td>within 21 days, condition recorded</td><td>A used copy priced as new</td></tr>
+<tr><td>New goods priced against a featured offer</td><td>required</td><td>A lone seller's asking price</td></tr>
+<tr><td>Pack size re-judged from both titles</td><td>must agree</td><td>A single item matched to a multipack</td></tr>
+<tr><td>Asking price close to its own history</td><td>at most 1.35 times the 90-day average</td><td>A price far above anything ever paid</td></tr>
+<tr><td>Profit and return after all costs</td><td>at least €3 and 25 percent</td><td>Margins eaten by handling</td></tr>
+<tr><td>Sales rank inside a real market</td><td>300,000 or better</td><td>Listings that have effectively stopped selling</td></tr>
+<tr><td>Speed of sale at this account's share</td><td>one unit within 56 days</td><td>Stock that outlives its storage budget</td></tr>
+</tbody>
+<caption>Table 3. Conditions a watched product must meet to appear on the buy list.</caption>
+</table></div>
+
+<p>The price-history rule deserves a word. The featured-offer check asks whether anyone competes for the sale, and it does not catch a price that is simply far above the listing's history, because a lone seller can hold the featured offer on a slow listing at an absurd number. Three such rows reached an early buy list at 1.9, 2.6 and 3.9 times their ninety-day averages. The threshold of 1.35 is loose on purpose, since restocks and thin markets legitimately move a price by twenty or thirty percent. A product with no ninety-day history at all is excluded, because for a buying decision having no history answers the same way as nobody having paid.</p>
+<p>A separate advisory check flags any deal where the Amazon price is more than four times the shop price. It does not remove the deal, because genuine clearance does reach such multiples, but it asks the owner to confirm that both sides describe the same product. It was calibrated on a real case, a €4.49 face mask whose barcode had been attached to a €21.85 ceiling lamp in Amazon's catalogue.</p>
+<p>Each surviving deal is sized as well as listed. The suggested quantity is the account's weekly share of sales multiplied by eight weeks of cover, rounded up and capped at twenty-four units for a first purchase from an unproven source. Eight weeks balances two costs. More cover ties up cash and pays storage, less means reordering constantly. The cap reflects the fact that the first purchase from a source is also an experiment, and the inventory literature [21] would describe the rule as a simple cover-based ordering policy with a safety limit on exposure.</p>
+<p>Deals are ranked by expected profit per day, meaning the profit per unit multiplied by the account's daily share of sales. Ranking by profit per unit, or by profit times quantity, put the fattest margins first however slowly they moved, which is how a margin-first buyer ends up holding a warehouse of slow stock. A deal that earns €2 and sells every other day is worth more than one that earns €9 and sells once a month.</p>
+
+<h3>4.8 Three services, three resources</h3>
+<p>Running continuously rather than in a nightly window created a problem the nightly design had hidden. Several kinds of work compete for the same few resources, and when they run at the same time they can either collide or starve each other. The answer was to give each scarce resource exactly one owner, as Figure 4 shows.</p>
+
+<figure class="wide">
+<svg viewBox="0 0 700 402" role="img" aria-label="Three services in the colours of Figure 1, each owning one scarce resource. Top row, the resources and what they allow. Retailer goodwill means robots rules and five to eight seconds between requests to one shop, which allows 450 to 720 pages an hour per shop. One Amazon rate limit allows about 0.8 seconds per screened product, about 4,500 products an hour. The Keepa token budget refills 20 tokens a minute, about 1,200 products an hour. Middle row, how each service shares its resource. In the retail service a readers and writers lock lets the harvest lanes, one per shop, run together as readers, while the price watch is the writer and has every shop to itself in turns of 200 products. In the Amazon service fair shares give screening 80 percent and the pricing of restricted products 20 percent, and a lane with nothing to do gives its time to the others. The demand service spends one token per product and measures only products that passed screening and have an Amazon price, again after 30 days. Bottom row, all three write to one shared database, the watchlist. The retail service writes products, shelf prices and stock, the Amazon service writes screening verdicts and Amazon prices, and the demand service writes sales rates." class="arch">
+<defs>
+<marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-2)"/></marker>
+</defs>
+
+<rect class="c1" x="10" y="24" width="220" height="64" rx="6" style="stroke-dasharray:5 4"/>
+<text class="t" x="120" y="44" text-anchor="middle">Retailer goodwill</text>
+<text class="s" x="120" y="60" text-anchor="middle">robots rules · 5 to 8 s per request</text>
+<text class="s" x="120" y="76" text-anchor="middle" style="fill:var(--ink)">450 to 720 pages an hour per shop</text>
+<rect class="c2" x="240" y="24" width="220" height="64" rx="6" style="stroke-dasharray:5 4"/>
+<text class="t" x="350" y="44" text-anchor="middle">One Amazon rate limit</text>
+<text class="s" x="350" y="60" text-anchor="middle">about 0.8 s per screened product</text>
+<text class="s" x="350" y="76" text-anchor="middle" style="fill:var(--ink)">about 4,500 products an hour</text>
+<rect class="c3" x="470" y="24" width="220" height="64" rx="6" style="stroke-dasharray:5 4"/>
+<text class="t" x="580" y="44" text-anchor="middle">Keepa token budget</text>
+<text class="s" x="580" y="60" text-anchor="middle">refills 20 tokens a minute</text>
+<text class="s" x="580" y="76" text-anchor="middle" style="fill:var(--ink)">about 1,200 products an hour</text>
+
+<path class="edge" d="M120,112 V91" marker-end="url(#ah4)"/><text class="s" x="128" y="105">paces itself against</text>
+<path class="edge" d="M350,112 V91" marker-end="url(#ah4)"/><text class="s" x="358" y="105">paces itself against</text>
+<path class="edge" d="M580,112 V91" marker-end="url(#ah4)"/><text class="s" x="588" y="105">paces itself against</text>
+
+<rect class="b1" x="10" y="114" width="220" height="180" rx="8"/>
+<circle class="f1" cx="30" cy="134" r="9"/><text class="num" x="30" y="138" text-anchor="middle">1</text>
+<text class="t" x="46" y="138">Retail service</text>
+<text class="s" x="22" y="164" style="fill:var(--ink);font-weight:600">readers and writers lock</text>
+<rect class="c1" x="22" y="174" width="196" height="46" rx="5"/>
+<text class="t" x="120" y="193" text-anchor="middle">Harvest lanes</text>
+<text class="s" x="120" y="209" text-anchor="middle">readers · one per shop, all at once</text>
+<rect class="c1" x="22" y="228" width="196" height="56" rx="5"/>
+<text class="t" x="120" y="247" text-anchor="middle">Price watch</text>
+<text class="s" x="120" y="263" text-anchor="middle">writer · has every shop to itself</text>
+<text class="s" x="120" y="277" text-anchor="middle">in turns of 200 products</text>
+
+<rect class="b2" x="240" y="114" width="220" height="180" rx="8"/>
+<circle class="f2" cx="260" cy="134" r="9"/><text class="num" x="260" y="138" text-anchor="middle">2</text>
+<text class="t" x="276" y="138">Amazon service</text>
+<text class="s" x="252" y="164" style="fill:var(--ink);font-weight:600">fair shares</text>
+<rect class="f2" x="252" y="174" width="157" height="26" rx="3"/>
+<text class="num" x="330.5" y="191" text-anchor="middle">screening · 80 %</text>
+<rect class="c2" x="409" y="174" width="39" height="26" rx="3"/>
+<text class="s" x="428.5" y="191" text-anchor="middle" style="fill:var(--ink)">20 %</text>
+<text class="s" x="252" y="220">the 20 % prices restricted products</text>
+<text class="s" x="252" y="242">the next turn goes to the lane</text>
+<text class="s" x="252" y="256">furthest below its share</text>
+<text class="s" x="252" y="278">a lane with no work gives its time away</text>
+
+<rect class="b3" x="470" y="114" width="220" height="180" rx="8"/>
+<circle class="f3" cx="490" cy="134" r="9"/><text class="num" x="490" y="138" text-anchor="middle">3</text>
+<text class="t" x="506" y="138">Demand service</text>
+<text class="s" x="482" y="164" style="fill:var(--ink);font-weight:600">one token per product</text>
+<rect class="c3" x="482" y="174" width="196" height="62" rx="5"/>
+<text class="t" x="580" y="193" text-anchor="middle">Velocity</text>
+<text class="s" x="580" y="209" text-anchor="middle">units a week, 90-day price</text>
+<text class="s" x="580" y="225" text-anchor="middle">measured again after 30 days</text>
+<text class="s" x="482" y="258">only products that passed screening</text>
+<text class="s" x="482" y="272">and have an Amazon price</text>
+
+<path class="edge" d="M120,294 V331" marker-end="url(#ah4)"/><text class="s" x="128" y="316">writes products, prices, stock</text>
+<path class="edge" d="M350,294 V327" marker-end="url(#ah4)"/><text class="s" x="358" y="316">writes verdicts, Amazon prices</text>
+<path class="edge" d="M580,294 V331" marker-end="url(#ah4)"/><text class="s" x="588" y="316">writes sales rates</text>
+
+<path class="db" d="M60,340 v38 a290,12 0 0 0 580,0 v-38"/>
+<ellipse class="db" cx="350" cy="340" rx="290" ry="12"/>
+<text class="t" x="350" y="366" text-anchor="middle">Watchlist</text>
+<text class="s" x="350" y="382" text-anchor="middle">one shared database on the server, the only place the services meet</text>
+</svg>
+<figcaption><b>Figure 4.</b> One owner per resource, in the colours of Figure 1. The top row is what each scarce resource allows, the middle row is how each service shares its resource out inside itself, and the bottom row is what each service writes to the shared database. Each service paces itself against the only resource it consumes, so no coordination between services is needed beyond the database.</figcaption>
+</figure>
+
+<p>Inside the retail service, the harvest lanes and the price watch would otherwise reach the same hosts at the same time and halve the effective spacing between requests. They are coordinated by a lock of the classic readers and writers kind [19]. Harvest lanes are readers and may run together, since different hosts cost each other nothing. The watch is the writer and takes the shops for itself in turns of two hundred products, after which the lanes get them back.</p>
+<p>Inside the Amazon service, the obvious design of always doing the most important work first would starve everything below it, because screening has a backlog for as long as the harvest runs. Each lane is instead given a share of the service's time, and the scheduler picks whichever lane is furthest below its share and actually has work to do. This is the idea behind fair queueing in networks [20]. A lane with nothing to do yields its time rather than idling, so once the catalogue is screened, the pricing of restricted products quietly speeds up.</p>
+<p>The demand service needs no such arbitration, because Keepa is a separate account with its own limit. Its constraint is cost. One token buys one product's history, so it measures only products that have already passed screening and have an Amazon price. It was also the easiest lane to forget. In August an older schedule measured 150 products a night while screening added about 900, the backlog grew by 750 a night, and the unmeasured products silently vanished from the buy list, since a product without a measured sales rate is never offered. A product that has not been measured is excluded rather than flagged, which is the safe choice and also the reason a stalled lane is invisible. A separate heartbeat now records that each service is alive, and a missing heartbeat raises an alert.</p>
+
+<h3>4.9 The owner's view</h3>
+<p>Everything above ends on one page. The Deals page shows the current buy list with the shop price, the Amazon price in the matching condition, the profit, the return, the measured sales rate, the number of competing sellers and the suggested quantity, together with links to the shop and to the Amazon listing so that each claim can be checked by eye before money is spent. Shop baskets are grouped so that delivery thresholds are visible. A separate view shows every deal that was live during a chosen period, which answers the question of what the agent was offering last week, a question a list rebuilt every hour cannot answer on its own.</p>
+
+<figure class="wide">
+  <div class="shot" data-placeholder="Screenshot to add. fig/deals.png, the Deals page with the current buy list."><img src="fig/deals.png" alt="The Deals page of Biryar showing the current buy list" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 5.</b> The Deals page, looking back over a chosen window. Every row was on the buy list at some point in that window, with the last prices seen while it was live. The summary line adds up what buying all of them would have cost and earned, which is how the owner judges the list as a whole rather than one row at a time.</figcaption>
+</figure>
+
+<p>Opening a deal shows the evidence behind it. If the deal is on the current buy list, three buttons sit below it, bought, rejected and skipped. They appear only there. A deal opened from the look-back view, like the one in Figure 6, carries the prices it had while it was live, and a button that invited a purchase at a price that may no longer exist would be exactly the mistake the hourly rebuild is there to prevent. So the look-back keeps the evidence and the links, which are enough to see whether the deal still holds, and leaves the verdict to the live list. The verdict keeps the deal off later lists, and it is stored with the deal as a label, since what the owner bought and what the owner turned down are the only direct evidence of what a good deal looks like to this business. A separate Sourcing page offers the research view, everything the ranking has ever scored, including the candidates that were later disproved.</p>
+
+<figure class="wide">
+  <div class="shot" data-placeholder="Screenshot to add. fig/deal-detail.png, one deal opened with its evidence and verdict buttons."><img src="fig/deal-detail.png" alt="A single deal opened from the look-back view of Biryar, with its evidence and links" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 6.</b> One deal, opened. A used book bought at €3 and sold at €15, with the sizing arithmetic spelled out. The blue note is the kind of advisory described in Section 4.7. With only one other offer on the listing, the €15 is that seller's asking price rather than a price anyone has been seen to pay, so the page asks the owner to check the price history before buying. The deal was opened from the look-back view, which is why the bought, rejected and skipped buttons are absent. They are shown only for deals on the current list, and on the day of the screenshot that list was empty.</figcaption>
+</figure>
+
+<figure class="wide">
+  <div class="shot" data-placeholder="Screenshot to add. fig/sourcing.png, the Sourcing page with harvest runs and scored candidates."><img src="fig/sourcing.png" alt="The Sourcing page of Biryar" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 7.</b> The Sourcing page, which reports the health of each source. Its counts differ from Table 4 by design. "Harvested" counts every page fetched, including the many that carry no price, and "Deals" counts only the rows on today's list, whereas Table 4 counts every product that reached the list since 10 September.</figcaption>
+</figure>
+
+<h2 id="results">5. What seven weeks of operation show</h2>
+<div class="stats">
+<div class="stat"><div class="k">Harvested</div><div class="v">875,963</div><div class="s">products, seven retailers</div></div>
+<div class="stat"><div class="k">Watched</div><div class="v">55,698</div><div class="s">passed every screen</div></div>
+<div class="stat"><div class="k">Deals</div><div class="v">103</div><div class="s">reached the buy list, 10 Sep to 2 Oct</div></div>
+<div class="stat"><div class="k">Ratio</div><div class="v">1 in 8,500</div><div class="s">harvested products per deal</div></div>
+</div>
+
+<h3>5.1 The funnel</h3>
+<p>Figure 8 follows the whole harvest through the agent. The bars use a plain linear scale, so the length each one loses against the stage above is the true size of that step. The last stages shrink to hairlines on such a scale, which is why the right-hand column gives the share each step keeps. That column reads the same at every size, from hundreds of thousands of products down to one.</p>
+
+<figure class="wide">
+<svg viewBox="0 0 700 378" role="img" aria-label="Funnel on a linear scale with the share kept at each step. Harvested 875,963. Screened 814,122, 93 percent of the step above. Listed on Amazon.de 632,844, 78 percent. Listable by this account 216,166, 34 percent. Watched 55,698, 26 percent. Measured as selling 22,563, 41 percent. Reached the buy list 103, 0.46 percent. On the list on 2 October 1, 1 percent." class="chart">
+<text class="ann" x="210" y="16">Products at each stage, linear scale</text>
+<text class="ann" x="698" y="16" text-anchor="end">Kept from the step above</text>
+<line class="grid" x1="210" y1="26" x2="210" y2="332"/>
+<line class="grid" x1="277.5" y1="26" x2="277.5" y2="332"/>
+<line class="grid" x1="345" y1="26" x2="345" y2="332"/>
+<line class="grid" x1="412.5" y1="26" x2="412.5" y2="332"/>
+<line class="grid" x1="480" y1="26" x2="480" y2="332"/>
+<text class="label" x="200" y="49" text-anchor="end">Harvested</text>
+<rect class="bar-1" x="210" y="34" width="236.5" height="22" rx="2"/>
+<text class="value" x="548" y="49" text-anchor="end">875,963</text>
+<text class="label" x="200" y="87" text-anchor="end">Screened (barcode and price)</text>
+<rect class="lost" x="210" y="72" width="236.5" height="22" rx="2"/>
+<rect class="bar-1" x="210" y="72" width="219.8" height="22" rx="2"/>
+<text class="value" x="548" y="87" text-anchor="end">814,122</text>
+<rect class="track" x="565" y="78" width="90" height="10" rx="2"/>
+<rect class="bar-1" x="565" y="78" width="83.6" height="10" rx="2"/>
+<text class="value" x="698" y="87" text-anchor="end">93%</text>
+<text class="label" x="200" y="125" text-anchor="end">Listed on Amazon.de</text>
+<rect class="lost" x="210" y="110" width="219.8" height="22" rx="2"/>
+<rect class="bar-1" x="210" y="110" width="170.9" height="22" rx="2"/>
+<text class="value" x="548" y="125" text-anchor="end">632,844</text>
+<rect class="track" x="565" y="116" width="90" height="10" rx="2"/>
+<rect class="bar-1" x="565" y="116" width="70.0" height="10" rx="2"/>
+<text class="value" x="698" y="125" text-anchor="end">78%</text>
+<text class="label" x="200" y="163" text-anchor="end">Listable by this account</text>
+<rect class="lost" x="210" y="148" width="170.9" height="22" rx="2"/>
+<rect class="bar-1" x="210" y="148" width="58.4" height="22" rx="2"/>
+<text class="value" x="548" y="163" text-anchor="end">216,166</text>
+<rect class="track" x="565" y="154" width="90" height="10" rx="2"/>
+<rect class="bar-1" x="565" y="154" width="30.7" height="10" rx="2"/>
+<text class="value" x="698" y="163" text-anchor="end">34%</text>
+<text class="label" x="200" y="201" text-anchor="end">Watched (passed every screen)</text>
+<rect class="lost" x="210" y="186" width="58.4" height="22" rx="2"/>
+<rect class="bar-1" x="210" y="186" width="15.0" height="22" rx="2"/>
+<text class="value" x="548" y="201" text-anchor="end">55,698</text>
+<rect class="track" x="565" y="192" width="90" height="10" rx="2"/>
+<rect class="bar-1" x="565" y="192" width="23.2" height="10" rx="2"/>
+<text class="value" x="698" y="201" text-anchor="end">26%</text>
+<text class="label" x="200" y="239" text-anchor="end">Measured as selling</text>
+<rect class="lost" x="210" y="224" width="15.0" height="22" rx="2"/>
+<rect class="bar-1" x="210" y="224" width="6.1" height="22" rx="2"/>
+<text class="value" x="548" y="239" text-anchor="end">22,563</text>
+<rect class="track" x="565" y="230" width="90" height="10" rx="2"/>
+<rect class="bar-1" x="565" y="230" width="36.5" height="10" rx="2"/>
+<text class="value" x="698" y="239" text-anchor="end">41%</text>
+<text class="label" x="200" y="277" text-anchor="end">Reached the buy list</text>
+<rect class="lost" x="210" y="262" width="6.1" height="22" rx="2"/>
+<rect class="bar-1" x="210" y="262" width="1.5" height="22" rx="2"/>
+<text class="value" x="548" y="277" text-anchor="end">103</text>
+<rect class="track" x="565" y="268" width="90" height="10" rx="2"/>
+<rect class="bar-1" x="565" y="268" width="1.0" height="10" rx="2"/>
+<text class="value" x="698" y="277" text-anchor="end">0.46%</text>
+<text class="label" x="200" y="315" text-anchor="end">On the list on 2 October</text>
+<rect class="lost" x="210" y="300" width="1.5" height="22" rx="2"/>
+<rect class="bar-1" x="210" y="300" width="1.5" height="22" rx="2"/>
+<text class="value" x="548" y="315" text-anchor="end">1</text>
+<rect class="track" x="565" y="306" width="90" height="10" rx="2"/>
+<rect class="bar-1" x="565" y="306" width="1.0" height="10" rx="2"/>
+<text class="value" x="698" y="315" text-anchor="end">0.97%</text>
+<text class="tick" x="210" y="350" text-anchor="middle">0</text>
+<text class="tick" x="277.5" y="350" text-anchor="middle">250k</text>
+<text class="tick" x="345" y="350" text-anchor="middle">500k</text>
+<text class="tick" x="412.5" y="350" text-anchor="middle">750k</text>
+<text class="tick" x="480" y="350" text-anchor="middle">1M</text>
+<rect class="bar-1" x="210" y="362" width="12" height="10" rx="2"/><text class="tick" x="228" y="371">kept at this step</text>
+<rect class="lost" x="340" y="362" width="12" height="10" rx="2"/><text class="tick" x="358" y="371">removed at this step</text>
+</svg>
+<figcaption><b>Figure 8.</b> The sourcing funnel as of 2 October 2026. Bars are drawn to a linear scale, the orange part of each bar is what that step removed, and the right column is the share of the stage above that survives. The steepest drop by far is the last one, from products that sell to products that are deals today, and Section 7 explains why it is steeper than it needs to be.</figcaption>
+</figure>
+
+<p>Three things stand out. Almost a quarter of what the shops sell is not on Amazon.de at all. Two thirds of what is on Amazon is closed to this account, which makes restrictions, not prices, the main reason a product cannot be a deal. And of the products the account may sell, more than two thirds have no sales rank or one so poor that the market is effectively dead.</p>
+
+<h3>5.2 Where the deals come from</h3>
+<p>Table 4 breaks the funnel down by source. The retailers are described by type rather than by name.</p>
+
+<div class="tablewrap"><table>
+<thead><tr><th>Source</th><th class="num">Harvested</th><th class="num">On Amazon</th><th class="num">Restricted</th><th class="num">Watched</th><th class="num">Deals</th><th class="num">Per 1,000</th></tr></thead>
+<tbody>
+<tr class="hl"><td>Used-media reseller</td><td class="num">347,598</td><td class="num">97.0%</td><td class="num">48.3%</td><td class="num">33,682</td><td class="num">95</td><td class="num">0.27</td></tr>
+<tr><td>Remaindered-books shop</td><td class="num">28,389</td><td class="num">99.7%</td><td class="num">70.5%</td><td class="num">5,033</td><td class="num">4</td><td class="num">0.14</td></tr>
+<tr><td>Pet-supplies shop</td><td class="num">29,411</td><td class="num">67.7%</td><td class="num">77.4%</td><td class="num">1,711</td><td class="num">2</td><td class="num">0.07</td></tr>
+<tr><td>Electronics chain A</td><td class="num">210,426</td><td class="num">60.8%</td><td class="num">84.4%</td><td class="num">6,677</td><td class="num">2</td><td class="num">0.01</td></tr>
+<tr><td>Electronics chain B</td><td class="num">209,983</td><td class="num">60.7%</td><td class="num">85.3%</td><td class="num">5,843</td><td class="num">0</td><td class="num">0.00</td></tr>
+<tr><td>Drugstore chain</td><td class="num">47,093</td><td class="num">74.4%</td><td class="num">88.5%</td><td class="num">2,309</td><td class="num">0</td><td class="num">0.00</td></tr>
+<tr><td>Bookshop chain</td><td class="num">3,063</td><td class="num">98.9%</td><td class="num">63.4%</td><td class="num">443</td><td class="num">0</td><td class="num">0.00</td></tr>
+</tbody>
+<caption>Table 4. The funnel by source. "On Amazon" is the share of screened products with an Amazon.de listing, and "Restricted" the share of those this account may not sell. Deals counts products that reached the buy list at least once between 10 September and 2 October 2026.</caption>
+</table></div>
+
+<p>The two electronics chains supplied 48 percent of everything harvested and 2 of the 103 deals. Their catalogues are mostly new, branded goods, the easiest products to compare, and eighty-five percent of what they sell that also appears on Amazon is restricted for a young account. The used-media reseller supplied 40 percent of the harvest and 92 percent of the deals.</p>
+
+<h3>5.3 Deals are used goods</h3>
+<p>Ninety-nine of the 103 deals concern used goods, graded "like new", "very good" or "good". Used goods account for about 272,000 of the 875,963 harvested products, roughly 31 percent. The deals are therefore concentrated in used goods by a factor of about three relative to their share of the harvest, and in new goods the agent found almost nothing. The average deal earned between €8 and €10 per unit after all costs in the model, with returns well above the 25 percent threshold.</p>
+<p>The owner recorded a verdict on 137 deals. Two were bought, three were skipped and 132 were rejected, most of them from the used-media reseller. The verdicts were recorded without reasons, which limits what can be learned from them, and Section 7 returns to this.</p>
+
+<h3>5.4 What the services do in a day</h3>
+<p>Screening resolves a product in about 0.8 seconds, which gives the Amazon service a capacity of roughly 4,500 products an hour. Keepa refills twenty tokens a minute, about 1,200 measurements an hour, and the demand service has measured 53,391 of the 55,698 watched products, of which 22,563 sold at least once in both windows. The watch is the slowest part. Over the last ten days it re-checked between about 440 and 1,800 products a day, and a batch of two hundred took around 45 minutes, since every request waits its turn behind the per-host spacing and behind the harvest lanes it shares hosts with.</p>
+
+<h2 id="discussion">6. Discussion</h2>
+<h3>6.1 A filter for errors more than a search for profit</h3>
+<p>Read as a list, the rules of Tables 2 and 3 look like an accumulation of special cases. Read through the optimizer's curse they are one idea. When the agent ranks hundreds of thousands of candidates by apparent margin, the candidates at the top are disproportionately those whose margin was mismeasured, and every rule removes one specific way of mismeasuring it. The wrong condition inflates the Amazon price. The wrong pack inflates it by a factor of ten. A lone asking price inflates it by whatever the seller hoped. A stale shelf price deflates the cost. Each failure was discovered as a spectacular deal, and that is no coincidence, because spectacular deals are exactly where the curse concentrates its errors [7].</p>
+<p>The base rate makes this unavoidable. With one true deal per 8,500 products, a check that wrongly passed just one bad candidate in a thousand would let through about eight bad deals for every good one. The agent is accordingly built to prefer silence to optimism at every point of doubt. An unstated pack size blocks the match, an unknown condition is not new, an unmeasured sales rate is not a sale, and a missing price history is not a price. Each of these choices costs some genuine deals. Together they are what makes the remaining list worth reading.</p>
+
+<h3>6.2 The margin lives where comparison is hard</h3>
+<p>The concentration of deals in used goods is the clearest result in this report, and the literature anticipates it. Search costs sustain price dispersion [1, 3], electronic markets erode it fastest for standardised goods [2], and quality uncertainty makes used-goods markets thin and uneven [5]. A new, barcoded television is compared by millions of shoppers and price bots every day, and any gap between a chain and Amazon closes quickly. A used DVD in "very good" condition is a slightly different product from every other copy, its Amazon used market is thin, and gaps can persist. In that sense the agent did not choose the used-goods niche. The niche was the only place where its filters left anything standing.</p>
+<p>The same reading explains why the shops with the largest catalogues were the least useful. Volume of harvest is not volume of opportunity, and the harvest weights of Section 4.2 now reflect measured yield rather than catalogue size.</p>
+
+<h3>6.3 Demand before margin</h3>
+<p>Ranking by expected profit per day rather than by margin is a small change in code and a large one in behaviour. It moves the agent from asking how much a unit earns to asking how much the business earns per day of holding it, which is the quantity that pays rent and repays credit. The same reasoning shapes the sizing rule, the refusal to use sales rank across categories, and the conservative choice of the lower of two sales-rate windows. Every one of these errs towards buying less, because unsold stock is the costliest mistake a small reseller can make. It pays storage, it occupies capital that could have bought something faster, and it eventually leaves at a loss.</p>
+
+<h3>6.4 Politeness as an architectural force</h3>
+<p>The agent would be simpler if it could read the shops faster. It cannot, by choice, and that choice turned out to shape the system more than any algorithm did. Because a full read of a catalogue takes days, the two clocks of Section 4.1 had to exist. Because politeness is per host, the harvest could run in parallel lanes. Because the lanes then outran screening, they had to be weighted by yield. Because the watch and the harvest share hosts, they needed a lock. Each of these follows from treating other people's servers as a resource that the agent does not own, which is the attitude the crawling literature recommends [11, 12] and also the one that keeps a small business welcome.</p>
+
+<h2 id="limits">7. Limitations</h2>
+<p><b>Freshness is the binding constraint.</b> The watch can re-check between roughly 440 and 1,800 products a day, while 55,698 products are watched. At that rate a full sweep takes weeks, and the buy list only accepts shelf prices from the last 48 hours, so on any given day most watched products are simply not eligible. This is the main reason the last step of the funnel in Figure 8 is so steep. The watch also currently visits products in order of age alone, which Cho and Garcia-Molina [13] would recognise as a uniform policy. It ignores both how valuable a product would be as a deal and how often its price changes. Many of the products it checks have meanwhile sold out, which in one batch observed on 2 October was 166 of 200.</p>
+<p><b>Sources change.</b> Two of the seven retailers have stopped answering the agent's requests since mid-September. The agent respects that, but their roughly twelve thousand watched products can no longer be refreshed and so no longer reach the buy list. Since those sources contributed almost no deals, the loss is small, but it illustrates that a harvest built on other people's goodwill is only as stable as that goodwill.</p>
+<p><b>The learning loop is not closed yet.</b> The platform is designed so that every decision a model makes is logged and later labelled, and the owner's verdicts are stored. However, the verdicts carry no reasons, the buy list keeps its own history rather than writing each decision into the platform's central prediction log, and a learned version of the deal ranking exists only in shadow form with far too few labels to judge. With 137 verdicts and two purchases, there is not yet anything to learn from. The 132 rejections are the most informative data the agent has, and without a recorded reason they cannot be told apart.</p>
+<p><b>The markdown classifier is dormant.</b> A calibrated classifier that distinguishes temporary sales from permanent markdowns, in the sense of Section 3.6, was built during the agent's American phase, for the price histories of a single US retailer [22]. It is not part of the current German pipeline, which treats any fall below the regular price as a markdown and does not try to predict whether the price will fall further.</p>
+<p><b>The cost model is deliberately approximate.</b> Fees are flat rather than category- and size-specific, and reverse-charge VAT is applied to all handling, including the owner's own preparation work. Both errors make deals look worse than they are, which is the safe direction, but they also hide some genuine deals near the thresholds.</p>
+<p><b>Demand estimates are rough.</b> Counting rank improvements undercounts sales, and the assumption that a listing's sales are shared evenly among its sellers ignores the featured offer. In reality the seller holding it takes most of the sales [16], so a new seller priced above it may sell much less than the even share, and one who wins it much more. The repricing agent, the subject of the next report in this series, models exactly this, and the two agents do not yet share the model.</p>
+<p><b>Identity rests on the barcode.</b> Title and pack-size checks, and the advisory ratio check, catch most mismatches, but the agent does not compare images or brands systematically, and a barcode that two unrelated products share in different catalogues can still slip through when the prices happen to look plausible.</p>
+
+<h2 id="future">8. Future work</h2>
+<p>The largest gain available is a better watch schedule. A product's claim on the watch should grow with the expected value of finding it on sale, meaning its sales rate, its margin at the last known price and the chance that its price has moved, and shrink when it was recently found sold out. Freshness-optimal crawling [13] gives the theory, and the data to estimate change rates per source are already in the price history.</p>
+<p>The second is to correct for the optimizer's curse statistically rather than only by rules. Shrinking each candidate's estimated profit towards what similar products have historically delivered, in the Bayesian manner Smith and Winkler [7] propose, would discount the extreme margins that are most often errors, while leaving well-supported ones nearly untouched.</p>
+<p>The third is to close the learning loop. Recording a short reason with every rejection, writing every buy-list decision into the platform's prediction log, and linking purchases to their eventual sales would turn the Deals page into a source of labels. With enough of them, the learned ranking that now waits in shadow form could be judged, and promoted only if it beats the rules.</p>
+<p>The last is strategic rather than technical. The funnel shows that restrictions remove more potential deals than any other step. Applying for the right brand approvals, and buying from wholesalers and manufacturers rather than from shops, attacks that step directly. Biryar already contains the agents that do this, and they are the subject of a later report.</p>
+
+<h2 id="conclusion">9. Conclusion</h2>
+<p>Biryar's sourcing agent reads the catalogues of seven German retailers, keeps everything it learns, and offers the owner only the products that survive a long sequence of checks. Seven weeks of continuous operation reduced 875,963 products to 103 deals. The ratio is the result. It says that in this market a deal is a rare event, that the main danger is the false deal rather than the missed one, and that a sourcing system earns its keep by the errors it removes. The deals that remain are almost all used goods, where comparison is hardest and price gaps survive longest. The agent's present limit is the rate at which it can afford to look again at what it already knows, and the next improvements are a smarter watch, a statistical correction for the optimism of rankings, and a learning loop fed by the owner's own decisions.</p>
+
+<h2 id="glossary">10. Glossary</h2>
+<div class="tablewrap"><table>
+<tbody>
+<tr><td><b>ASIN</b></td><td>Amazon's own identifier for a product listing.</td></tr>
+<tr><td><b>Barcode (EAN)</b></td><td>The European Article Number printed on a product. The one identifier that appears on the shop page, the box and the Amazon listing alike.</td></tr>
+<tr><td><b>Featured offer (Buy Box)</b></td><td>The offer Amazon places behind the main purchase button. Most sales on a listing go through it.</td></tr>
+<tr><td><b>Gated or restricted</b></td><td>A brand or category that a seller may list only after Amazon has approved them for it.</td></tr>
+<tr><td><b>FBA</b></td><td>Fulfilment by Amazon. The seller sends stock to Amazon's warehouses and Amazon ships each order.</td></tr>
+<tr><td><b>Kleinunternehmer</b></td><td>The German small-business VAT rule under which no VAT is charged on sales and none is reclaimed on purchases.</td></tr>
+<tr><td><b>Keepa</b></td><td>A commercial service that records the price and sales-rank history of Amazon listings.</td></tr>
+<tr><td><b>Markdown</b></td><td>A fall in a shop's price below its regular level, temporary or permanent.</td></tr>
+<tr><td><b>Sales rank</b></td><td>A product's position within its Amazon category by recent sales. Not comparable across categories.</td></tr>
+<tr><td><b>Sitemap</b></td><td>A machine-readable list of a website's pages, published for search engines and crawlers.</td></tr>
+<tr><td><b>Velocity</b></td><td>Units sold per week, here counted from improvements in sales rank.</td></tr>
+</tbody>
+</table></div>
+
+<h2 id="refs">11. References</h2>
+<ol class="refs">
+<li>Stigler, G. J. (1961). The economics of information. <i>Journal of Political Economy</i>, 69(3), 213–225.</li>
+<li>Bakos, J. Y. (1997). Reducing buyer search costs. Implications for electronic marketplaces. <i>Management Science</i>, 43(12), 1676–1692.</li>
+<li>Brynjolfsson, E., and Smith, M. D. (2000). Frictionless commerce? A comparison of Internet and conventional retailers. <i>Management Science</i>, 46(4), 563–585.</li>
+<li>Shleifer, A., and Vishny, R. W. (1997). The limits of arbitrage. <i>Journal of Finance</i>, 52(1), 35–55.</li>
+<li>Akerlof, G. A. (1970). The market for "lemons". Quality uncertainty and the market mechanism. <i>Quarterly Journal of Economics</i>, 84(3), 488–500.</li>
+<li>Capen, E. C., Clapp, R. V., and Campbell, W. M. (1971). Competitive bidding in high-risk situations. <i>Journal of Petroleum Technology</i>, 23(6), 641–653.</li>
+<li>Smith, J. E., and Winkler, R. L. (2006). The optimizer's curse. Skepticism and postdecision surprise in decision analysis. <i>Management Science</i>, 52(3), 311–322.</li>
+<li>Bar-Hillel, M. (1980). The base-rate fallacy in probability judgments. <i>Acta Psychologica</i>, 44(3), 211–233.</li>
+<li>Fellegi, I. P., and Sunter, A. B. (1969). A theory for record linkage. <i>Journal of the American Statistical Association</i>, 64(328), 1183–1210.</li>
+<li>Christen, P. (2012). <i>Data Matching. Concepts and Techniques for Record Linkage, Entity Resolution, and Duplicate Detection</i>. Springer.</li>
+<li>Koster, M., Illyes, G., Zeller, H., and Sassman, L. (2022). <i>Robots Exclusion Protocol</i>. RFC 9309, Internet Engineering Task Force.</li>
+<li>Olston, C., and Najork, M. (2010). Web crawling. <i>Foundations and Trends in Information Retrieval</i>, 4(3), 175–246.</li>
+<li>Cho, J., and Garcia-Molina, H. (2003). Effective page refresh policies for Web crawlers. <i>ACM Transactions on Database Systems</i>, 28(4), 390–426.</li>
+<li>Chevalier, J., and Goolsbee, A. (2003). Measuring prices and price competition online. Amazon.com and BarnesandNoble.com. <i>Quantitative Marketing and Economics</i>, 1(2), 203–222.</li>
+<li>Brynjolfsson, E., Hu, Y. J., and Smith, M. D. (2003). Consumer surplus in the digital economy. Estimating the value of increased product variety at online booksellers. <i>Management Science</i>, 49(11), 1580–1596.</li>
+<li>Chen, L., Mislove, A., and Wilson, C. (2016). An empirical analysis of algorithmic pricing on Amazon Marketplace. <i>Proceedings of the 25th International Conference on World Wide Web</i>, 1339–1349.</li>
+<li>Varian, H. R. (1980). A model of sales. <i>American Economic Review</i>, 70(4), 651–659.</li>
+<li>Pashigian, B. P. (1988). Demand uncertainty and sales. A study of fashion and markdown pricing. <i>American Economic Review</i>, 78(5), 936–953.</li>
+<li>Courtois, P. J., Heymans, F., and Parnas, D. L. (1971). Concurrent control with "readers" and "writers". <i>Communications of the ACM</i>, 14(10), 667–668.</li>
+<li>Demers, A., Keshav, S., and Shenker, S. (1989). Analysis and simulation of a fair queueing algorithm. <i>ACM SIGCOMM Computer Communication Review</i>, 19(4), 1–12.</li>
+<li>Silver, E. A., Pyke, D. F., and Thomas, D. J. (2017). <i>Inventory and Production Management in Supply Chains</i> (4th ed.). CRC Press.</li>
+<li>Niculescu-Mizil, A., and Caruana, R. (2005). Predicting good probabilities with supervised learning. <i>Proceedings of the 22nd International Conference on Machine Learning</i>, 625–632.</li>
+</ol>
+<p class="byline" style="margin-top:40px">Written from the live system's databases, configuration and design notes. Every count in this report was read from the production server on 2 October 2026. Biryar is a Ciya Labs project.</p>
+</div>
+</div>
+<script>
+(function(){
+  var root=document.documentElement,key="biryar-report-theme",btn=document.getElementById("themetoggle");
+  var saved=null;
+  try{saved=localStorage.getItem(key)}catch(e){}
+  if(saved==="light"||saved==="dark"){root.setAttribute("data-theme",saved)}
+  function current(){
+    var set=root.getAttribute("data-theme");
+    if(set)return set;
+    return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  }
+  btn.addEventListener("click",function(){
+    var next=current()==="dark"?"light":"dark";
+    root.setAttribute("data-theme",next);
+    try{localStorage.setItem(key,next)}catch(e){}
+  });
+})();
+</script>
+<!-- inline citations: begin -->
+<style>
+a.cite{color:var(--accent);text-decoration:none;border-bottom:1px dotted currentColor;font-variant-numeric:tabular-nums}
+a.cite:hover,a.cite:focus-visible{border-bottom-style:solid}
+a.cite:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.cite-tip{position:absolute;z-index:40;max-width:min(460px,calc(100vw - 32px));padding:10px 14px;background:var(--bg-2);color:var(--ink);border:1px solid var(--rule);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:13.5px;line-height:1.45;pointer-events:none;opacity:0;transition:opacity .12s}
+.cite-tip.on{opacity:1}
+.cite-tip .n{color:var(--ink-2);font-weight:600;margin-right:6px}
+ol.refs li:target{background:var(--accent-soft);outline:6px solid var(--accent-soft)}
+@media print{.cite-tip{display:none}a.cite{color:inherit;border:0}}
+</style>
+<script>
+/* Inline citations. Each [n], [n, m] or [n–m] in the text links to reference n
+   in the list at the end and shows that reference on hover or keyboard focus.
+   Figures, the list itself and existing links are left alone, and without
+   JavaScript the text reads exactly as written. */
+(function () {
+  var list = document.querySelector("ol.refs");
+  if (!list) return;
+  var items = Array.prototype.slice.call(list.children);
+  items.forEach(function (li, i) { if (!li.id) li.id = "ref-" + (i + 1); });
+  var pattern = /\[(\d+(?:\s*[,–-]\s*\d+)*)\]/g;
+  function skipped(el) {
+    return !el || el.closest("svg, ol.refs, a, code, pre, script, style");
+  }
+  var nodes = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+  while (walker.nextNode()) {
+    var n = walker.currentNode;
+    pattern.lastIndex = 0;
+    if (pattern.test(n.nodeValue) && !skipped(n.parentElement)) nodes.push(n);
+  }
+  function link(num) {
+    var a = document.createElement("a");
+    a.className = "cite";
+    a.href = "#ref-" + num;
+    a.textContent = num;
+    a.setAttribute("data-ref", num);
+    return a;
+  }
+  nodes.forEach(function (node) {
+    var text = node.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
+    pattern.lastIndex = 0;
+    while ((m = pattern.exec(text))) {
+      var numbers = m[1].match(/\d+/g);
+      if (!numbers.every(function (x) { return +x >= 1 && +x <= items.length; })) continue;
+      frag.appendChild(document.createTextNode(text.slice(last, m.index) + "["));
+      var parts = m[1].split(/(\d+)/);
+      parts.forEach(function (p) {
+        if (/^\d+$/.test(p)) frag.appendChild(link(p));
+        else if (p) frag.appendChild(document.createTextNode(p));
+      });
+      frag.appendChild(document.createTextNode("]"));
+      last = m.index + m[0].length;
+    }
+    if (!last) return;
+    frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+
+  var tip = document.createElement("div");
+  tip.className = "cite-tip";
+  tip.setAttribute("role", "tooltip");
+  tip.id = "cite-tip";
+  document.body.appendChild(tip);
+  function show(a) {
+    var li = document.getElementById("ref-" + a.getAttribute("data-ref"));
+    if (!li) return;
+    tip.innerHTML = '<span class="n">[' + a.getAttribute("data-ref") + ']</span>' + li.innerHTML;
+    tip.classList.add("on");
+    a.setAttribute("aria-describedby", "cite-tip");
+    var r = a.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+    var top = r.top - h - 10;
+    if (top < 8) top = r.bottom + 10;
+    tip.style.left = (left + window.scrollX) + "px";
+    tip.style.top = (top + window.scrollY) + "px";
+  }
+  function hide(a) {
+    tip.classList.remove("on");
+    if (a) a.removeAttribute("aria-describedby");
+  }
+  document.addEventListener("mouseover", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) show(a);
+  });
+  document.addEventListener("mouseout", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) hide(a);
+  });
+  document.addEventListener("focusin", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) show(e.target);
+  });
+  document.addEventListener("focusout", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) hide(e.target);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", function () { hide(); }, { passive: true });
+})();
+</script>
+<!-- inline citations: end -->
+</body>
+</html>

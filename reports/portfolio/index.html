@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biryar Portfolio</title>
+<meta name="description" content="What happens to a product after Biryar has bought it. Listing it and keeping it live through Amazon's compliance checks, measuring what each sale really leaves behind from invoices and Amazon's own fee feed, deciding where the next euro of stock should go, and mirroring the catalogue into the company shop.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f6f7f2; --bg-2:#ecefe6; --bg-3:#e1e6d9;
+  --ink:#1c2219; --ink-2:#56604f; --ink-3:#8b9484; --rule:#d5dbcd;
+  --accent:#2d6a3e; --accent-soft:#dfece0;
+  --goods:#5a6b52; --fees:#8a9a7f; --post:#b6c2ad; --pack:#d4dccb; --left:#2d6a3e;
+  --warn:#b26a00; --bad:#b93a32;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121510; --bg-2:#1b1f18; --bg-3:#252a21;
+    --ink:#e6ebe2; --ink-2:#adb7a6; --ink-3:#7c8676; --rule:#2e352a;
+    --accent:#7cc48e; --accent-soft:#1d2e21;
+    --goods:#9aa991; --fees:#788770; --post:#5c6955; --pack:#434d3e; --left:#7cc48e;
+    --warn:#e0a03a; --bad:#e2685f;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121510; --bg-2:#1b1f18; --bg-3:#252a21;
+  --ink:#e6ebe2; --ink-2:#adb7a6; --ink-3:#7c8676; --rule:#2e352a;
+  --accent:#7cc48e; --accent-soft:#1d2e21;
+  --goods:#9aa991; --fees:#788770; --post:#5c6955; --pack:#434d3e; --left:#7cc48e;
+  --warn:#e0a03a; --bad:#e2685f;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,"Times New Roman",serif;font-size:18px;line-height:1.62;padding-block:0 96px;padding-inline:16px}
+.page{max-width:700px;margin:0 auto}
+h1,h2,h3{font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;text-wrap:balance;line-height:1.2;color:var(--ink);font-weight:600}
+h1{font-size:clamp(34px,6vw,50px);margin:24px 0 8px;letter-spacing:-0.01em}
+h2{font-size:26px;margin:80px 0 6px;padding-bottom:10px;border-bottom:3px double var(--rule)}
+.stage{font-family:"IBM Plex Sans",sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 18px;display:flex;align-items:center;gap:10px}
+.stage .dots{display:inline-flex;gap:4px}
+.stage .dots i{width:8px;height:8px;border-radius:50%;background:var(--rule);display:inline-block}
+.stage .dots i.on{background:var(--accent)}
+h3{font-size:19px;margin:32px 0 10px}
+p{margin:0 0 18px}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-family:"IBM Plex Sans",sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-2)}
+.byline{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0 28px}
+.lede{font-size:21px;line-height:1.5;color:var(--ink-2);margin:0 0 20px;font-style:italic}
+.hero{margin:20px 0 8px;aspect-ratio:21/9;background:linear-gradient(135deg,var(--bg-3),var(--bg-2));display:grid;place-items:center;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;font-size:14px;overflow:hidden}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero.missing img{display:none}
+.hero.missing::after{content:"Header image to add. fig/header.jpg"}
+.hero-credit{font-family:"IBM Plex Sans",sans-serif;font-size:0.8rem;color:var(--ink-3);font-style:italic;text-align:right;margin-top:8px}
+.thesis{font-size:19px;line-height:1.55;margin:28px 0;padding:0 0 0 22px;border-left:4px solid var(--accent)}
+figure{margin:32px 0}
+figcaption{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);line-height:1.5;margin-top:10px}
+figcaption b{color:var(--ink);font-weight:600}
+.chart,.diagram{width:100%;height:auto;display:block;font-family:"IBM Plex Sans",sans-serif;color:var(--ink)}
+.chart .grid{stroke:var(--rule);stroke-width:1}
+.chart .axis{stroke:var(--ink-3);stroke-width:1}
+.chart .zero{stroke:var(--ink-2);stroke-width:1.3}
+.chart .tick{fill:var(--ink-3);font-size:11px}
+.chart .label{fill:var(--ink-2);font-size:12px}
+.chart .value{fill:var(--ink);font-size:12px;font-weight:600}
+.chart .value-in{fill:#fff;font-size:11.5px;font-weight:600}
+.chart .ann{fill:var(--ink-2);font-size:11.5px}
+.chart .s-goods{fill:var(--goods)} .chart .s-fees{fill:var(--fees)} .chart .s-post{fill:var(--post)} .chart .s-pack{fill:var(--pack)} .chart .s-left{fill:var(--left)}
+.chart .mid{fill:none;stroke:var(--accent);stroke-width:2.6}
+.chart .band{fill:var(--accent);fill-opacity:.14}
+.chart .edge{fill:none;stroke:var(--accent);stroke-width:1;stroke-dasharray:4 3;opacity:.7}
+.chart .now{stroke:var(--ink);stroke-width:1.4;stroke-dasharray:3 3}
+.chart .dot{fill:var(--accent);stroke:var(--bg);stroke-width:2}
+.chart .loss{fill:var(--bad);fill-opacity:.09}
+.chart .mark{stroke:var(--ink);stroke-width:2}
+.diagram text{fill:currentColor;font-size:12px}
+.diagram .title{font-weight:600;font-size:13px}
+.diagram .small{font-size:11px;fill:var(--ink-2)}
+.diagram .node{fill:var(--bg);stroke:var(--accent);stroke-width:2}
+.diagram .node-off{fill:var(--bg-2);stroke:var(--ink-3);stroke-width:1.4}
+.diagram .ring{fill:none;stroke:var(--rule);stroke-width:10}
+.diagram .box{fill:var(--bg-2);stroke:var(--ink-3);stroke-width:1}
+.diagram .box-acc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.diagram .box-audit{fill:var(--bg);stroke:var(--ink-3);stroke-width:1;stroke-dasharray:4 3}
+.diagram .edge{stroke:var(--ink-2);stroke-width:1.3;fill:none}
+.diagram a:hover .node{fill:var(--accent-soft)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:"IBM Plex Sans",sans-serif;font-size:13px;color:var(--ink-2);margin:8px 0 0}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--sw)}
+.ledger{width:100%;border-collapse:collapse;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13.5px;margin:22px 0;font-variant-numeric:tabular-nums}
+.ledger td{padding:7px 8px;border-bottom:1px dotted var(--rule)}
+.ledger td.amt{text-align:right;white-space:nowrap}
+.ledger tr.total td{border-top:1px solid var(--ink);border-bottom:3px double var(--ink);font-weight:500}
+.ledger td.src{color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;font-size:12.5px}
+.tablewrap{overflow-x:auto;margin:24px 0}
+table.t{border-collapse:collapse;width:100%;font-family:"IBM Plex Sans",sans-serif;font-size:14px;font-variant-numeric:tabular-nums}
+table.t th,table.t td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+table.t th{font-weight:600;color:var(--ink-2);font-size:13px}
+table.t td.num{text-align:right;white-space:nowrap}
+caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--ink-2);padding:8px 0 0;font-family:"IBM Plex Sans",sans-serif}
+.versus{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--rule);margin:24px 0;font-family:"IBM Plex Sans",sans-serif;font-size:14.5px;line-height:1.5}
+.versus div{background:var(--bg);padding:14px 16px}
+.versus h4{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.versus div:last-child h4{color:var(--accent)}
+@media (max-width:560px){.versus{grid-template-columns:1fr}}
+.casenotes{background:var(--bg-2);padding:16px 20px 8px;margin:26px 0;font-size:16.5px}
+.casenotes .tag{display:block;font-family:"IBM Plex Sans",sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--warn);font-weight:600;margin-bottom:8px}
+.casenotes ol{margin:0 0 12px;padding-left:22px}
+.casenotes li{margin:0 0 6px}
+.shot{border:1px solid var(--rule);background:var(--bg-2)}
+.shot img{width:100%;height:auto;display:block}
+.shot.missing{aspect-ratio:16/9;display:grid;place-items:center;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;font-size:14px;text-align:center;padding:16px}
+.shot.missing img{display:none}
+.shot.missing::after{content:attr(data-placeholder)}
+.close{margin:46px 0 0;padding:20px 0;border-top:3px double var(--rule);border-bottom:3px double var(--rule)}
+.refs{font-size:15px;padding-left:28px}
+.refs li{margin:0 0 10px}
+@media (max-width:600px){body{font-size:17px} h2{margin-top:56px}}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:20;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--rule);border-radius:999px;background:var(--bg-2);color:var(--ink-2);font-family:"IBM Plex Sans",sans-serif;font-size:13px;cursor:pointer;line-height:1}
+.themetoggle:hover{color:var(--ink);border-color:var(--ink-3)}
+.themetoggle svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.themetoggle .sun{display:none}
+:root[data-theme="dark"] .themetoggle .sun,:root[data-theme="dark"] .themetoggle .lbl-l{display:inline}
+:root[data-theme="dark"] .themetoggle .moon,:root[data-theme="dark"] .themetoggle .lbl-d{display:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .themetoggle .sun{display:inline}:root:not([data-theme="light"]) .themetoggle .moon{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-d{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-l{display:inline}}
+.themetoggle .lbl-l{display:none}
+@media print{.themetoggle{display:none}}
+</style>
+</head>
+<body>
+<button class="themetoggle" id="themetoggle" type="button" aria-label="Switch between light and dark theme">
+<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+<span class="lbl-d">Dark</span><span class="lbl-l">Light</span>
+</button>
+<div class="page">
+
+<div class="eyebrow">Technical report · Biryar, part 5 · Listings, profit and the shop</div>
+<h1>What a Sale Leaves Behind</h1>
+<p class="lede">The first four reports followed money out of the business, into stock and into prices. This one follows it back. It describes how a bought product becomes a live listing, why listings die in ways Amazon does not show, and how Biryar works out what each sale really left behind once every party has taken its share.</p>
+<div class="byline"><span>Loghman Samani</span><span>Ciya Labs</span><span>Germany, October 2026</span></div>
+
+<figure>
+  <div class="hero"><img src="fig/header.jpg" alt="" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption class="hero-credit">Generated with an image model</figcaption>
+</figure>
+
+<p class="thesis">Amazon's payments page reports revenue minus Amazon's own cut and calls it net proceeds. It has never seen a supplier invoice, so it cannot know what anything cost. Profit is a number no single system in this business holds. Biryar builds it by joining three records that were never meant to meet, the supplier's invoice, Amazon's itemised fees and the postage label bought hours after the order, and it refuses to show a profit it cannot trace to all three.</p>
+
+<figure>
+<svg viewBox="0 0 700 300" role="img" aria-label="The loop after a purchase. Buy, covered in parts one to three, then list, keep live, measure and decide, which leads back to buy. The shop mirror branches off from the listings." class="diagram">
+<circle class="ring" cx="350" cy="150" r="105"/>
+<text class="small" x="350" y="146" text-anchor="middle">the loop after</text>
+<text class="small" x="350" y="162" text-anchor="middle">every purchase</text>
+<g><circle class="node-off" cx="350" cy="45" r="38"/><text class="title" x="350" y="42" text-anchor="middle">Buy</text><text class="small" x="350" y="57" text-anchor="middle">Parts 1 to 3</text></g>
+<a href="#list"><circle class="node" cx="449.9" cy="117.6" r="30"/><text class="title" x="449.9" y="122" text-anchor="middle">List</text></a>
+<a href="#live"><circle class="node" cx="411.7" cy="234.9" r="30"/><text class="title" x="411.7" y="232" text-anchor="middle">Keep</text><text class="title" x="411.7" y="247" text-anchor="middle">live</text></a>
+<a href="#measure"><circle class="node" cx="288.3" cy="234.9" r="30"/><text class="title" x="288.3" y="239" text-anchor="middle">Measure</text></a>
+<a href="#decide"><circle class="node" cx="250.1" cy="117.6" r="30"/><text class="title" x="250.1" y="122" text-anchor="middle">Decide</text></a>
+<path class="edge" d="M480,117 H566"/>
+<a href="#shop"><rect class="box-acc" x="566" y="94" width="120" height="46" rx="23"/><text class="title" x="626" y="114" text-anchor="middle">Shop mirror</text><text class="small" x="626" y="129" text-anchor="middle">side branch</text></a>
+</svg>
+<figcaption><b>Figure 1.</b> The report's route, clockwise from the top. Each stage is a link. Deciding feeds back into buying, which is where the earlier reports of the series began.</figcaption>
+</figure>
+
+<h2 id="list">Putting a product on Amazon</h2>
+<div class="stage"><span class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></span>Stage one · list</div>
+<p>Biryar's business is reselling, so every product it lists already exists on Amazon. Someone else, usually the brand, created the product page and owns its title, photographs and description. What this account adds is an offer, a price, a quantity and a condition on somebody else's page. Amazon's listing interface has a mode for exactly that, which validates only the offer fields and does not demand the catalogue content that belongs to the brand. Using the full listing mode instead produces a wall of errors about attributes a reseller has no business supplying.</p>
+<p>Every listing operation is rehearsed before it is performed. Amazon's interface can run its complete validation on a request and report the problems it would raise, without changing anything. That makes a dry run a real test of the exact request rather than a simulation of it, and the agent treats the rehearsal as the default and the live write as the deliberate step.</p>
+
+<h3>Compliance belongs to the brand</h3>
+<p>Since December 2024 the EU's General Product Safety Regulation requires products sold online to name their manufacturer and, for makers outside the EU, a responsible person inside it, together with safety information [1]. On Amazon those facts are listing attributes, and a listing missing them can be suppressed. Biryar records the answers per brand rather than per product, because they are properties of the brand, read off one box for the whole range, and because Amazon itself asks that a manufacturer's details be submitted identically every time. Seven variants of one fragrance line share one record, which leaves one chance to get it right instead of seven chances to get it different.</p>
+<p>The compliance data are written onto live listings with a partial update that names only the fields it touches. A full replacement would silently delete the price, quantity and condition of an offer that is already selling. Four attribute names and shapes came from Amazon's live product-type definitions rather than from memory, and every one of them would have been guessed wrong. A safety attestation that looks like a yes-or-no checkbox in Seller Central is a true boolean underneath. A fifth field, the manufacturer's name, belongs to the catalogue and not to the offer, and writing it with any value other than Amazon's own produced an error that stopped the rest of the update from taking effect. The one field that was none of the reseller's business blocked the four that were.</p>
+
+<h3>Labels without a shipment</h3>
+<p>Stock sent to Amazon's warehouses needs a barcode label on every unit, carrying Amazon's internal stock number, the title and the condition. Amazon's own label endpoints are attached to an inbound shipment that has to be created and confirmed first. Biryar generates the item labels locally instead, since everything printed on them is already known, as a sheet of 24 labels per A4 page with a standard Code 128 barcode [2]. A damaged sticker can be reprinted without touching a shipment. Box and pallet labels genuinely need the shipment and are not produced this way.</p>
+
+<h2 id="live">Keeping a listing alive</h2>
+<div class="stage"><span class="dots"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span>Stage two · keep live</div>
+<p>A listing can stop selling for reasons Seller Central does not show. Twice a day a job asks Amazon's listing interface about every product and records one of five verdicts, sellable, suppressed, inbound, out of stock, or carrying an error. On 5 October, 26 listings were sellable and two carried errors. The job keeps the reason Amazon gives, and a history of it, because some reasons are visible nowhere else.</p>
+
+<div class="versus">
+<div><h4>What Seller Central showed</h4>"Inactive" with a link labelled "fix listing issue", one product at a time, and for one fragrance listing nothing at all. The blocking error appeared in no inventory row and no violation panel.</div>
+<div><h4>What the listing interface said</h4>The exact error code on every product at once, including one that objected to a unit of measure no document on either side of the listing contained, and that survived a corrected resubmission Amazon had accepted.</div>
+</div>
+
+<div class="casenotes"><span class="tag">Case notes · a suppression that would not lift</span>
+<p>Six fragrance listings sat suppressed for weeks under an error for a missing responsible person under the product safety rules. The record of what was tried is instructive.</p>
+<ol>
+<li>The missing attributes were written with the exact names and shapes from Amazon's definitions and confirmed present on read-back. The suppression stayed.</li>
+<li>Full snapshots of a listing before and after each change were taken and compared, to rule out a field being silently dropped. None was.</li>
+<li>The responsible person was saved again in the account-level registry that the listing attribute must match. The save silently never persisted.</li>
+<li>The offers on other European marketplaces were closed, so that each product was listed in Germany alone. Nothing changed.</li>
+<li>On 5 September the six listings were deleted and created again from scratch with the complete data. The suppression was gone.</li>
+</ol>
+<p>The lesson the system took from it is narrow and useful. When a targeted fix has been verified to land and the error survives anyway, the state that holds the error is not the state being edited, and recreating the object is a legitimate repair rather than a last resort.</p>
+</div>
+
+<h3>Blocks that belong to the product page</h3>
+<p>Some blocks are not on this account's offer at all. A compliance block for children's products, or a pending safety review, sits on the product page itself, and Amazon's own notice says the page stays down until the issue is resolved by this seller or by any other seller. A block can therefore clear on a day nobody can predict, because a stranger uploaded a certificate. Biryar watches three such product pages with one catalogue request each per day. A removed page answers that it does not exist, a restored one answers normally, and when the answer changes the owner is told once and never again, so the watch cannot turn into noise.</p>
+
+<h2 id="measure">What a sale really left</h2>
+<div class="stage"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>Stage three · measure</div>
+<p>This is the part of Biryar most recently rebuilt, and the page that shows it in the web interface was renamed from Listings to Portfolio to say so. The old page explained why a listing was blocked, useful once. What decides how the business grows is what each product earns per euro of stock, and nothing was answering that.</p>
+
+<h3>Three records that were never meant to meet</h3>
+<p>Amazon's finance feed itemises every order. A shipment carries, for each product line, the price the buyer paid and every fee Amazon charged on it, referral commission, fulfilment and closing fees. A postage label bought through Amazon's shipping service arrives as a separate transaction, often hours later, carrying the order it belongs to. And the monthly selling plan and inbound freight to Amazon's warehouses appear as service fees that belong to no order at all. Biryar unpacks the feed into one row per product per order, attaches each label to the order it shipped, and keeps the period costs apart.</p>
+
+<table class="ledger" aria-label="Illustrative ledger for one unit">
+<tr><td>Buyer paid</td><td class="amt">+ 20.00</td><td class="src">finance feed</td></tr>
+<tr><td>Amazon commission and fees</td><td class="amt">− 3.40</td><td class="src">finance feed, per line</td></tr>
+<tr><td>Postage label</td><td class="amt">− 4.10</td><td class="src">finance feed, attached by order</td></tr>
+<tr><td>Packaging</td><td class="amt">− 1.50</td><td class="src">owner's rate, an estimate</td></tr>
+<tr><td>Goods, landed</td><td class="amt">− 8.20</td><td class="src">supplier invoice, dated</td></tr>
+<tr class="total"><td>Left behind</td><td class="amt">2.80</td><td class="src">every line traced</td></tr>
+</table>
+<p style="font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--ink-2);margin-top:-10px">An illustrative merchant-shipped unit. The figures are invented for the example, the sources are the ones the system uses.</p>
+
+<p>Three rules govern the attribution. A label pays for a parcel, not a product, so when one parcel holds several products its cost is split in proportion to their revenue. Splitting it equally would make a three-euro add-on look as expensive to ship as the forty-euro item it travelled with. Signs are kept as Amazon sends them, revenue positive and every cost negative, so a line's result is always a sum and a cost arriving with an unexpected sign cannot quietly improve it. And the monthly plan and inbound freight are never spread over the products that happened to sell. Cost accountants have warned for decades that allocating shared overhead to products by volume distorts which products look profitable [3, 4]. Spreading a fixed monthly fee over whichever products sold in a slow month makes the month look like a bad product.</p>
+
+<h3>The number Amazon cannot know</h3>
+<p>The landed cost of a unit is the only figure in the calculation that no Amazon system holds. Several places in the platform claim to know it, and they disagree. The repricer of Part 4 needs a cost to set floors and, where no invoice is on file, derives one backwards from the seller's own minimum price. That number is circular. A break-even computed from it lands exactly on the floor it came from, every margin looks plausible, and a loss-making price reads as healthy. On this account 22 of 26 repricing rows carried such a derived cost, and one household product appeared to lose money on a cost of more than fourteen euros that was really the floor restated. Its invoices said it cost under seven.</p>
+<p>So costs are now resolved through an explicit chain, each step carrying the name of what vouched for it, a practice the data-provenance literature would recognise as recording where each value came from and why it can be trusted [5].</p>
+
+<figure>
+<svg viewBox="0 0 700 250" role="img" aria-label="The cost chain. First the owner's own dated entry, then the invoice book, then a repricer row only if it carries no warning, then a supplier list price marked as an estimate. A derived repricer row is dropped. The tax archive's invoices audit the total but never price a unit." class="diagram">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect class="box-acc" x="10" y="20" width="150" height="62" rx="4"/><text class="title" x="85" y="44" text-anchor="middle">Dated cost entry</text><text class="small" x="85" y="62" text-anchor="middle">from invoice lines</text><text class="small" x="85" y="75" text-anchor="middle">or the owner</text>
+<rect class="box" x="185" y="20" width="150" height="62" rx="4"/><text class="title" x="260" y="44" text-anchor="middle">Invoice book</text><text class="small" x="260" y="62" text-anchor="middle">keyed by barcode</text>
+<rect class="box" x="360" y="20" width="150" height="62" rx="4"/><text class="title" x="435" y="44" text-anchor="middle">Repricer cost</text><text class="small" x="435" y="62" text-anchor="middle">only if not derived</text>
+<rect class="box" x="535" y="20" width="155" height="62" rx="4"/><text class="title" x="612" y="44" text-anchor="middle">Supplier list price</text><text class="small" x="612" y="62" text-anchor="middle">marked as an estimate</text>
+<path class="edge" d="M160,51 H183" marker-end="url(#arr)"/><path class="edge" d="M335,51 H358" marker-end="url(#arr)"/><path class="edge" d="M510,51 H533" marker-end="url(#arr)"/>
+<text class="small" x="350" y="104" text-anchor="middle">first source that can honestly answer wins, and its name travels with the number</text>
+<rect class="box-audit" x="185" y="128" width="325" height="54" rx="4"/><text class="title" x="347" y="150" text-anchor="middle">Tax archive of paid invoices</text><text class="small" x="347" y="168" text-anchor="middle">proves money left the account, audits the total, never prices a unit</text>
+<rect class="box-audit" x="535" y="128" width="155" height="54" rx="4"/><text class="title" x="612" y="150" text-anchor="middle">Derived cost</text><text class="small" x="612" y="168" text-anchor="middle">dropped, not demoted</text>
+<path class="edge" d="M435,82 V110 H612 V126" marker-end="url(#arr)"/>
+<text class="small" x="350" y="222" text-anchor="middle">A product with no honest source shows an empty cost, never a zero.</text>
+</svg>
+<figcaption><b>Figure 2.</b> Where a buy price comes from. A cost that is really a restated price is worse than no cost, because a missing cost is visibly missing and a restated one is not.</figcaption>
+</figure>
+
+<p>The invoices themselves turned out to be the best source, and they were already on disk. The tax system of a later report archives every supplier invoice and reads it for VAT, and was throwing away the product lines, the only record of what a single unit cost. Biryar now reads those lines back. A landed unit cost is the printed price, plus that line's share of the invoice's delivery charge, plus the VAT a small business under the German small-business rule cannot reclaim, added only where the supplier priced net. Delivery is divided per unit, not per line, so a delivery charge of a few euros across five jars adds well under a euro to each. Every parsed invoice is reconciled against the total the tax system already recorded, and lines that match no listed product are reported rather than dropped, since most of them are purchases made only to support a brand approval, as described in Part 2.</p>
+<p>Costs are dated. Buying the same product again at a new price adds a second entry rather than editing the first, and a sale is charged the cost in force on the day it sold. Accounting standards allow first-in first-out or weighted averages for inventory [6], and true first-in first-out would need a record of which physical unit sold, which nothing here keeps. With a reorder cycle of about eight weeks, dated cost and first-in first-out agree except in the days around a price change. One detail runs the other way deliberately. The repricer's floor uses the higher of two costs when batches overlap, because units from two purchases are indistinguishable once they share a warehouse bin, and a floor set from the cheaper batch would sell the dearer one at a loss.</p>
+<p>Two costs remain estimates and are labelled as such. Packaging for a merchant-shipped parcel, a box, tape, filler and a label pouch, appears on no supplier invoice and in no Amazon fee, and was silently zero on exactly the channel whose margins are thinnest. It is now an owner-set rate per unit shipped by the business itself, excluded for units Amazon ships because its fee already bought the box. Preparation work invoiced in batches by a prep service cannot be allocated to individual units from the documents, so it stays visible as an unallocated cost rather than being guessed.</p>
+
+<h3>Where each euro of a sale goes</h3>
+<p>Figure 3 shows how the revenue of every product sold so far divided, overall and by fulfilment channel.</p>
+
+<figure>
+<svg viewBox="0 0 700 200" role="img" aria-label="Shares of revenue. All products, goods 43 percent, Amazon fees 24, postage 12, packaging 5, left 17. Fulfilled by Amazon, goods 41, Amazon fees 34, left 25. Merchant-fulfilled, goods 45, Amazon fees 17, postage 20, packaging 8, left 11." class="chart">
+<text class="label" x="190" y="44" text-anchor="end">All products</text>
+<rect class="s-goods" x="200" y="26" width="199.6" height="28"/><rect class="s-fees" x="399.6" y="26" width="108.9" height="28"/><rect class="s-post" x="508.5" y="26" width="54.8" height="28"/><rect class="s-pack" x="563.3" y="26" width="21" height="28"/><rect class="s-left" x="584.3" y="26" width="75.7" height="28"/>
+<text class="value-in" x="299.8" y="45" text-anchor="middle">43%</text><text class="value-in" x="454" y="45" text-anchor="middle">24%</text><text class="value-in" x="622" y="45" text-anchor="middle">17%</text>
+<text class="label" x="190" y="94" text-anchor="end">Shipped by Amazon</text>
+<rect class="s-goods" x="200" y="76" width="189.9" height="28"/><rect class="s-fees" x="389.9" y="76" width="155.5" height="28"/><rect class="s-left" x="545.4" y="76" width="114.6" height="28"/>
+<text class="value-in" x="295" y="95" text-anchor="middle">41%</text><text class="value-in" x="467.6" y="95" text-anchor="middle">34%</text><text class="value-in" x="602.7" y="95" text-anchor="middle">25%</text>
+<text class="label" x="190" y="144" text-anchor="end">Shipped by the business</text>
+<rect class="s-goods" x="200" y="126" width="206.3" height="28"/><rect class="s-fees" x="406.3" y="126" width="76.5" height="28"/><rect class="s-post" x="482.8" y="126" width="92.9" height="28"/><rect class="s-pack" x="575.7" y="126" width="35.7" height="28"/><rect class="s-left" x="611.4" y="126" width="48.6" height="28"/>
+<text class="value-in" x="303.2" y="145" text-anchor="middle">45%</text><text class="value-in" x="444.6" y="145" text-anchor="middle">17%</text><text class="value-in" x="529.3" y="145" text-anchor="middle">20%</text><text class="value-in" x="635.7" y="145" text-anchor="middle">11%</text>
+<line class="axis" x1="200" y1="168" x2="660" y2="168"/>
+<text class="tick" x="200" y="184" text-anchor="middle">0%</text><text class="tick" x="430" y="184" text-anchor="middle">50%</text><text class="tick" x="660" y="184" text-anchor="middle">100%</text>
+</svg>
+<div class="legend"><span style="--sw:var(--goods)">Goods, landed</span><span style="--sw:var(--fees)">Amazon fees</span><span style="--sw:var(--post)">Postage labels</span><span style="--sw:var(--pack)">Packaging, estimated</span><span style="--sw:var(--left)">Left behind</span></div>
+<figcaption><b>Figure 3.</b> Shares of revenue for every product sold since August 2026, before the monthly plan and inbound freight. Costs share one hue at four weights because they are one category seen four ways. The two channels sold different products, so the comparison is suggestive rather than controlled.</figcaption>
+</figure>
+
+<p>Two observations follow. The goods themselves take a little under half of what buyers pay, in both channels, which is roughly what the sourcing thresholds of Part 1 were designed to allow. And shipping the parcels oneself is not cheaper than paying Amazon to do it. Amazon's fulfilment fee is large, but postage, packaging and the remaining commission on self-shipped orders added up to more, and the self-shipped products kept less than half the share of revenue that the Amazon-shipped ones did. The comparison is confounded by product mix, since household goods and fragrances went through the business and soft toys and a video game through Amazon, but it is the kind of question the ledger was built to answer, and it now answers it per unit instead of by impression.</p>
+<p>Every total on the page carries how much of it rests on a known cost. A margin computed over partly unpriced stock is not partly right, it is unusable, so the count of products without an honest cost sits beside the number rather than in a footnote. At present every product that has sold has a traced cost, while eleven of the thirty listed products, most of which have never sold, do not.</p>
+
+<h3>The page, and one picture on it</h3>
+<p>The Portfolio page in Biryar is built to be read in one direction. At the top, four figures for the chosen period answer the owner's questions in order, what buyers paid, what Amazon and the carriers took, what was left after the goods, and what running the catalogue cost. Below them, every listed product with stock appears in one table, the ones that have sold first and the rest below rather than omitted, with the buy price in a column of its own beside the costs. That separation is deliberate. The buy price is the only cost the owner can change by buying better, and an earlier layout that mixed it with the fees made an invented number and a paid invoice look identical. The number of products without a traced cost is stated above the table. A button reads the invoice archive again and records any new costs, each dated at its invoice.</p>
+<figure>
+  <div class="shot" data-placeholder="Screenshot to add. fig/portfolio-summary.png"><img src="fig/portfolio-summary.png" alt="The top of the Portfolio page in Biryar, with the period figures and the products table" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 4.</b> The top of the Portfolio page. The four figures for the period, and below them every listed product with stock, the buy price in its own column and its source named. Product and supplier names and the period totals are blurred.</figcaption>
+</figure>
+
+<p>Opening a single product shows two pictures. The first cuts one unit's selling price into fees, label, packaging, goods and what is left, as one bar whose parts add up to the whole, and when a price does not cover its costs the shortfall is drawn on the negative side rather than as an impossible remainder. The second is a price ladder, every price that matters for that product on one shared axis, with everything below the true break-even shaded. It exists because a table of floors made the reader do the comparing.</p>
+
+<figure>
+<svg viewBox="0 0 700 170" role="img" aria-label="Illustrative price ladder for one product. True break-even at 9.80 euros with the region below it shaded as loss. The seller's floor at 9.50 sits inside the loss region. The current price is 12.40 and the Featured Offer is 12.39." class="chart">
+<rect class="loss" x="40" y="60" width="294.5" height="40"/>
+<line class="axis" x1="40" y1="100" x2="660" y2="100"/>
+<line class="mark" x1="334.5" y1="54" x2="334.5" y2="106"/>
+<line class="mark" x1="311.2" y1="66" x2="311.2" y2="106" style="stroke:var(--bad)"/>
+<line class="mark" x1="536.0" y1="54" x2="536.0" y2="106" style="stroke:var(--accent)"/>
+<line class="mark" x1="535.2" y1="66" x2="535.2" y2="106" style="stroke:var(--ink-3)"/>
+<text class="ann" x="334.5" y="44" text-anchor="middle">true break-even €9.80</text>
+<text class="ann" x="305.2" y="126" text-anchor="end" style="fill:var(--bad)">seller floor €9.50, inside the loss</text>
+<text class="ann" x="536.0" y="44" text-anchor="middle">our price €12.40</text>
+<text class="ann" x="541.2" y="126">Featured Offer €12.39</text>
+<text class="ann" x="60" y="86">loss</text>
+<text class="tick" x="40" y="150" text-anchor="middle">€6</text><text class="tick" x="195" y="150" text-anchor="middle">€8</text><text class="tick" x="350" y="150" text-anchor="middle">€10</text><text class="tick" x="505" y="150" text-anchor="middle">€12</text><text class="tick" x="660" y="150" text-anchor="middle">€14</text>
+</svg>
+<figcaption><b>Figure 5.</b> An illustrative price ladder. A floor that permits a loss sits visibly inside the shaded zone instead of appearing as a slightly smaller number three rows down a table. Labels are placed above and below the axis by distance, because the prices that matter most are the ones closest together.</figcaption>
+</figure>
+
+<figure>
+  <div class="shot" data-placeholder="Screenshot to add. fig/portfolio-unit.png"><img src="fig/portfolio-unit.png" alt="One product opened on the Portfolio page, with its per-unit breakdown and price ladder" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 6.</b> One product opened on the Portfolio page, a household product shipped by the business. The selling price of a unit is cut into fees, label, packaging, goods and what is left, and the ladder shows its true break-even, floor, price and ceiling on one axis. The note under the sources says it plainly. The pricing job believed break-even was the seller's floor, measured from the invoices it is lower. Product name and invoice number are blurred.</figcaption>
+</figure>
+
+
+<p>The numbers that belong to running a catalogue rather than to any one product, sales rates, weeks of cover and the capital tied up, live in a separate section at the bottom of the page, the subject of the next stage, where they are the thing being decided rather than noise beside a price.</p>
+
+
+<h2 id="decide">Where the next euro should go</h2>
+<div class="stage"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>Stage four · decide</div>
+<p>Each month the owner chooses between two uses of the same money. Depth means more units of a product already listed. Breadth means a product nobody has sold yet. On an invoice they look alike. In the business they behave nothing alike.</p>
+<p>A product sells at a rate the market sets. Stock does not raise that rate, it only decides whether the rate can be met. So the return on an extra unit of depth is a step. It is positive while the product would otherwise run out and zero afterwards, and buying the tenth month of cover for a product that sells once every few days converts cash into shelf space. This is the logic of the classical inventory models, in which stock beyond what demand during the cover period can absorb carries cost and earns nothing [7]. Breadth has no such ceiling, because each new product brings its own demand, while the monthly selling plan it has to help pay for is charged once for the whole catalogue. The same reasoning lies behind the long-tail economics of online retail, in which many products that each sell little can together outweigh a few that sell well [8].</p>
+<p>The allocation metric follows from this, and it is not margin. It is contribution per euro of working capital per month, a close relative of the retailer's gross margin return on inventory investment [9]. A product earning four euros a unit on twenty euros of stock that turns twice a year is worse than one earning a euro and a half on five euros of stock that turns monthly, and ranking by margin hides that at exactly the moment capital is the binding constraint.</p>
+
+<h3>Projecting the catalogue, honestly</h3>
+<p>The model will not forecast a specific new product, because nothing in it knows what has not been bought. It projects the portfolio the owner already has. It measures the spread of contribution per unit, sales rate and unit cost across the nine products that have actually sold, and asks what a catalogue of N products like these would earn. Nine observations do not support a point estimate, so every projection carries the lower and upper quartiles as well as the median, in the spirit of exploratory rather than confirmatory analysis [10].</p>
+
+<figure>
+<svg viewBox="0 0 700 270" role="img" aria-label="Projected monthly result against catalogue size, in multiples of the monthly running costs. The median line crosses zero at about three products. The pessimistic quartile crosses zero at about twenty-five. The optimistic quartile rises off the chart. The current catalogue of nine selling products is marked." class="chart">
+<polygon class="band" points="60,218.9 313.7,30 670,30 670,200.7"/>
+<line class="grid" x1="60" y1="30" x2="670" y2="30"/><line class="grid" x1="60" y1="96.7" x2="670" y2="96.7"/><line class="grid" x1="60" y1="163.3" x2="670" y2="163.3"/>
+<line class="zero" x1="60" y1="207.8" x2="670" y2="207.8"/>
+<line class="axis" x1="60" y1="230" x2="670" y2="230"/>
+<path class="edge" d="M60,218.9 L313.7,30"/><path class="edge" d="M60,218.9 L670,200.7"/>
+<path class="mid" d="M60,218.9 L670,60.9"/>
+<line class="now" x1="197.3" y1="30" x2="197.3" y2="230"/>
+<text class="ann" x="203" y="44">today, nine products selling</text>
+<circle class="dot" cx="102.9" cy="207.8" r="4.5"/><text class="ann" x="182" y="176" text-anchor="end">median breaks</text><text class="ann" x="182" y="190" text-anchor="end">even near 3</text>
+<circle class="dot" cx="432.5" cy="207.8" r="4.5"/><text class="ann" x="440" y="198">lower quartile near 25</text>
+<text class="ann" x="420" y="46">upper quartile continues above</text>
+<text class="tick" x="52" y="34" text-anchor="end">16×</text><text class="tick" x="52" y="100" text-anchor="end">10×</text><text class="tick" x="52" y="167" text-anchor="end">4×</text><text class="tick" x="52" y="212" text-anchor="end">0</text>
+<text class="tick" x="60" y="248" text-anchor="middle">0</text><text class="tick" x="212.5" y="248" text-anchor="middle">10</text><text class="tick" x="365" y="248" text-anchor="middle">20</text><text class="tick" x="517.5" y="248" text-anchor="middle">30</text><text class="tick" x="670" y="248" text-anchor="middle">40</text>
+<text class="label" x="365" y="266" text-anchor="middle">Products in the catalogue, all like the ones that have sold</text>
+</svg>
+<div class="legend"><span style="--sw:var(--accent)">Median projection</span><span style="--sw:var(--accent-soft)">Between the lower and upper quartiles</span></div>
+<figcaption><b>Figure 7.</b> Monthly result after the running costs, in multiples of those running costs, as the catalogue grows. The band is wide because nine products are a small sample. Even its pessimistic edge turns positive at around twenty-five products, and the shape is the finding, since profit rises with breadth and not with depth.</figcaption>
+</figure>
+
+<figure>
+  <div class="shot" data-placeholder="Screenshot to add. fig/portfolio-growth.png"><img src="fig/portfolio-growth.png" alt="The growth section of the Portfolio page" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 8.</b> The growth section of the Portfolio page, the same projection as Figure 7 as the owner sees it. Its euro amounts are blurred, as this report shows money only as shares and multiples.</figcaption>
+</figure>
+
+
+<p>The chart's message is deliberately structural. A catalogue of nine good products earns less than a catalogue of thirty ordinary ones, because the running costs are paid once and every product adds its own demand. The question that sits under all the others, how many products it takes to stop losing money in a bad month, has an answer with an honest range, a few at the median and around twenty-five at the lower quartile. The sourcing agents of Parts 1 to 3 are therefore tuned to find more products, not more units, and the buy list of Part 1 sizes each purchase at about eight weeks of cover.</p>
+
+<h2 id="shop">The shop as a mirror</h2>
+<div class="stage"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Side branch · mirror</div>
+<p>The business also runs a small web shop on its own domain, built on a hosted shop platform. It is not a sales channel, and no revenue is planned from it. It exists because the new-account desks of manufacturers and distributors check whether an applicant is a real trading business before they disclose prices or stock, and some of them say explicitly that they supply only retailers with an online shop of their own. A live catalogue with prices, stock, safety information and the legal pages German law requires answers that question without a phone call. At the time of writing the storefront is complete but still behind a password, so the mirror described here is keeping a shop current that the public cannot yet browse.</p>
+<p>Because the shop earns nothing, the measure of success is the opposite of the Amazon side. It should need no attention for months at a time. Typing fifteen products in once is an afternoon, and keeping them current forever is the real cost. So Biryar does not maintain the shop. It mirrors the Amazon catalogue into it once a day, and everything below is a consequence of making that mirror trustworthy enough to leave alone.</p>
+
+<figure>
+<svg viewBox="0 0 700 330" role="img" aria-label="The daily shop sync. Five inputs, the Amazon listings report, Amazon warehouse stock, catalogue facts for new products only, the compliance book and the shop-only book, feed a plan keyed by seller SKU that creates, updates, archives or skips each product, applied to the shop through one declarative call per product. A separate half-hourly loop reads paid shop orders and alerts the owner once, who ships them by hand." class="diagram">
+<defs><marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<rect class="box" x="10" y="14" width="200" height="40" rx="4"/><text class="title" x="110" y="31" text-anchor="middle">Amazon listings report</text><text class="small" x="110" y="46" text-anchor="middle">every live offer, one request</text>
+<rect class="box" x="10" y="62" width="200" height="40" rx="4"/><text class="title" x="110" y="79" text-anchor="middle">Warehouse stock</text><text class="small" x="110" y="94" text-anchor="middle">available, inbound, in transfer</text>
+<rect class="box" x="10" y="110" width="200" height="40" rx="4"/><text class="title" x="110" y="127" text-anchor="middle">Catalogue facts</text><text class="small" x="110" y="142" text-anchor="middle">image, barcode, attributes, new only</text>
+<rect class="box" x="10" y="158" width="200" height="40" rx="4"/><text class="title" x="110" y="175" text-anchor="middle">Compliance book</text><text class="small" x="110" y="190" text-anchor="middle">safety details per brand</text>
+<rect class="box" x="10" y="206" width="200" height="40" rx="4"/><text class="title" x="110" y="223" text-anchor="middle">Shop-only book</text><text class="small" x="110" y="238" text-anchor="middle">held stock gated on Amazon</text>
+<path class="edge" d="M210,34 H250 V126 H268" marker-end="url(#arr2)"/>
+<path class="edge" d="M210,82 H250"/><path class="edge" d="M210,130 H250"/><path class="edge" d="M210,178 H250"/><path class="edge" d="M210,226 H250 V130"/>
+<rect class="box-acc" x="270" y="92" width="190" height="76" rx="4"/><text class="title" x="365" y="114" text-anchor="middle">The plan</text><text class="small" x="365" y="132" text-anchor="middle">keyed by seller SKU</text><text class="small" x="365" y="147" text-anchor="middle">create · update · archive · skip</text><text class="small" x="365" y="161" text-anchor="middle">same input, same plan</text>
+<path class="edge" d="M460,130 H498" marker-end="url(#arr2)"/>
+<rect class="box" x="500" y="100" width="190" height="60" rx="4"/><text class="title" x="595" y="124" text-anchor="middle">The shop</text><text class="small" x="595" y="142" text-anchor="middle">one declarative write per product</text>
+<rect class="box-audit" x="270" y="262" width="420" height="54" rx="4"/><text class="title" x="480" y="284" text-anchor="middle">Every half hour, paid and unfulfilled shop orders are read</text><text class="small" x="480" y="302" text-anchor="middle">announced to the owner once, never shipped by the system</text>
+<path class="edge" d="M595,160 V260" marker-end="url(#arr2)"/>
+</svg>
+<figcaption><b>Figure 9.</b> The daily mirror. Five sources become one plan, and the plan is applied to the shop. The order watch runs separately and stops exactly where goods would leave the warehouse.</figcaption>
+</figure>
+
+<h3>The plan, and why it can run unattended</h3>
+<p>Each day the sync reads the account's merchant listings report, one request that returns every live offer whether the catalogue holds fifteen products or fifteen hundred, so the cost of the job does not grow with the business. It then computes a plan, keyed by the seller's own SKU, that says for every product whether the shop should create it, update it, archive it or skip it, and why. The planning step is a pure function of its inputs, with no network, database or clock inside it, which is what makes its judgements testable offline and visible rather than buried in the job. Because the plan is keyed by SKU and the shop is written with one declarative call per product that states what the product should become, running the sync twice changes nothing the second time, and a shop left in any state converges. In the week before this report the daily pass produced the same plan every morning, 31 products updated to their current state, four archived because they had left Amazon, and eight skipped, each with its reason. A mirror at rest looks exactly like that.</p>
+<p>The shop platform's own marketplace integration was not used, for two reasons. It pushes products from the shop to Amazon, the opposite of what is needed, and it assumes prices include VAT. Under the German small-business rule this business charges no VAT, so a custom connection that writes untaxed products directly was less work than fighting an integration's tax model.</p>
+
+<div class="tablewrap"><table class="t">
+<thead><tr><th>Shop field</th><th>Taken from</th><th>The rule</th></tr></thead>
+<tbody>
+<tr><td>Price</td><td>This account's own Amazon offer</td><td>Copied, never computed. Never the Featured Offer price, which may belong to a competitor below this account's cost. A product with no price is skipped, never published at zero.</td></tr>
+<tr><td>Stock</td><td>Amazon's warehouse inventory</td><td>Available units, plus units on their way in, plus units Amazon is moving between warehouses. Units reserved for a customer's order are not counted, since they are already sold.</td></tr>
+<tr><td>Barcode and image</td><td>Amazon's catalogue</td><td>Fetched once, for products with no media yet, so the daily run normally spends nothing on it.</td></tr>
+<tr><td>Description</td><td>Structured catalogue attributes</td><td>Brand, maker, model, colour, size and material as a short table. Amazon's bullet points only as a fallback, at most two, cut at a sentence and de-capitalised.</td></tr>
+<tr><td>Safety information</td><td>The compliance book of Stage one</td><td>The same per-brand record that is written onto Amazon listings, rendered as a panel showing only what is known.</td></tr>
+<tr><td>Shop-only products</td><td>A short hand-kept list</td><td>Price and quantity stated by the owner, exempt from archiving, ignored automatically once the product appears as an Amazon listing.</td></tr>
+</tbody>
+<caption>Table 1. Where every field in the shop comes from. Nothing in the shop is typed by hand except the shop-only list.</caption>
+</table></div>
+
+<h3>Three judgements about price</h3>
+<p>Prices are copied, never computed. Amazon's referral and fulfilment fees are already inside the Amazon price, anything that sells will most likely sell on Amazon anyway, and copying is the only rule under which the shop can never undercut the business's own Amazon offer. A shop cheaper than its owner's Amazon listing makes the Amazon price look inflated, which is the pattern Amazon's fair-pricing policy penalises by withholding the Featured Offer, on the channel that actually earns. The safe rule and the low-effort rule turn out to be the same rule.</p>
+<p>The price copied is this account's own, not the price of whoever holds the Featured Offer. The two agree whenever the account holds it and differ when it does not, and in that case the Featured Offer may belong to a competitor pricing below this account's cost. Mirroring that number would place a loss-making price in the shop and invite someone to take it.</p>
+<p>A listing without a price is left out rather than published at zero. German consumer law ties a shop's obligations to the price it shows [11, 12], so a product listed at zero euros is a legal problem rather than a cosmetic one.</p>
+
+<h3>Three lessons about stock</h3>
+<p>Stock is the field that went wrong most often, each time in a way that made a working business look dead to a supplier's reviewer, which is the one reader the shop exists for. The listings report leaves the quantity blank for every unit stored in Amazon's warehouses, because that stock is Amazon's to report, not the merchant's. Read literally, the whole shop showed as sold out, so stock is read from Amazon's inventory interface instead. Next, on the day the first shipment was still travelling to Amazon, every product showed zero available and three inbound, and the shop again published as sold out, so units on their way in now count. Finally, a few days later the same units showed as neither available nor inbound but reserved, because Amazon was moving them between warehouses, and seven products appeared sold out once more. Amazon's reserved figure turned out to have three parts, units held for customer orders, which are sold, and units in transfer or in processing, which are not. Only the first is now excluded. The figure published overstates slightly what could be shipped today, an honest trade, since the goods exist and orders through the shop are paid in advance and shipped by hand.</p>
+
+<h3>Descriptions, safety and shop-only products</h3>
+<p>Product descriptions are built from facts rather than copied. The bullet points on a product page this account does not own are the brand's marketing text, and reproducing them would be copying someone else's work. They are also poor product copy, repetitive, capitalised and written to win a search box rather than to inform a reader. Brand, maker, model, colour, size and material are facts, they are what a buyer needs, and they compress into a small table. Safety information follows the goods. Selling to EU consumers makes the business a distributor under the product safety rules whatever the channel, and on the shop nothing enforces that obligation the way Amazon does, which is exactly why the panel is generated from the same per-brand compliance book rather than typed product by product.</p>
+<p>Some stock can be sold everywhere except on Amazon. Products of brands gated for this account, bought with an invoice and held by the business, have no Amazon listing to mirror, and the archive step would remove anything added to the shop by hand. A short shop-only list solves this. Its products carry a price and quantity stated by the owner, are exempt from archiving, and drop out of the list automatically the day the brand is approved and the product appears as an Amazon listing.</p>
+
+<h3>Where the automation stops</h3>
+<p>Every half hour Biryar reads the shop's paid and unfulfilled orders and tells the owner once about each new one. Orders are paid by bank transfer in advance, so an unpaid order needs nothing but patience, and the owner marking it paid is the signal worth acting on. The system does not create the fulfilment order with Amazon and does not mark anything as shipped. Both send goods irreversibly into the post, which the platform's safety rules reserve for an explicit owner decision, and the Amazon permission that would allow it is one this account deliberately does not hold. What the automation removes is the failure that actually threatens a shop nobody watches, an order sitting unnoticed for days because there was no reason to open the shop's admin pages.</p>
+
+<figure>
+  <div class="shot" data-placeholder="Screenshot to add. fig/shopify.png"><img src="fig/shopify.png" alt="The front page of the company shop, kept current by the mirror" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 10.</b> The front page of the shop as the mirror keeps it. The count of 31 products in the range is the same 31 that the daily plan updates, and every image and price on it was copied from Amazon rather than entered by hand. Product names and brand marks are blurred.</figcaption>
+</figure>
+
+<div class="close">
+<p><b>Closing the loop.</b> Profit turned out to be the hardest number in the business to know and the easiest to fake. Every system that touches a sale holds part of it, and each part looks complete on its own. Biryar's answer is to join the parts, refuse any cost it cannot trace, keep period costs out of product margins, and label every estimate as one. What the joined numbers say is unglamorous and useful. The products are mostly fine, the catalogue is too small, and the next euro belongs to breadth.</p>
+</div>
+
+<h2 id="refs" style="border-bottom:none">References</h2>
+<ol class="refs">
+<li>European Parliament and Council (2023). Regulation (EU) 2023/988 on general product safety. <i>Official Journal of the European Union</i>, L 135, 1–51.</li>
+<li>International Organization for Standardization (2007). <i>ISO/IEC 15417. Information technology. Automatic identification and data capture techniques. Code 128 bar code symbology specification</i>. ISO.</li>
+<li>Cooper, R., and Kaplan, R. S. (1988). Measure costs right. Make the right decisions. <i>Harvard Business Review</i>, 66(5), 96–103.</li>
+<li>Horngren, C. T., Datar, S. M., and Rajan, M. V. (2015). <i>Cost Accounting. A Managerial Emphasis</i> (15th ed.). Pearson.</li>
+<li>Buneman, P., Khanna, S., and Tan, W.-C. (2001). Why and where. A characterization of data provenance. In <i>Database Theory, ICDT 2001</i>, Lecture Notes in Computer Science 1973, 316–330. Springer.</li>
+<li>International Accounting Standards Board (2003). <i>IAS 2. Inventories</i>. IFRS Foundation.</li>
+<li>Arrow, K. J., Harris, T., and Marschak, J. (1951). Optimal inventory policy. <i>Econometrica</i>, 19(3), 250–272.</li>
+<li>Brynjolfsson, E., Hu, Y. J., and Smith, M. D. (2003). Consumer surplus in the digital economy. Estimating the value of increased product variety at online booksellers. <i>Management Science</i>, 49(11), 1580–1596.</li>
+<li>Levy, M., Weitz, B. A., and Grewal, D. (2019). <i>Retailing Management</i> (10th ed.). McGraw-Hill Education.</li>
+<li>Tukey, J. W. (1977). <i>Exploratory Data Analysis</i>. Addison-Wesley.</li>
+<li>Bürgerliches Gesetzbuch, § 312j. Besondere Pflichten im elektronischen Geschäftsverkehr gegenüber Verbrauchern.</li>
+<li>Preisangabenverordnung (PAngV) of 12 November 2021. <i>Bundesgesetzblatt</i> I, 4921.</li>
+</ol>
+<p class="byline" style="margin-top:36px">Written from the live system's databases, configuration and design notes, read from the production server on 6 October 2026. Money is shown as shares of revenue or as multiples of running costs, apart from the per-unit breakdown of one unnamed product in Figure 6. Product, brand and supplier names are withheld. Biryar is a Ciya Labs project.</p>
+</div>
+<script>
+(function(){
+  var root=document.documentElement,key="biryar-report-theme",btn=document.getElementById("themetoggle");
+  var saved=null;
+  try{saved=localStorage.getItem(key)}catch(e){}
+  if(saved==="light"||saved==="dark"){root.setAttribute("data-theme",saved)}
+  function current(){
+    var set=root.getAttribute("data-theme");
+    if(set)return set;
+    return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  }
+  btn.addEventListener("click",function(){
+    var next=current()==="dark"?"light":"dark";
+    root.setAttribute("data-theme",next);
+    try{localStorage.setItem(key,next)}catch(e){}
+  });
+})();
+</script>
+<!-- inline citations: begin -->
+<style>
+a.cite{color:var(--accent);text-decoration:none;border-bottom:1px dotted currentColor;font-variant-numeric:tabular-nums}
+a.cite:hover,a.cite:focus-visible{border-bottom-style:solid}
+a.cite:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.cite-tip{position:absolute;z-index:40;max-width:min(460px,calc(100vw - 32px));padding:10px 14px;background:var(--bg-2);color:var(--ink);border:1px solid var(--rule);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:13.5px;line-height:1.45;pointer-events:none;opacity:0;transition:opacity .12s}
+.cite-tip.on{opacity:1}
+.cite-tip .n{color:var(--ink-2);font-weight:600;margin-right:6px}
+ol.refs li:target{background:var(--accent-soft);outline:6px solid var(--accent-soft)}
+@media print{.cite-tip{display:none}a.cite{color:inherit;border:0}}
+</style>
+<script>
+/* Inline citations. Each [n], [n, m] or [n–m] in the text links to reference n
+   in the list at the end and shows that reference on hover or keyboard focus.
+   Figures, the list itself and existing links are left alone, and without
+   JavaScript the text reads exactly as written. */
+(function () {
+  var list = document.querySelector("ol.refs");
+  if (!list) return;
+  var items = Array.prototype.slice.call(list.children);
+  items.forEach(function (li, i) { if (!li.id) li.id = "ref-" + (i + 1); });
+  var pattern = /\[(\d+(?:\s*[,–-]\s*\d+)*)\]/g;
+  function skipped(el) {
+    return !el || el.closest("svg, ol.refs, a, code, pre, script, style");
+  }
+  var nodes = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+  while (walker.nextNode()) {
+    var n = walker.currentNode;
+    pattern.lastIndex = 0;
+    if (pattern.test(n.nodeValue) && !skipped(n.parentElement)) nodes.push(n);
+  }
+  function link(num) {
+    var a = document.createElement("a");
+    a.className = "cite";
+    a.href = "#ref-" + num;
+    a.textContent = num;
+    a.setAttribute("data-ref", num);
+    return a;
+  }
+  nodes.forEach(function (node) {
+    var text = node.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
+    pattern.lastIndex = 0;
+    while ((m = pattern.exec(text))) {
+      var numbers = m[1].match(/\d+/g);
+      if (!numbers.every(function (x) { return +x >= 1 && +x <= items.length; })) continue;
+      frag.appendChild(document.createTextNode(text.slice(last, m.index) + "["));
+      var parts = m[1].split(/(\d+)/);
+      parts.forEach(function (p) {
+        if (/^\d+$/.test(p)) frag.appendChild(link(p));
+        else if (p) frag.appendChild(document.createTextNode(p));
+      });
+      frag.appendChild(document.createTextNode("]"));
+      last = m.index + m[0].length;
+    }
+    if (!last) return;
+    frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+
+  var tip = document.createElement("div");
+  tip.className = "cite-tip";
+  tip.setAttribute("role", "tooltip");
+  tip.id = "cite-tip";
+  document.body.appendChild(tip);
+  function show(a) {
+    var li = document.getElementById("ref-" + a.getAttribute("data-ref"));
+    if (!li) return;
+    tip.innerHTML = '<span class="n">[' + a.getAttribute("data-ref") + ']</span>' + li.innerHTML;
+    tip.classList.add("on");
+    a.setAttribute("aria-describedby", "cite-tip");
+    var r = a.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+    var top = r.top - h - 10;
+    if (top < 8) top = r.bottom + 10;
+    tip.style.left = (left + window.scrollX) + "px";
+    tip.style.top = (top + window.scrollY) + "px";
+  }
+  function hide(a) {
+    tip.classList.remove("on");
+    if (a) a.removeAttribute("aria-describedby");
+  }
+  document.addEventListener("mouseover", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) show(a);
+  });
+  document.addEventListener("mouseout", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) hide(a);
+  });
+  document.addEventListener("focusin", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) show(e.target);
+  });
+  document.addEventListener("focusout", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) hide(e.target);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", function () { hide(); }, { passive: true });
+})();
+</script>
+<!-- inline citations: end -->
+</body>
+</html>

@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biryar Ungating</title>
+<meta name="description" content="How Biryar treats Amazon's brand restrictions as a sourcing problem in their own right. Reading the locks, starting from what is already open, screening wholesale catalogues from the supplier's side, and deciding which door is worth an invoice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f6f7f5; --bg-2:#eceeeb; --bg-3:#e2e6e3;
+  --ink:#182220; --ink-2:#55615e; --ink-3:#8a9490; --rule:#d7dcd9;
+  --accent:#0f6b63; --accent-soft:#dcefec;
+  --s1:#0f8a7e; --s2:#eb6834; --s3:#2a78d6; --s4:#c98a00; --s5:#8a5cc7;
+  --good:#1a7f4b; --bad:#b93a32;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121614; --bg-2:#1b201e; --bg-3:#242a28;
+    --ink:#e6eae8; --ink-2:#aeb6b3; --ink-3:#7d8683; --rule:#2c3331;
+    --accent:#6cc7bb; --accent-soft:#16302d;
+    --s1:#2fb3a5; --s2:#d95926; --s3:#3987e5; --s4:#d9a23a; --s5:#9b74d4;
+    --good:#4fc47f; --bad:#e2685f;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121614; --bg-2:#1b201e; --bg-3:#242a28;
+  --ink:#e6eae8; --ink-2:#aeb6b3; --ink-3:#7d8683; --rule:#2c3331;
+  --accent:#6cc7bb; --accent-soft:#16302d;
+  --s1:#2fb3a5; --s2:#d95926; --s3:#3987e5; --s4:#d9a23a; --s5:#9b74d4;
+  --good:#4fc47f; --bad:#e2685f;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,"Times New Roman",serif;font-size:18px;line-height:1.62;padding-block:0 96px;padding-inline:16px}
+.page{max-width:700px;margin:0 auto}
+h1,h2,h3,h4{font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;text-wrap:balance;line-height:1.2;color:var(--ink);font-weight:600}
+h1{font-size:clamp(34px,6vw,50px);margin:24px 0 8px;letter-spacing:-0.01em}
+h2{font-size:27px;margin:84px 0 6px}
+h2 .num{display:block;font-family:"Newsreader",serif;font-weight:400;font-size:64px;line-height:1;color:var(--accent);opacity:.55;margin-bottom:6px}
+h2 + .q{font-family:"Newsreader",serif;font-style:italic;font-size:20px;color:var(--ink-2);margin:0 0 26px}
+h3{font-size:19px;margin:34px 0 10px}
+p{margin:0 0 18px}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-family:"IBM Plex Sans",sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-2)}
+.byline{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0 28px}
+.lede{font-size:21px;line-height:1.5;color:var(--ink-2);margin:0 0 20px;font-style:italic}
+.hero{margin:20px 0 8px;aspect-ratio:21/9;max-width:100%;background:linear-gradient(135deg,var(--bg-3),var(--bg-2));display:grid;place-items:center;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;font-size:14px;overflow:hidden}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero.missing img{display:none}
+.hero.missing::after{content:"Header image to add. fig/header.jpg"}
+.hero-credit{font-family:"IBM Plex Sans",sans-serif;font-size:0.8rem;color:var(--ink-3);font-style:italic;text-align:right;margin-top:8px}
+.glance{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:30px 0 14px}
+.glance div{background:var(--bg);padding:14px 16px;font-family:"IBM Plex Sans",sans-serif}
+.glance .v{font-size:28px;font-weight:600;color:var(--accent);line-height:1.1;font-variant-numeric:tabular-nums}
+.glance .k{font-size:13px;color:var(--ink-2);margin-top:6px;line-height:1.35}
+.brief{font-size:17px;margin:22px 0 10px;padding:0;list-style:none;counter-reset:b}
+.brief li{counter-increment:b;position:relative;padding-left:40px;margin:0 0 12px}
+.brief li::before{content:counter(b);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:"IBM Plex Sans",sans-serif;font-size:13px;font-weight:600;display:grid;place-items:center}
+.routemap{margin:34px 0 8px}
+.routemap a{cursor:pointer}
+.routemap a:hover circle{fill:var(--accent)}
+.routemap a:focus-visible circle{stroke-width:3}
+.drop::first-letter{float:left;font-size:64px;line-height:0.9;padding:6px 10px 0 0;color:var(--accent);font-weight:500}
+figure{margin:32px 0}
+figcaption{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);line-height:1.5;margin-top:10px}
+figcaption b{color:var(--ink);font-weight:600}
+.chart,.diagram{width:100%;height:auto;display:block;font-family:"IBM Plex Sans",sans-serif;color:var(--ink)}
+.chart .grid{stroke:var(--rule);stroke-width:1}
+.chart .axis{stroke:var(--ink-3);stroke-width:1}
+.chart .tick{fill:var(--ink-3);font-size:11px}
+.chart .label{fill:var(--ink-2);font-size:12px}
+.chart .value{fill:var(--ink);font-size:12px;font-weight:600}
+.chart .value-in{fill:#fff;font-size:12px;font-weight:600}
+.chart .ann{fill:var(--ink-2);font-size:11.5px}
+.chart .line-a{fill:none;stroke:var(--s1);stroke-width:2.4;stroke-linejoin:round}
+.chart .line-id{fill:none;stroke:var(--ink-3);stroke-width:1.4;stroke-dasharray:5 4}
+.chart .zero{stroke:var(--ink-2);stroke-width:1.2}
+.chart .loss{fill:var(--bad);fill-opacity:.08}
+.chart .dot{fill:var(--s1);stroke:var(--bg);stroke-width:2}
+.chart .dot-bad{fill:var(--bad);stroke:var(--bg);stroke-width:2}
+.chart .bar-a{fill:var(--s1)} .chart .bar-b{fill:var(--s2)} .chart .bar-c{fill:var(--ink-3)}
+.chart .seg-anchor{fill:var(--s1)} .chart .seg-fill{fill:var(--s3)} .chart .seg-fill2{fill:var(--s5)} .chart .seg-fill3{fill:var(--s4)}
+.chart .mov{stroke:var(--ink);stroke-width:1.6}
+.chart .cap{stroke:var(--ink-3);stroke-width:1.2;stroke-dasharray:4 4}
+.locks .lk-head{fill:var(--ink);font-size:13.5px;font-weight:600}
+.locks .lk-lt{fill:var(--ink);font-size:12.5px;font-weight:600}
+.locks .lk-ls,.locks .lk-sub{fill:var(--ink-2);font-size:12px}
+.locks .lk-col{fill:var(--ink-3);font-size:11px;letter-spacing:.06em}
+.locks .lk-name{fill:var(--ink);font-size:13.5px;font-weight:500}
+.locks .lk-free{fill:var(--s1);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.locks .lk-strong{font-weight:700}
+.locks .lk-in{fill:#fff;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.locks .lk-rule{stroke:var(--rule);stroke-width:1}
+.chart .lk-sole{fill:var(--s1)} .chart .lk-brand{fill:var(--ink-3)} .chart .lk-prod{fill:var(--s2)}
+.lanes .ln-a{--ln:var(--ink-3)} .lanes .ln-b{--ln:var(--s1)} .lanes .ln-c{--ln:var(--s3)}
+.lanes .ln-card{fill:var(--bg-2);stroke:var(--rule)}
+.lanes .ln-stripe{fill:var(--ln)}
+.lanes .ln-idx{fill:var(--ln);font-size:12px;font-weight:600;letter-spacing:.08em;font-variant-numeric:tabular-nums}
+.lanes .ln-name{fill:var(--ink);font-size:15px;font-weight:600}
+.lanes .ln-sub{fill:var(--ink-2);font-size:12px}
+.lanes .ln-where{fill:var(--ink-3);font-size:11.5px;font-style:italic}
+.lanes .ln-div{stroke:var(--rule)}
+.lanes .ln-track{stroke:var(--ln);stroke-width:2}
+.lanes .ln-thin{stroke-dasharray:3 3;stroke-width:1.4;stroke:var(--bad)}
+.lanes .ln-head{fill:var(--ln)} .lanes .ln-thinh{fill:var(--bad)}
+.lanes .ln-start{fill:var(--ln)}
+.lanes .ln-step{fill:var(--bg);stroke:var(--ln);stroke-width:2}
+.lanes .ln-bad{fill:var(--bg);stroke:var(--bad);stroke-width:2}
+.lanes .ln-x{stroke:var(--bad);stroke-width:2;stroke-linecap:round}
+.lanes .ln-n0{fill:#fff;font-size:12px;font-weight:600}
+.lanes .ln-n{fill:var(--ln);font-size:12px;font-weight:600}
+.lanes .ln-t{fill:var(--ink);font-size:12.5px;font-weight:600}
+.lanes .ln-tbad{fill:var(--bad)}
+.lanes .ln-s{fill:var(--ink-2);font-size:11.5px}
+.vat .v-band{fill:var(--bad);fill-opacity:.07}
+.vat .v-bandt{fill:var(--bad);font-size:11.5px;font-weight:600}
+.vat .v-panel{fill:var(--ink-3);font-size:11px;letter-spacing:.06em}
+.vat .v-teal{fill:var(--s1);font-size:12px;font-weight:600}
+.vat .v-gap{stroke:var(--ink-2);stroke-width:1.2;stroke-dasharray:2 2}
+.vat .v-lose{fill:var(--ink-3);fill-opacity:.55} .vat .v-trap{fill:var(--bad)} .vat .v-win{fill:var(--s1)}
+.vat .v-kn,.vat .v-kb,.vat .v-kt{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.vat .v-kn{fill:var(--ink)} .vat .v-kb{fill:var(--bad)} .vat .v-kt{fill:var(--s1)}
+.vat .v-ks{fill:var(--ink-2);font-size:12px}
+.ladder .ld-here{fill:var(--accent-soft)}
+.ladder .ld-heret{fill:var(--accent);font-size:11px;font-weight:600}
+.ladder .ld-panel{fill:var(--ink-3);font-size:11px;letter-spacing:.06em}
+.ladder .ld-line{fill:none;stroke:var(--s1);stroke-width:2.4;stroke-linejoin:round}
+.ladder .ld-price{fill:var(--ink);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.ladder .ld-pct{fill:var(--s1);font-size:11.5px;font-weight:600}
+.ladder .ld-rule{stroke:var(--rule)}
+.ladder .ld-rl{fill:var(--ink-2);font-size:12px}
+.ladder .ld-v{fill:var(--ink);font-size:12.5px;font-variant-numeric:tabular-nums}
+.ladder .ld-vs{fill:var(--s1);font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.ladder .ld-vm{fill:var(--ink-3);font-size:12px}
+.ladder .ld-vin{fill:#fff;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.ladder .ld-bar{fill:var(--s3)} .ladder .ld-track{fill:var(--bg-3)}
+.ladder .ld-rs{fill:var(--ink-3);font-size:11px}
+.butterfly .bf-h{fill:var(--ink-3);font-size:11px;letter-spacing:.06em;font-weight:600}
+.butterfly .bf-hl{fill:var(--s1)}
+.butterfly .bf-sec{fill:var(--ink-3);font-size:10.5px;letter-spacing:.06em}
+.butterfly .bf-rule{stroke:var(--rule)}
+.butterfly .bf-t{fill:var(--ink);font-size:12.5px;font-weight:600}
+.butterfly .bf-s{fill:var(--ink-2);font-size:11px}
+.butterfly .bf-open{fill:var(--ink-3)} .butterfly .bf-lock{fill:var(--s1)}
+.butterfly .bf-v{fill:var(--ink);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.butterfly .bf-vin{fill:#fff;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.butterfly .bf-q{fill:var(--accent);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.butterfly .bf-qcol{fill:var(--bg-2)}
+.butterfly .bf-note{fill:var(--ink-2);font-size:11.5px}
+.basket .bk-col{fill:var(--ink-3);font-size:11px;letter-spacing:.06em}
+.basket .bk-over{fill:var(--s4);fill-opacity:.12}
+.basket .bk-min{fill:var(--ink);font-size:11.5px;font-weight:600}
+.basket .bk-ot{fill:var(--s4);font-size:11px;font-weight:600}
+.basket .bk-minl{stroke:var(--ink);stroke-width:1.6}
+.basket .bk-capl{stroke:var(--s4);stroke-width:1.2;stroke-dasharray:4 3}
+.basket .bk-row{stroke:var(--rule)}
+.basket .bk-name{fill:var(--ink);font-size:12.5px;font-weight:600}
+.basket .bk-sub{fill:var(--ink-2);font-size:11.5px;font-variant-numeric:tabular-nums}
+.basket .bk-dim{fill:var(--ink-3)}
+.basket .bk-anchor{fill:var(--s1)} .basket .bk-fill{fill:var(--s3)}
+.basket .bk-ghost{fill:none;stroke:var(--ink-3);stroke-width:1.2;stroke-dasharray:3 3}
+.basket .bk-why{fill:var(--bad);font-size:11.5px}
+.basket .bk-done{fill:var(--ink);font-size:11.5px;font-weight:600}
+.basket .bk-step{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:2 2}
+.basket .bk-in{fill:#fff;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.basket .bk-tot{fill:var(--ink);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.basket .bk-sum{fill:var(--bg-2)}
+.basket .bk-st{fill:var(--ink);font-size:13px;font-weight:600}
+.basket .bk-ss{fill:var(--ink-2);font-size:11.5px}
+.basket .bk-fv{fill:var(--s1);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.diagram text{fill:currentColor;font-size:12px}
+.diagram .title{font-weight:600;font-size:12.5px}
+.diagram .muted{fill:var(--ink-3);font-size:11px;letter-spacing:.06em}
+.diagram .small{font-size:11px;fill:var(--ink-2)}
+.diagram .box{fill:var(--bg-2);stroke:var(--ink-3);stroke-width:1}
+.diagram .box-acc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+.diagram .box-bad{fill:var(--bg);stroke:var(--bad);stroke-width:1.2;stroke-dasharray:4 3}
+.diagram .edge{stroke:var(--ink-2);stroke-width:1.2;fill:none}
+.diagram .track{stroke:var(--accent);stroke-width:3;fill:none}
+.diagram .station{fill:var(--bg);stroke:var(--accent);stroke-width:2.2}
+.diagram .alive{fill:var(--good)} .diagram .dead{fill:var(--bad);fill-opacity:.45}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:"IBM Plex Sans",sans-serif;font-size:13px;color:var(--ink-2);margin:8px 0 0}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--sw)}
+.logbook{border-left:4px solid var(--s4);background:var(--bg-2);padding:14px 18px 6px;margin:26px 0;font-size:16.5px}
+.logbook .tag{display:block;font-family:"IBM Plex Sans",sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--s4);font-weight:600;margin-bottom:6px}
+.pull{font-family:"Newsreader",serif;font-size:24px;line-height:1.35;font-style:italic;color:var(--accent);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px 0;margin:34px 0;text-align:center}
+details.hood{border:1px solid var(--rule);padding:12px 18px;margin:24px 0;font-size:16px;background:var(--bg)}
+details.hood summary{font-family:"IBM Plex Sans",sans-serif;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--accent)}
+details.hood[open] summary{margin-bottom:10px}
+.tablewrap{overflow-x:auto;margin:24px 0}
+table{border-collapse:collapse;width:100%;font-family:"IBM Plex Sans",sans-serif;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--ink-2);font-size:13px}
+td.num,th.num{text-align:right;white-space:nowrap}
+caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--ink-2);padding:8px 0 0}
+.shot{border:1px solid var(--rule);background:var(--bg-2)}
+.shot img{width:100%;height:auto;display:block}
+.refs{font-size:15px;padding-left:28px}
+.refs li{margin:0 0 10px}
+.coda{background:var(--accent-soft);padding:22px 26px;margin:40px 0;border-radius:4px}
+.coda p:last-child{margin-bottom:0}
+@media (max-width:600px){body{font-size:17px} h2{margin-top:60px} h2 .num{font-size:48px}}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:20;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--rule);border-radius:999px;background:var(--bg-2);color:var(--ink-2);font-family:"IBM Plex Sans",sans-serif;font-size:13px;cursor:pointer;line-height:1}
+.themetoggle:hover{color:var(--ink);border-color:var(--ink-3)}
+.themetoggle svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.themetoggle .sun{display:none}
+:root[data-theme="dark"] .themetoggle .sun,:root[data-theme="dark"] .themetoggle .lbl-l{display:inline}
+:root[data-theme="dark"] .themetoggle .moon,:root[data-theme="dark"] .themetoggle .lbl-d{display:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .themetoggle .sun{display:inline}:root:not([data-theme="light"]) .themetoggle .moon{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-d{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-l{display:inline}}
+.themetoggle .lbl-l{display:none}
+@media print{.themetoggle{display:none}}
+</style>
+</head>
+<body>
+<button class="themetoggle" id="themetoggle" type="button" aria-label="Switch between light and dark theme">
+<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+<span class="lbl-d">Dark</span><span class="lbl-l">Light</span>
+</button>
+<div class="page">
+
+<div class="eyebrow">Technical report · Biryar, part 2 · Wholesale and ungating</div>
+<h1>The Locked Two Thirds</h1>
+<p class="lede">Most of what a young Amazon account could sell, it is not allowed to sell. This report follows how Biryar stopped treating that as a wall and started treating it as a map, one that shows which doors exist, which of them can be opened, and which are worth the price of the key.</p>
+<div class="byline"><span>Loghman Samani</span><span>Ciya Labs</span><span>October 2026</span></div>
+
+<figure>
+  <div class="hero"><img src="fig/header.jpg" alt="" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption class="hero-credit">Generated with OpenAI's DALL-E</figcaption>
+</figure>
+
+<div class="glance" role="list">
+  <div role="listitem"><div class="v">2 in 3</div><div class="k">products found on Amazon that this account may not sell</div></div>
+  <div role="listitem"><div class="v">1,569</div><div class="k">brands the account is already approved for, many granted without an application</div></div>
+  <div role="listitem"><div class="v">156,403</div><div class="k">barcodes screened from one wholesale catalogue, gated rows included</div></div>
+  <div role="listitem"><div class="v">19×</div><div class="k">more estimated profit behind closed brands than behind open ones in that catalogue</div></div>
+</div>
+
+<ol class="brief">
+<li>Amazon restricts many brands and some categories to sellers who can show an invoice from a manufacturer or distributor. For this account such restrictions remove more candidates than every other screening step combined.</li>
+<li>Biryar reads each restriction as a lock with a name, and records every lock on every product, because a product can sit behind two of them at once.</li>
+<li>Instead of asking Amazon about one product at a time, the agent starts from the list of what the account may already sell, which turned out to be long.</li>
+<li>From the other direction, it screens whole wholesale catalogues against Amazon, keeps pricing the products it may not sell, and ranks brands by the profit standing behind each closed door.</li>
+<li>The economics of opening a door are a small optimisation problem. An order has to clear a supplier's minimum, show at least ten units of the brand, and still be worth owning.</li>
+</ol>
+
+<figure class="routemap">
+<svg viewBox="0 0 700 150" role="img" aria-label="Route map of the report with seven stations, each a link to a chapter" class="diagram">
+<path class="track" d="M50,75 H650"/>
+<a href="#s1"><circle class="station" cx="50" cy="75" r="9"/><text class="title" x="50" y="45" text-anchor="middle">I</text><text class="small" x="50" y="110" text-anchor="middle">The wall</text></a>
+<a href="#s2"><circle class="station" cx="150" cy="75" r="9"/><text class="title" x="150" y="45" text-anchor="middle">II</text><text class="small" x="150" y="110" text-anchor="middle">Reading</text><text class="small" x="150" y="124" text-anchor="middle">the locks</text></a>
+<a href="#s3"><circle class="station" cx="250" cy="75" r="9"/><text class="title" x="250" y="45" text-anchor="middle">III</text><text class="small" x="250" y="110" text-anchor="middle">What is</text><text class="small" x="250" y="124" text-anchor="middle">already open</text></a>
+<a href="#s4"><circle class="station" cx="350" cy="75" r="9"/><text class="title" x="350" y="45" text-anchor="middle">IV</text><text class="small" x="350" y="110" text-anchor="middle">From the</text><text class="small" x="350" y="124" text-anchor="middle">supplier's side</text></a>
+<a href="#s5"><circle class="station" cx="450" cy="75" r="9"/><text class="title" x="450" y="45" text-anchor="middle">V</text><text class="small" x="450" y="110" text-anchor="middle">Which door</text><text class="small" x="450" y="124" text-anchor="middle">first</text></a>
+<a href="#s6"><circle class="station" cx="550" cy="75" r="9"/><text class="title" x="550" y="45" text-anchor="middle">VI</text><text class="small" x="550" y="110" text-anchor="middle">The order</text><text class="small" x="550" y="124" text-anchor="middle">that opens it</text></a>
+<a href="#s7"><circle class="station" cx="650" cy="75" r="9"/><text class="title" x="650" y="45" text-anchor="middle">VII</text><text class="small" x="650" y="110" text-anchor="middle">Where it</text><text class="small" x="650" y="124" text-anchor="middle">stands</text></a>
+</svg>
+<figcaption>The route through this report. Each station is a chapter and a link. Part 1 of the series, on <a href="../sourcing/index.html">sourcing from retail shops</a>, ends where this one begins.</figcaption>
+</figure>
+
+<h2 id="s1"><span class="num">I</span>The wall</h2>
+<p class="q">Why can a seller not simply sell what it buys?</p>
+<p class="drop">The sourcing agent described in the first report of this series reads the catalogues of seven German shops and asks, for every product with a barcode, whether this account could resell it on Amazon at a profit. Of the 632,844 products it found on Amazon, two thirds failed at a single question, namely whether the account is allowed to list them at all. Not because they were unprofitable, or slow, or mismatched. Because Amazon said no.</p>
+<p>Amazon calls this gating, and it is a deliberate policy. <b>A marketplace that lets anyone list anything inherits every counterfeit, every grey import and every unsafe product its sellers bring with them</b>. Platforms therefore act as regulators of their own markets, setting rules about who may sell what, which is the role Boudreau and Hagiu describe for multi-sided platforms in general [1]. For a seller, the practical form of the rule is simple to state. Many brands, and some whole categories such as books or food, can be listed only after an application, and the application is usually decided on an invoice. That invoice must come from the manufacturer or an authorised distributor, be recent, cover a handful of units, and name the selling business. A receipt from a shop is not accepted.</p>
+<p>Economists would recognise this as screening by a costly signal. Spence [2] showed that a signal separates good types from bad ones only when it is cheaper to send for the good type. A till receipt costs a counterfeiter nothing. A trade account with a distributor costs time, paperwork, a minimum order and a credible business, which a legitimate reseller can produce and a fraudulent one usually cannot. The invoice works as a filter precisely because it is expensive, and that expense is what this report is about.</p>
+<p>Seen from the seller's side, an approved brand stays open. One invoice, if accepted, unlocks every product of that brand for as long as the approval lasts. Opening a gate is therefore less like buying stock and more like buying an option, an up-front cost that creates the right to profit from a stream of future deals, which is how Dixit and Pindyck frame irreversible investment under uncertainty [3]. The question is never whether to open gates in general. It is which gate pays for its key first.</p>
+
+<div class="pull">For this account, permission removes more candidates than every other screening step combined.</div>
+
+<h2 id="s2"><span class="num">II</span>Reading the locks</h2>
+<p class="q">What exactly stands between a product and a listing?</p>
+<p>When Amazon refuses a listing it returns a short explanation, in German for this marketplace, and often more than one. The agent reads every message and turns each into a named lock. A message about a brand becomes a brand lock, labelled with the product's brand because Amazon's message never names it. A message about a category becomes a category lock, labelled with the category the message names. Anything the parser does not recognise becomes an "other" lock with its text attached, so that a new kind of restriction shows up in the reports as a strange name instead of quietly vanishing and making a locked product look open.</p>
+<p>Recording every lock matters because locks combine. A product can be sold only when all of its locks are open, and some products carry two. Books are the clearest case, as Figure 1 shows.</p>
+
+<figure>
+<svg viewBox="0 0 700 454" role="img" aria-label="Of 11,736 retail products behind a category lock, 587 are freed by the category approval alone. 10,630 also need a brand approval and 519 also carry a lock on the product itself. Books 212 of 9,108 freed, food 180 of 1,731, ingestibles 187 of 717, baby food 2 of 100, a baby toy category 6 of 80." class="chart locks">
+<text class="lk-head" x="0" y="16">A product can be listed only when every lock on it is open</text>
+<rect class="lk-sole" x="0" y="34" width="12" height="12" rx="2"/>
+<text class="lk-lt" x="20" y="44">Category lock only</text>
+<text class="lk-ls" x="20" y="60">the category approval frees it</text>
+<rect class="lk-brand" x="236" y="34" width="12" height="12" rx="2"/>
+<text class="lk-lt" x="256" y="44">Also a brand lock</text>
+<text class="lk-ls" x="256" y="60">still needs the publisher or maker</text>
+<rect class="lk-prod" x="472" y="34" width="12" height="12" rx="2"/>
+<text class="lk-lt" x="492" y="44">Also a product lock</text>
+<text class="lk-ls" x="492" y="60">set on the item, no invoice opens it</text>
+<line class="lk-rule" x1="0" y1="78" x2="700" y2="78"/>
+<text class="lk-col" x="0" y="100">CATEGORY LOCK</text>
+<text class="lk-col" x="204" y="100">WHAT ELSE LOCKS THESE PRODUCTS</text>
+<text class="lk-col" x="534" y="100">FREED BY THE CATEGORY</text>
+<text class="lk-col" x="534" y="114">APPROVAL ALONE</text>
+<text class="lk-name" x="0" y="144">Books</text>
+<text class="lk-sub" x="0" y="160">9,108 products</text>
+<rect class="lk-sole" x="204.0" y="132" width="7.2" height="26"><title>212 of 9,108</title></rect>
+<rect class="lk-brand" x="211.2" y="132" width="302.8" height="26"><title>8,896 of 9,108</title></rect>
+<text class="lk-in" x="362.6" y="149" text-anchor="middle">8,896</text>
+<text class="lk-free" x="534" y="145">212</text>
+<text class="lk-sub" x="534" y="160">2.3% of 9,108</text>
+<text class="lk-name" x="0" y="194">Food</text>
+<text class="lk-sub" x="0" y="210">1,731 products</text>
+<rect class="lk-sole" x="204.0" y="182" width="32.2" height="26"><title>180 of 1,731</title></rect>
+<rect class="lk-brand" x="236.2" y="182" width="187.7" height="26"><title>1,048 of 1,731</title></rect>
+<text class="lk-in" x="330.1" y="199" text-anchor="middle">1,048</text>
+<rect class="lk-prod" x="423.9" y="182" width="90.1" height="26"><title>503 of 1,731</title></rect>
+<text class="lk-in" x="469.0" y="199" text-anchor="middle">503</text>
+<text class="lk-free" x="534" y="195">180</text>
+<text class="lk-sub" x="534" y="210">10.4% of 1,731</text>
+<text class="lk-name" x="0" y="244">Ingestibles</text>
+<text class="lk-sub" x="0" y="260">717 products, e.g. supplements</text>
+<rect class="lk-sole" x="204.0" y="232" width="80.9" height="26"><title>187 of 717</title></rect>
+<text class="lk-in" x="244.4" y="249" text-anchor="middle">187</text>
+<rect class="lk-brand" x="284.9" y="232" width="222.2" height="26"><title>514 of 717</title></rect>
+<text class="lk-in" x="396.0" y="249" text-anchor="middle">514</text>
+<rect class="lk-prod" x="507.1" y="232" width="6.9" height="26"><title>16 of 717</title></rect>
+<text class="lk-free" x="534" y="245">187</text>
+<text class="lk-sub" x="534" y="260">26.1% of 717</text>
+<text class="lk-name" x="0" y="294">Baby food</text>
+<text class="lk-sub" x="0" y="310">100 products</text>
+<rect class="lk-sole" x="204.0" y="282" width="6.2" height="26"><title>2 of 100</title></rect>
+<rect class="lk-brand" x="210.2" y="282" width="303.8" height="26"><title>98 of 100</title></rect>
+<text class="lk-in" x="362.1" y="299" text-anchor="middle">98</text>
+<text class="lk-free" x="534" y="295">2</text>
+<text class="lk-sub" x="534" y="310">2.0% of 100</text>
+<text class="lk-name" x="0" y="344">A baby toy category</text>
+<text class="lk-sub" x="0" y="360">80 products</text>
+<rect class="lk-sole" x="204.0" y="332" width="23.2" height="26"><title>6 of 80</title></rect>
+<rect class="lk-brand" x="227.2" y="332" width="286.8" height="26"><title>74 of 80</title></rect>
+<text class="lk-in" x="370.6" y="349" text-anchor="middle">74</text>
+<text class="lk-free" x="534" y="345">6</text>
+<text class="lk-sub" x="534" y="360">7.5% of 80</text>
+<line class="lk-rule" x1="0" y1="374" x2="700" y2="374"/>
+<text class="lk-name lk-strong" x="0" y="402">All five categories</text>
+<text class="lk-sub" x="0" y="418">11,736 products</text>
+<rect class="lk-sole" x="204.0" y="390" width="15.5" height="26"><title>587 of 11,736</title></rect>
+<rect class="lk-brand" x="219.5" y="390" width="280.8" height="26"><title>10,630 of 11,736</title></rect>
+<text class="lk-in" x="359.9" y="407" text-anchor="middle">10,630</text>
+<rect class="lk-prod" x="500.3" y="390" width="13.7" height="26"><title>519 of 11,736</title></rect>
+<text class="lk-free lk-strong" x="534" y="403">587</text>
+<text class="lk-sub" x="534" y="418">5.0% of 11,736</text>
+<text class="lk-sub" x="0" y="444">Four food products carry a second category lock instead of a brand lock and are counted in grey.</text>
+</svg>
+<figcaption><b>Figure 1.</b> Locks combine. Counted by category, five category approvals would seem to open 11,736 products. Read lock by lock, they open 587, about one in twenty. Nearly every book also needs its publisher, and nearly a third of the food also carries a lock on the product itself. Ingestibles are the one category where the approval alone frees a real share. Each bar is one category scaled to 100 percent, counted on 13 October 2026 across the retail products the agent has screened.</figcaption>
+</figure>
+
+<p>Brand locks follow a long-tailed distribution, which shapes every strategy that follows. Among the gated retail products whose shop page names a brand, the hundred most common brands account for 56 percent of the products, while 3,489 of the 4,837 brands appear on five products or fewer. A few doors hold a lot behind them, and thousands hold almost nothing. The same pattern appears in online retail demand more generally, where a large share of sales comes from a very long tail of rarely sold items [4].</p>
+
+<h3>Doors with no key</h3>
+<p>A brand lock is worth studying only if someone can issue the invoice that opens it, and the agent learned early that this is often not the case. Ranked by the number of locked products, the first brands on the list were batteries, screen protectors and phone cases. Every one of them turned out to be a house brand, a label created by a single trading company that sells its own products directly on Amazon and on the big electronics marketplaces. There is no distributor to buy from, because the brand owner is the only seller.</p>
+<p>The agent detects this from evidence it already has. Electronics marketplaces name the seller of each listing, and if essentially every listing of a brand comes from one seller, that seller owns the brand and no wholesale channel exists. On the watchlist of mid-August this applied to 44 percent of all locked products, including the four largest brands. The test is deliberately one-sided. A brand with many sellers is marked as possibly distributed, which means only that there is no evidence against it.</p>
+<p>A second kind of door has a key that does not fit. Here a distributor exists, but its invoice cannot serve as evidence. The gated book pile looked like the most profitable target of all, and every German publisher is supplied by the same few book wholesalers. On inspection the channel was closed for a business of this size. One wholesaler required a six-figure annual purchase volume, one issues invoices that list delivery notes rather than items, which an application cannot use, and one no longer accepted new contact by email. The agent now records such closed channels as data, with the evidence that closed them, and marks every brand behind a closed channel as unreachable, however much profit it seems to hold.</p>
+
+<div class="tablewrap"><table>
+<thead><tr><th>Question about a brand lock</th><th>How the agent answers it</th><th>What a "no" means</th></tr></thead>
+<tbody>
+<tr><td>Which locks sit on this product?</td><td>Parses every restriction message</td><td>Nothing, every product has an answer</td></tr>
+<tr><td>Does anyone distribute the brand?</td><td>Counts distinct sellers on marketplaces that name them</td><td>A house brand, no invoice can exist</td></tr>
+<tr><td>Will that channel issue a usable invoice?</td><td>Recorded closed channels with evidence</td><td>A distributor exists but the door stays shut</td></tr>
+<tr><td>Is the account perhaps already approved?</td><td>The approvals list, Chapter III</td><td>The lock is real today</td></tr>
+<tr><td>Is it worth opening?</td><td>The gate ranking, Chapter V</td><td>Open, but not this month</td></tr>
+</tbody>
+<caption>Table 1. Five questions the agent asks about a lock before it is allowed to become a recommendation.</caption>
+</table></div>
+
+<h2 id="s3"><span class="num">III</span>What is already open</h2>
+<p class="q">What if the account may already sell more than anyone thought?</p>
+<p>Amazon's interface for checking restrictions answers one product at a time and, for a young account, mostly answers no. Two early screens of supplier catalogues measured the cost of that. One spent 194 rate-limited calls to find 11 sellable products, the other spent 146 to find one. Roughly 330 calls bought twelve useful answers, and those calls come from the same budget that prices products and checks fees, which is where the actual decisions are made.</p>
+<p>Seller Central has a page that answers the mirror question for the whole account at once, the list of approvals the account already holds. Many of them are granted automatically, without an application, when Amazon decides an account qualifies. When the agent first read that list it held 1,569 approved brands, many of them granted without the owner ever applying.</p>
+
+<figure>
+<svg viewBox="0 0 700 340" role="img" aria-label="Three ways to look for sellable stock. Amazon first, from Part 1, finds a product in a shop and asks Amazon, which refuses two in three, and screens the rest. Permission first starts from the approvals list of 1,569 brands, matches it against supply, screens only that and asks again about 2,281 old refusals whose brand is now approved. Supplier first starts from a wholesale catalogue, screens every line including locked ones, ranks the locks by the profit behind each and opens one door with one order." class="chart lanes">
+<g class="lane ln-a">
+<rect class="ln-card" x="0.5" y="0.5" width="699" height="103" rx="6"/>
+<rect class="ln-stripe" x="0" y="0" width="4" height="104" rx="2"/>
+<text class="ln-idx" x="20" y="28">01</text>
+<text class="ln-name" x="20" y="50">Amazon first</text>
+<text class="ln-sub" x="20" y="68">from a shop's product</text>
+<text class="ln-where" x="20" y="86">Part 1, retail shops</text>
+<line class="ln-div" x1="158" y1="16" x2="158" y2="88"/>
+<line class="ln-track" x1="242" y1="34" x2="338" y2="34"/>
+<path class="ln-head" d="M337,30 L344,34 L337,38 z"/>
+<line class="ln-track" x1="372" y1="34" x2="468" y2="34"/>
+<path class="ln-head" d="M467,30 L474,34 L467,38 z"/>
+<line class="ln-track ln-thin" x1="502" y1="34" x2="598" y2="34"/>
+<path class="ln-head ln-thinh" d="M597,30 L604,34 L597,38 z"/>
+<circle class="ln-start" cx="228" cy="34" r="12"/>
+<text class="ln-n0" x="228" y="38" text-anchor="middle">1</text>
+<text class="ln-t" x="228" y="68" text-anchor="middle">Find a product</text>
+<text class="ln-s" x="228" y="85" text-anchor="middle">in a shop</text>
+<circle class="ln-step" cx="358" cy="34" r="12"/>
+<text class="ln-n" x="358" y="38" text-anchor="middle">2</text>
+<text class="ln-t" x="358" y="68" text-anchor="middle">Ask Amazon</text>
+<text class="ln-s" x="358" y="85" text-anchor="middle">one call per product</text>
+<circle class="ln-bad" cx="488" cy="34" r="12"/>
+<path class="ln-x" d="M484,30 L492,38 M492,30 L484,38"/>
+<text class="ln-t ln-tbad" x="488" y="68" text-anchor="middle">Mostly refused</text>
+<text class="ln-s" x="488" y="85" text-anchor="middle">two in three</text>
+<circle class="ln-step" cx="618" cy="34" r="12"/>
+<text class="ln-n" x="618" y="38" text-anchor="middle">4</text>
+<text class="ln-t" x="618" y="68" text-anchor="middle">Screen the rest</text>
+<text class="ln-s" x="618" y="85" text-anchor="middle">price, fees, demand</text>
+</g>
+<g class="lane ln-b">
+<rect class="ln-card" x="0.5" y="118.5" width="699" height="103" rx="6"/>
+<rect class="ln-stripe" x="0" y="118" width="4" height="104" rx="2"/>
+<text class="ln-idx" x="20" y="146">02</text>
+<text class="ln-name" x="20" y="168">Permission first</text>
+<text class="ln-sub" x="20" y="186">from what is open</text>
+<text class="ln-where" x="20" y="204">Chapter III</text>
+<line class="ln-div" x1="158" y1="134" x2="158" y2="206"/>
+<line class="ln-track" x1="242" y1="152" x2="338" y2="152"/>
+<path class="ln-head" d="M337,148 L344,152 L337,156 z"/>
+<line class="ln-track" x1="372" y1="152" x2="468" y2="152"/>
+<path class="ln-head" d="M467,148 L474,152 L467,156 z"/>
+<line class="ln-track" x1="502" y1="152" x2="598" y2="152"/>
+<path class="ln-head" d="M597,148 L604,152 L597,156 z"/>
+<circle class="ln-start" cx="228" cy="152" r="12"/>
+<text class="ln-n0" x="228" y="156" text-anchor="middle">1</text>
+<text class="ln-t" x="228" y="186" text-anchor="middle">Approvals list</text>
+<text class="ln-s" x="228" y="203" text-anchor="middle">1,569 brands, free</text>
+<circle class="ln-step" cx="358" cy="152" r="12"/>
+<text class="ln-n" x="358" y="156" text-anchor="middle">2</text>
+<text class="ln-t" x="358" y="186" text-anchor="middle">Match the names</text>
+<text class="ln-s" x="358" y="203" text-anchor="middle">against a catalogue</text>
+<circle class="ln-step" cx="488" cy="152" r="12"/>
+<text class="ln-n" x="488" y="156" text-anchor="middle">3</text>
+<text class="ln-t" x="488" y="186" text-anchor="middle">Screen only that</text>
+<text class="ln-s" x="488" y="203" text-anchor="middle">calls well spent</text>
+<circle class="ln-step" cx="618" cy="152" r="12"/>
+<text class="ln-n" x="618" y="156" text-anchor="middle">4</text>
+<text class="ln-t" x="618" y="186" text-anchor="middle">Ask again</text>
+<text class="ln-s" x="618" y="203" text-anchor="middle">2,281 old refusals</text>
+</g>
+<g class="lane ln-c">
+<rect class="ln-card" x="0.5" y="236.5" width="699" height="103" rx="6"/>
+<rect class="ln-stripe" x="0" y="236" width="4" height="104" rx="2"/>
+<text class="ln-idx" x="20" y="264">03</text>
+<text class="ln-name" x="20" y="286">Supplier first</text>
+<text class="ln-sub" x="20" y="304">from a wholesaler</text>
+<text class="ln-where" x="20" y="322">Chapters IV to VI</text>
+<line class="ln-div" x1="158" y1="252" x2="158" y2="324"/>
+<line class="ln-track" x1="242" y1="270" x2="338" y2="270"/>
+<path class="ln-head" d="M337,266 L344,270 L337,274 z"/>
+<line class="ln-track" x1="372" y1="270" x2="468" y2="270"/>
+<path class="ln-head" d="M467,266 L474,270 L467,274 z"/>
+<line class="ln-track" x1="502" y1="270" x2="598" y2="270"/>
+<path class="ln-head" d="M597,266 L604,270 L597,274 z"/>
+<circle class="ln-start" cx="228" cy="270" r="12"/>
+<text class="ln-n0" x="228" y="274" text-anchor="middle">1</text>
+<text class="ln-t" x="228" y="304" text-anchor="middle">Wholesale catalogue</text>
+<text class="ln-s" x="228" y="321" text-anchor="middle">every line and brand</text>
+<circle class="ln-step" cx="358" cy="270" r="12"/>
+<text class="ln-n" x="358" y="274" text-anchor="middle">2</text>
+<text class="ln-t" x="358" y="304" text-anchor="middle">Screen everything</text>
+<text class="ln-s" x="358" y="321" text-anchor="middle">locked lines too</text>
+<circle class="ln-step" cx="488" cy="270" r="12"/>
+<text class="ln-n" x="488" y="274" text-anchor="middle">3</text>
+<text class="ln-t" x="488" y="304" text-anchor="middle">Rank the locks</text>
+<text class="ln-s" x="488" y="321" text-anchor="middle">profit behind each</text>
+<circle class="ln-step" cx="618" cy="270" r="12"/>
+<text class="ln-n" x="618" y="274" text-anchor="middle">4</text>
+<text class="ln-t" x="618" y="304" text-anchor="middle">Open one door</text>
+<text class="ln-s" x="618" y="321" text-anchor="middle">with one order</text>
+</g>
+</svg>
+<figcaption><b>Figure 2.</b> Three directions of search, each read left to right from its starting point. The first is the retail agent of Part 1, which spends a call on every product and hears no to two of every three. The second and third are this report. They start from what is already open and from what a supplier can deliver, and spend calls only where an answer can change a decision. The agent runs all three.</figcaption>
+</figure>
+
+<p>Inverting the search in this way does not replace Amazon's per-product check, which remains the truth before any purchase, since approvals are held per brand and per category and a product can be restricted for reasons that have nothing to do with either. What it replaces is the prospecting pass, in which almost every call is wasted. Intersecting the approvals list with a supplier's catalogue answers, offline and for nothing, which part of that catalogue is worth a call.</p>
+<p>The intersection produces a third answer that is more useful than the first two. When a brand is on the approvals list but a product of that brand is still recorded as refused, one of two things is true. Either the approval is newer than the refusal, or something other than the brand is locking the product. Both are worth exactly one call to settle, and no call is better spent, because these are products Amazon has already been asked to price.</p>
+
+<h3>Making two spellings meet</h3>
+<p>None of this works unless a name on the approvals list can be matched to the same name in a catalogue, and the two are rarely written the same way. Amazon writes a brand in capitals, an invoice in title case, a toy wholesaler uses the company's full name where a shop uses a short one, and a German category appears with an umlaut in one export and without it in the next. The agent keeps two keys per name. The first removes everything that is not a letter or a digit and folds umlauts the German way, so that two spellings of the same brand with and without a hyphen become identical, and "Bücher" becomes "buecher" rather than colliding with a different word. The second keeps the list of words, so that an approval for a two-word company name can plausibly cover a catalogue's one-word short form. Word lists rather than character prefixes keep two unrelated brands that happen to share a first word apart. A prefix match is always reported as weaker than an exact one, and only exact matches are allowed to change anything. This is the record-linkage problem of the first report again [5], with a different cost structure. A false "already open" sends the owner to buy stock he cannot list.</p>
+
+<h3>Letting an approval reach the products it frees</h3>
+<p>A refusal is a fact about one moment, and approvals arrive later on their own clock. The screening pipeline revisits a refused product only after thirty days, so a new approval stayed invisible for up to a month. The agent now closes that gap. Whenever the approvals list is imported, every refused product whose brand is now certainly approved, and whose refusal predates the approval, is put back in front of the screening queue. Nothing is marked sellable by this step. Amazon is simply asked again, and answers. The most recent import sent 2,281 retail products across 302 brands back to be asked.</p>
+
+<div class="logbook"><span class="tag">From the logbook</span>
+<p>Reading the approvals page cannot be done through Amazon's seller interface, which has no such endpoint, so the agent reads it with a real browser on the server, signed in by the owner by hand, at human pace, clicking nothing but the page numbers. It never stores or types a password. To find out whether a signed-in session could be kept alive by touching it every few hours, it recorded every check. Three sign-ins in September each died within an hour, and 258 later checks found the session gone. The measurement settled the question. The list is now refreshed when the owner signs in, from a button in Biryar, and a dead session is reported as a sign-in to do rather than as a failure to investigate.</p>
+</div>
+
+<figure>
+  <div class="shot"><img src="fig/applications.png" alt="The approvals panel in Biryar, showing approved brands, the date of the last read and an expired session"></div>
+  <figcaption><b>Figure 3.</b> The approvals panel in Biryar. It shows how many approvals the account holds, when the list was last read and whether the browser session behind it is still alive. The command for signing in again is blurred.</figcaption>
+</figure>
+
+<h2 id="s4"><span class="num">IV</span>From the supplier's side</h2>
+<p class="q">Start with what a distributor sells, and ask which doors it could open.</p>
+<p>The retail agent starts at a shop and walks towards Amazon. The reverse strategy starts at a distributor, because a distributor's invoice is the key and its catalogue is therefore a list of keys. Biryar buys from a European wholesale marketplace that aggregates several hundred suppliers, each with its own prices, stock and minimum order value. One of its catalogues, a list of electronics published by the marketplace and refreshed every morning, is now pulled automatically twice a week. It currently holds 412,604 offers of 156,403 distinct barcodes from 807 suppliers.</p>
+
+<h3>Which brand is this line?</h3>
+<p>Wholesale catalogues name products, not brands, and the brand is the unit of every later decision because Amazon locks and unlocks per brand. Taking the first word of each product name was tried first and produced brands called "10-Port" and "1.92TB". The agent now matches names against a vocabulary of brands it has already seen on Amazon and in earlier catalogues, longest match first and anchored at the start of the name. Anchoring has one predictable failure. A screen protector "for" a phone maker's model starts with the phone maker's name and is assigned to that brand, although it is a third-party accessory whose invoice would not support an application for the phone maker. Such names are flagged for review rather than trusted. The vocabulary grows with every screening pass, so names that cannot be placed on import often resolve later.</p>
+
+<h3>Screening that does not stop at the lock</h3>
+<p>The retail screener of Part 1 stops at a refusal, correctly, because a product that cannot be sold today is not worth a pricing call. The catalogue screener deliberately keeps going. A locked product still gets its Amazon price, sales rank and number of competing offers, and the lock is recorded beside them. That single difference is what lets the agent see the profit standing behind each door. Of the catalogue's barcodes that exist on Amazon, 73 percent are locked for this account, and the screener priced them anyway. Demand is then measured from the history of each product's sales rank, as in Part 1, at one paid token per product, with the queue ordered by the profit standing behind each barcode so that an interrupted run has always measured the most useful products first. So far 93,922 products have been measured, of which 42,157 sold in both the thirty-day and the ninety-day window.</p>
+
+<h3>The price is net, the cost is not</h3>
+<p>A German shop's shelf price includes VAT. A wholesale price is quoted without it. For a business under the small-business VAT rule, the difference is not a formality, because the tax is owed and never reclaimed. Buying from the marketplace's suppliers in other EU countries falls under the simplified triangular arrangement of the EU VAT Directive [6], so the invoice shows no VAT and the tax is paid separately to the German tax office. Buying from a German wholesaler puts the tax on the invoice. Different law, identical cost, the net price times 1.19.</p>
+<p>Leaving that factor out is not a small error, because it inflates both halves of the return calculation at once. Figure 4 shows the consequence. Any line that reported a return below nineteen percent was in truth a loss, and an early version of the wholesale ranking used a fifteen percent floor for the filler lines in an order, which selected exactly the lines that lost money.</p>
+
+<figure>
+<svg viewBox="0 0 700 538" role="img" aria-label="Two panels on one scale of reported return. Panel A, the true return when 19 percent VAT is paid and left out of the cost, equal to the reported return minus 19 points, divided by 1.19. It crosses zero at a reported 19 percent, a 15 percent floor is a 3.4 percent loss and 50 percent reported is 26 percent true. Panel B, 85,035 catalogue barcodes by reported return. 36,436 look profitable, 14,585 of them lose money, 2,124 losing lines would pass a 15 percent floor and 21,851 are profitable once VAT is counted." class="chart vat">
+<defs><clipPath id="vat-clip"><rect x="64" y="44" width="620" height="180"/></clipPath></defs>
+<rect class="v-band" x="233.1" y="44" width="107.1" height="360"/>
+<text class="v-bandt" x="286.6" y="36" text-anchor="middle">looks profitable, loses money</text>
+<text class="v-panel" x="0" y="14">A · TRUE RETURN FOR ANY RETURN REPORTED WITHOUT VAT</text>
+<line class="grid" x1="64" y1="224.0" x2="684" y2="224.0"/>
+<text class="tick" x="56" y="228.0" text-anchor="end">−40%</text>
+<line class="grid" x1="64" y1="188.0" x2="684" y2="188.0"/>
+<text class="tick" x="56" y="192.0" text-anchor="end">−20%</text>
+<line class="zero" x1="64" y1="152.0" x2="684" y2="152.0"/>
+<text class="tick" x="56" y="156.0" text-anchor="end">0%</text>
+<line class="grid" x1="64" y1="116.0" x2="684" y2="116.0"/>
+<text class="tick" x="56" y="120.0" text-anchor="end">20%</text>
+<line class="grid" x1="64" y1="80.0" x2="684" y2="80.0"/>
+<text class="tick" x="56" y="84.0" text-anchor="end">40%</text>
+<line class="grid" x1="64" y1="44.0" x2="684" y2="44.0"/>
+<text class="tick" x="56" y="48.0" text-anchor="end">60%</text>
+<g clip-path="url(#vat-clip)">
+<path class="line-id" d="M64.0,206.0 L684.0,8.0"/>
+<path class="line-a" d="M64.0,226.1 L684.0,59.7"/>
+</g>
+<text class="ann" x="492.4" y="58.4" text-anchor="end">as reported</text>
+<text class="v-teal" x="627.6" y="64.9" text-anchor="middle">true return</text>
+<line class="v-gap" x1="514.9" y1="65.0" x2="514.9" y2="102.1"/>
+<text class="ann" x="520.9" y="128.6">50% reported is 26% true,</text>
+<text class="ann" x="520.9" y="143.6">and the gap grows with the return</text>
+<circle class="dot" cx="514.9" cy="105.1" r="4"/>
+<circle class="dot-bad" cx="317.6" cy="158.1" r="5"/>
+<line class="v-gap" x1="317.6" y1="164.1" x2="317.6" y2="189.8"/>
+<text class="ann" x="323.6" y="195.2">a 15% floor is a 3.4% loss</text>
+<circle class="dot" cx="340.2" cy="152.0" r="4"/>
+<text class="ann" x="348.2" y="168.0">break-even only at 19%</text>
+<text class="v-panel" x="0" y="268">B · 85,035 CATALOGUE BARCODES BY THE RETURN THEY REPORT</text>
+<line class="grid" x1="64" y1="286" x2="684" y2="286"/>
+<line class="grid" x1="64" y1="345.0" x2="684" y2="345.0"/>
+<text class="tick" x="56" y="290" text-anchor="end">1,400</text>
+<text class="tick" x="56" y="349.0" text-anchor="end">700</text>
+<text class="tick" x="56" y="408" text-anchor="end">0</text>
+<rect class="v-lose" x="64.4" y="351.8" width="4.84" height="52.2"/>
+<rect class="v-lose" x="70.0" y="351.9" width="4.84" height="52.1"/>
+<rect class="v-lose" x="75.7" y="344.0" width="4.84" height="60.0"/>
+<rect class="v-lose" x="81.3" y="343.7" width="4.84" height="60.3"/>
+<rect class="v-lose" x="86.9" y="338.4" width="4.84" height="65.6"/>
+<rect class="v-lose" x="92.6" y="336.8" width="4.84" height="67.2"/>
+<rect class="v-lose" x="98.2" y="333.8" width="4.84" height="70.2"/>
+<rect class="v-lose" x="103.9" y="329.7" width="4.84" height="74.3"/>
+<rect class="v-lose" x="109.5" y="323.6" width="4.84" height="80.4"/>
+<rect class="v-lose" x="115.1" y="322.4" width="4.84" height="81.6"/>
+<rect class="v-lose" x="120.8" y="318.9" width="4.84" height="85.1"/>
+<rect class="v-lose" x="126.4" y="312.0" width="4.84" height="92.0"/>
+<rect class="v-lose" x="132.0" y="303.4" width="4.84" height="100.6"/>
+<rect class="v-lose" x="137.7" y="313.3" width="4.84" height="90.7"/>
+<rect class="v-lose" x="143.3" y="298.1" width="4.84" height="105.9"/>
+<rect class="v-lose" x="148.9" y="310.9" width="4.84" height="93.1"/>
+<rect class="v-lose" x="154.6" y="303.2" width="4.84" height="100.8"/>
+<rect class="v-lose" x="160.2" y="294.9" width="4.84" height="109.2"/>
+<rect class="v-lose" x="165.9" y="299.6" width="4.84" height="104.4"/>
+<rect class="v-lose" x="171.5" y="293.5" width="4.84" height="110.5"/>
+<rect class="v-lose" x="177.1" y="288.4" width="4.84" height="115.6"/>
+<rect class="v-lose" x="182.8" y="288.4" width="4.84" height="115.6"/>
+<rect class="v-lose" x="188.4" y="290.8" width="4.84" height="113.2"/>
+<rect class="v-lose" x="194.0" y="288.9" width="4.84" height="115.1"/>
+<rect class="v-lose" x="199.7" y="286.2" width="4.84" height="117.8"/>
+<rect class="v-lose" x="205.3" y="291.9" width="4.84" height="112.1"/>
+<rect class="v-lose" x="210.9" y="304.0" width="4.84" height="100.0"/>
+<rect class="v-lose" x="216.6" y="301.8" width="4.84" height="102.2"/>
+<rect class="v-lose" x="222.2" y="302.1" width="4.84" height="101.9"/>
+<rect class="v-lose" x="227.9" y="308.8" width="4.84" height="95.2"/>
+<rect class="v-trap" x="233.5" y="313.6" width="4.84" height="90.4"/>
+<rect class="v-trap" x="239.1" y="312.6" width="4.84" height="91.4"/>
+<rect class="v-trap" x="244.8" y="315.5" width="4.84" height="88.5"/>
+<rect class="v-trap" x="250.4" y="318.7" width="4.84" height="85.3"/>
+<rect class="v-trap" x="256.0" y="328.4" width="4.84" height="75.6"/>
+<rect class="v-trap" x="261.7" y="329.4" width="4.84" height="74.6"/>
+<rect class="v-trap" x="267.3" y="334.0" width="4.84" height="70.0"/>
+<rect class="v-trap" x="272.9" y="332.0" width="4.84" height="72.0"/>
+<rect class="v-trap" x="278.6" y="340.3" width="4.84" height="63.7"/>
+<rect class="v-trap" x="284.2" y="339.2" width="4.84" height="64.8"/>
+<rect class="v-trap" x="289.9" y="340.5" width="4.84" height="63.5"/>
+<rect class="v-trap" x="295.5" y="348.1" width="4.84" height="55.9"/>
+<rect class="v-trap" x="301.1" y="351.5" width="4.84" height="52.5"/>
+<rect class="v-trap" x="306.8" y="350.3" width="4.84" height="53.7"/>
+<rect class="v-trap" x="312.4" y="355.6" width="4.84" height="48.4"/>
+<rect class="v-trap" x="318.0" y="356.0" width="4.84" height="48.0"/>
+<rect class="v-trap" x="323.7" y="361.7" width="4.84" height="42.3"/>
+<rect class="v-trap" x="329.3" y="359.8" width="4.84" height="44.2"/>
+<rect class="v-trap" x="334.9" y="359.5" width="4.84" height="44.5"/>
+<rect class="v-win" x="340.6" y="362.8" width="4.84" height="41.2"/>
+<rect class="v-win" x="346.2" y="364.2" width="4.84" height="39.8"/>
+<rect class="v-win" x="351.9" y="368.1" width="4.84" height="35.9"/>
+<rect class="v-win" x="357.5" y="367.3" width="4.84" height="36.7"/>
+<rect class="v-win" x="363.1" y="369.3" width="4.84" height="34.7"/>
+<rect class="v-win" x="368.8" y="371.9" width="4.84" height="32.1"/>
+<rect class="v-win" x="374.4" y="372.5" width="4.84" height="31.5"/>
+<rect class="v-win" x="380.0" y="374.8" width="4.84" height="29.2"/>
+<rect class="v-win" x="385.7" y="377.0" width="4.84" height="27.0"/>
+<rect class="v-win" x="391.3" y="375.9" width="4.84" height="28.1"/>
+<rect class="v-win" x="396.9" y="375.5" width="4.84" height="28.5"/>
+<rect class="v-win" x="402.6" y="377.7" width="4.84" height="26.3"/>
+<rect class="v-win" x="408.2" y="377.2" width="4.84" height="26.8"/>
+<rect class="v-win" x="413.9" y="381.1" width="4.84" height="22.9"/>
+<rect class="v-win" x="419.5" y="377.2" width="4.84" height="26.8"/>
+<rect class="v-win" x="425.1" y="382.4" width="4.84" height="21.6"/>
+<rect class="v-win" x="430.8" y="383.2" width="4.84" height="20.8"/>
+<rect class="v-win" x="436.4" y="382.1" width="4.84" height="21.9"/>
+<rect class="v-win" x="442.0" y="387.1" width="4.84" height="16.9"/>
+<rect class="v-win" x="447.7" y="382.8" width="4.84" height="21.2"/>
+<rect class="v-win" x="453.3" y="382.4" width="4.84" height="21.6"/>
+<rect class="v-win" x="458.9" y="383.9" width="4.84" height="20.1"/>
+<rect class="v-win" x="464.6" y="383.1" width="4.84" height="20.9"/>
+<rect class="v-win" x="470.2" y="383.0" width="4.84" height="21.0"/>
+<rect class="v-win" x="475.9" y="385.5" width="4.84" height="18.5"/>
+<rect class="v-win" x="481.5" y="381.2" width="4.84" height="22.8"/>
+<rect class="v-win" x="487.1" y="384.3" width="4.84" height="19.7"/>
+<rect class="v-win" x="492.8" y="387.0" width="4.84" height="17.0"/>
+<rect class="v-win" x="498.4" y="387.1" width="4.84" height="16.9"/>
+<rect class="v-win" x="504.0" y="389.1" width="4.84" height="14.9"/>
+<rect class="v-win" x="509.7" y="385.9" width="4.84" height="18.1"/>
+<rect class="v-win" x="515.3" y="389.9" width="4.84" height="14.1"/>
+<rect class="v-win" x="520.9" y="388.6" width="4.84" height="15.4"/>
+<rect class="v-win" x="526.6" y="390.9" width="4.84" height="13.1"/>
+<rect class="v-win" x="532.2" y="391.1" width="4.84" height="12.9"/>
+<rect class="v-win" x="537.9" y="389.9" width="4.84" height="14.1"/>
+<rect class="v-win" x="543.5" y="392.6" width="4.84" height="11.4"/>
+<rect class="v-win" x="549.1" y="391.3" width="4.84" height="12.7"/>
+<rect class="v-win" x="554.8" y="393.6" width="4.84" height="10.4"/>
+<rect class="v-win" x="560.4" y="391.0" width="4.84" height="13.0"/>
+<rect class="v-win" x="566.0" y="391.1" width="4.84" height="12.9"/>
+<rect class="v-win" x="571.7" y="393.4" width="4.84" height="10.6"/>
+<rect class="v-win" x="577.3" y="393.4" width="4.84" height="10.6"/>
+<rect class="v-win" x="582.9" y="394.2" width="4.84" height="9.8"/>
+<rect class="v-win" x="588.6" y="394.2" width="4.84" height="9.8"/>
+<rect class="v-win" x="594.2" y="394.1" width="4.84" height="9.9"/>
+<rect class="v-win" x="599.9" y="393.6" width="4.84" height="10.4"/>
+<rect class="v-win" x="605.5" y="396.8" width="4.84" height="7.2"/>
+<rect class="v-win" x="611.1" y="395.4" width="4.84" height="8.6"/>
+<rect class="v-win" x="616.8" y="394.1" width="4.84" height="9.9"/>
+<rect class="v-win" x="622.4" y="395.6" width="4.84" height="8.4"/>
+<rect class="v-win" x="628.0" y="394.1" width="4.84" height="9.9"/>
+<rect class="v-win" x="633.7" y="394.1" width="4.84" height="9.9"/>
+<rect class="v-win" x="639.3" y="397.6" width="4.84" height="6.4"/>
+<rect class="v-win" x="644.9" y="395.7" width="4.84" height="8.3"/>
+<rect class="v-win" x="650.6" y="398.1" width="4.84" height="5.9"/>
+<rect class="v-win" x="656.2" y="395.9" width="4.84" height="8.1"/>
+<rect class="v-win" x="661.9" y="395.3" width="4.84" height="8.7"/>
+<rect class="v-win" x="667.5" y="396.6" width="4.84" height="7.4"/>
+<rect class="v-win" x="673.1" y="396.7" width="4.84" height="7.3"/>
+<rect class="v-win" x="678.8" y="396.2" width="4.84" height="7.8"/>
+<text class="ann" x="684" y="268" text-anchor="end">plus 16,032 below −30% and 8,962 above 80%</text>
+<line class="axis" x1="64" y1="404" x2="684" y2="404"/>
+<line class="axis" x1="64.0" y1="404" x2="64.0" y2="408"/>
+<text class="tick" x="64.0" y="422" text-anchor="middle">−30%</text>
+<line class="axis" x1="120.4" y1="404" x2="120.4" y2="408"/>
+<text class="tick" x="120.4" y="422" text-anchor="middle">−20%</text>
+<line class="axis" x1="176.7" y1="404" x2="176.7" y2="408"/>
+<text class="tick" x="176.7" y="422" text-anchor="middle">−10%</text>
+<line class="axis" x1="233.1" y1="404" x2="233.1" y2="408"/>
+<text class="tick" x="233.1" y="422" text-anchor="middle">0%</text>
+<line class="axis" x1="289.5" y1="404" x2="289.5" y2="408"/>
+<text class="tick" x="289.5" y="422" text-anchor="middle">10%</text>
+<line class="axis" x1="345.8" y1="404" x2="345.8" y2="408"/>
+<text class="tick" x="345.8" y="422" text-anchor="middle">20%</text>
+<line class="axis" x1="402.2" y1="404" x2="402.2" y2="408"/>
+<text class="tick" x="402.2" y="422" text-anchor="middle">30%</text>
+<line class="axis" x1="458.5" y1="404" x2="458.5" y2="408"/>
+<text class="tick" x="458.5" y="422" text-anchor="middle">40%</text>
+<line class="axis" x1="514.9" y1="404" x2="514.9" y2="408"/>
+<text class="tick" x="514.9" y="422" text-anchor="middle">50%</text>
+<line class="axis" x1="571.3" y1="404" x2="571.3" y2="408"/>
+<text class="tick" x="571.3" y="422" text-anchor="middle">60%</text>
+<line class="axis" x1="627.6" y1="404" x2="627.6" y2="408"/>
+<text class="tick" x="627.6" y="422" text-anchor="middle">70%</text>
+<line class="axis" x1="684.0" y1="404" x2="684.0" y2="408"/>
+<text class="tick" x="684.0" y="422" text-anchor="middle">80%</text>
+<text class="label" x="374" y="442" text-anchor="middle">Return reported with VAT left out of the cost, the same scale in both panels</text>
+<line class="grid" x1="0" y1="466" x2="700" y2="466"/>
+<text class="v-kn" x="0" y="496">36,436</text>
+<text class="v-ks" x="0" y="514">look profitable with</text>
+<text class="v-ks" x="0" y="529">VAT left out</text>
+<text class="v-kb" x="176" y="496">14,585</text>
+<text class="v-ks" x="176" y="514">of them lose money,</text>
+<text class="v-ks" x="176" y="529">two in every five</text>
+<text class="v-kb" x="352" y="496">2,124</text>
+<text class="v-ks" x="352" y="514">losing lines would pass</text>
+<text class="v-ks" x="352" y="529">a 15% floor</text>
+<text class="v-kt" x="528" y="496">21,851</text>
+<text class="v-ks" x="528" y="514">are profitable once</text>
+<text class="v-ks" x="528" y="529">VAT is counted</text>
+</svg>
+<div class="legend"><span style="--sw:var(--ink-3)">a loss either way</span><span style="--sw:var(--bad)">looks profitable, is a loss</span><span style="--sw:var(--s1)">profitable either way</span></div>
+<figcaption><b>Figure 4.</b> What forgetting nineteen percent does to a return. Panel A converts any return reported without VAT into the true one, which equals the reported return minus 19 points, divided by 1.19. Panel B applies it to the wholesale catalogue, 85,035 barcodes that Amazon prices and ranks, each at its cheapest offer and under the ranking's own fee estimate. Every bar in the red band looked profitable and was not. Read on 13 October 2026.</figcaption>
+</figure>
+
+<h3>A price is a ladder, not a number</h3>
+<p>Wholesale suppliers quote a schedule rather than a price. A larger commitment buys a lower unit price, in steps, and the quantity-discount literature explains why a supplier offers such a schedule and how buyers should read it [7, 8]. The agent reads the whole ladder but prices every decision at the bottom rung, the smallest commitment and therefore the highest unit price, which is the rung a small buyer actually stands on. Figure 5 shows one real ladder. It is shallow, and that shape turned out to be typical.</p>
+
+<figure>
+<svg viewBox="0 0 700 406" role="img" aria-label="One supplier's price ladder for one product. At 500 euros minimum order the unit price is 9.14 euros, about 55 units. At 1,500 euros it is 8.97, at 5,000 euros 8.88, at 10,000 euros 8.71, and at 15,000 euros 8.62, 5.7 percent lower, which takes 1,741 units of the product and saves 905 euros on the order." class="chart ladder">
+<rect class="ld-here" x="176" y="22" width="104" height="384" rx="4"/>
+<text class="ld-heret" x="228.0" y="38" text-anchor="middle">a small buyer stands here</text>
+<text class="ld-panel" x="0" y="14">UNIT PRICE AT EACH RUNG</text>
+<line class="grid" x1="176" y1="164.7" x2="696" y2="164.7"/>
+<text class="tick" x="168" y="168.7" text-anchor="end">€8.60</text>
+<line class="grid" x1="176" y1="130.0" x2="696" y2="130.0"/>
+<text class="tick" x="168" y="134.0" text-anchor="end">€8.80</text>
+<line class="grid" x1="176" y1="95.3" x2="696" y2="95.3"/>
+<text class="tick" x="168" y="99.3" text-anchor="end">€9.00</text>
+<line class="grid" x1="176" y1="60.7" x2="696" y2="60.7"/>
+<text class="tick" x="168" y="64.7" text-anchor="end">€9.20</text>
+<path class="ld-line" d="M186,71.1 L270,71.1 L290,100.5 L290,100.5 L374,100.5 L394,116.1 L394,116.1 L478,116.1 L498,145.6 L498,145.6 L582,145.6 L602,161.2 L602,161.2 L686,161.2"/>
+<circle class="dot" cx="228.0" cy="71.1" r="4.5"/>
+<text class="ld-price" x="228.0" y="59.1" text-anchor="middle">€9.14</text>
+<circle class="dot" cx="332.0" cy="100.5" r="4.5"/>
+<text class="ld-price" x="332.0" y="88.5" text-anchor="middle">€8.97</text>
+<text class="ld-pct" x="332.0" y="122.5" text-anchor="middle">−1.9%</text>
+<circle class="dot" cx="436.0" cy="116.1" r="4.5"/>
+<text class="ld-price" x="436.0" y="104.1" text-anchor="middle">€8.88</text>
+<text class="ld-pct" x="436.0" y="138.1" text-anchor="middle">−2.8%</text>
+<circle class="dot" cx="540.0" cy="145.6" r="4.5"/>
+<text class="ld-price" x="540.0" y="133.6" text-anchor="middle">€8.71</text>
+<text class="ld-pct" x="540.0" y="167.6" text-anchor="middle">−4.7%</text>
+<circle class="dot" cx="644.0" cy="161.2" r="4.5"/>
+<text class="ld-price" x="644.0" y="149.2" text-anchor="middle">€8.62</text>
+<text class="ld-pct" x="644.0" y="183.2" text-anchor="middle">−5.7%</text>
+<text class="ld-panel" x="0" y="226">WHAT EACH RUNG ASKS FOR</text>
+<line class="ld-rule" x1="0" y1="236" x2="696" y2="236"/>
+<text class="ld-rl" x="0" y="255">Minimum order</text>
+<line class="ld-rule" x1="0" y1="278" x2="696" y2="278"/>
+<text class="ld-rl" x="0" y="297">Units of this one product</text>
+<line class="ld-rule" x1="0" y1="308" x2="696" y2="308"/>
+<text class="ld-rl" x="0" y="327">Saving per unit</text>
+<line class="ld-rule" x1="0" y1="338" x2="696" y2="338"/>
+<text class="ld-rl" x="0" y="357">Saving on the whole order</text>
+<line class="ld-rule" x1="0" y1="368" x2="696" y2="368"/>
+<text class="ld-rl" x="0" y="387">Days of stock at five sales a day</text>
+<text class="ld-rs" x="0" y="270">bar to scale, €15,000 is full</text>
+<text class="ld-v" x="228.0" y="255" text-anchor="middle">€500</text>
+<rect class="ld-track" x="188" y="263" width="80" height="6" rx="3"/>
+<rect class="ld-bar" x="188" y="263" width="3.0" height="6" rx="3"/>
+<text class="ld-v" x="228.0" y="297" text-anchor="middle">55</text>
+<text class="ld-vm" x="228.0" y="327" text-anchor="middle">none</text>
+<text class="ld-vm" x="228.0" y="357" text-anchor="middle">none</text>
+<text class="ld-v" x="228.0" y="387" text-anchor="middle">11</text>
+<text class="ld-v" x="332.0" y="255" text-anchor="middle">€1,500</text>
+<rect class="ld-track" x="292" y="263" width="80" height="6" rx="3"/>
+<rect class="ld-bar" x="292" y="263" width="8.0" height="6" rx="3"/>
+<text class="ld-v" x="332.0" y="297" text-anchor="middle">168</text>
+<text class="ld-v" x="332.0" y="327" text-anchor="middle">€0.17</text>
+<text class="ld-vs" x="332.0" y="357" text-anchor="middle">€29</text>
+<text class="ld-v" x="332.0" y="387" text-anchor="middle">34</text>
+<text class="ld-v" x="436.0" y="255" text-anchor="middle">€5,000</text>
+<rect class="ld-track" x="396" y="263" width="80" height="6" rx="3"/>
+<rect class="ld-bar" x="396" y="263" width="26.7" height="6" rx="3"/>
+<text class="ld-v" x="436.0" y="297" text-anchor="middle">564</text>
+<text class="ld-v" x="436.0" y="327" text-anchor="middle">€0.26</text>
+<text class="ld-vs" x="436.0" y="357" text-anchor="middle">€147</text>
+<text class="ld-v" x="436.0" y="387" text-anchor="middle">113</text>
+<text class="ld-v" x="540.0" y="255" text-anchor="middle">€10,000</text>
+<rect class="ld-track" x="500" y="263" width="80" height="6" rx="3"/>
+<rect class="ld-bar" x="500" y="263" width="53.3" height="6" rx="3"/>
+<text class="ld-v" x="540.0" y="297" text-anchor="middle">1,149</text>
+<text class="ld-v" x="540.0" y="327" text-anchor="middle">€0.43</text>
+<text class="ld-vs" x="540.0" y="357" text-anchor="middle">€494</text>
+<text class="ld-v" x="540.0" y="387" text-anchor="middle">230</text>
+<text class="ld-v" x="644.0" y="255" text-anchor="middle">€15,000</text>
+<rect class="ld-track" x="604" y="263" width="80" height="6" rx="3"/>
+<rect class="ld-bar" x="604" y="263" width="80.0" height="6" rx="3"/>
+<text class="ld-v" x="644.0" y="297" text-anchor="middle">1,741</text>
+<text class="ld-v" x="644.0" y="327" text-anchor="middle">€0.52</text>
+<text class="ld-vs" x="644.0" y="357" text-anchor="middle">€905</text>
+<text class="ld-v" x="644.0" y="387" text-anchor="middle">348</text>
+<line class="ld-rule" x1="0" y1="398" x2="696" y2="398"/>
+</svg>
+<figcaption><b>Figure 5.</b> One supplier's price ladder for one product, as quoted on 22 August 2026. Each column is a rung, and the rows under it show what the rung asks for. Committing thirty times as much money buys a unit price 5.7 percent lower, and reaching it means taking 1,741 units of a single product. For a business of this size the first rung is the only honest assumption, and the ladder's shallowness means little is lost by it. The last row assumes five sales a day, for illustration.</figcaption>
+</figure>
+
+<details class="hood"><summary>Under the hood. Two clocks, again</summary>
+<p>The wholesale side repeats the central design of the retail agent. Whether a barcode exists on Amazon, whether it is locked and how fast it sells change slowly, so they are screened once, stored against the barcode and shared by every supplier that offers it. Price, stock and minimum order change by the hour, so they are never trusted from storage for a buying decision. Each pass reads them live, immediately before an order is proposed, and refuses any quote older than an hour.</p>
+<p>The two clocks also keep the cost bounded. Screening a catalogue of a hundred and fifty thousand barcodes takes days of rate-limited calls at about two seconds each, so it runs in budgeted passes of a few hundred, remembers everything, and re-ranks the whole catalogue at the end of every pass. The ranking is useful on the first day and sharpens as screening proceeds. There is no finished state, because new catalogues arrive and old measurements go stale.</p>
+<p>The demand measurement for a wholesale catalogue runs as its own always-on service, because it is large and patient and would otherwise take every token from the retail measurement that feeds the daily buy list. It paces itself to about fifteen tokens a minute out of a refill of twenty, so that a catalogue finishes two days later and nothing else waits.</p>
+</details>
+
+<h2 id="s5"><span class="num">V</span>Which door first</h2>
+<p class="q">Of four thousand closed doors, which one is worth a key?</p>
+<p>For each brand in a screened catalogue the agent computes four numbers and reports them side by side. It does not fold them into one score, because the right weights depend on how much capital is free in a given month, and that judgement belongs to the owner. Multi-attribute decision theory makes the same point formally [9]. Weights encode preferences, and a constant in a file is not a preference.</p>
+
+<div class="tablewrap"><table>
+<thead><tr><th>Number</th><th>What it measures</th><th>Why it cannot stand alone</th></tr></thead>
+<tbody>
+<tr><td>Locked profit</td><td>Profit per unit, summed over the brand's believable profitable lines</td><td>One extreme line can carry the whole sum</td></tr>
+<tr><td>Profitable lines</td><td>How many distinct products earn</td><td>A brand with fifteen keeps paying when one dies</td></tr>
+<tr><td>Measured demand</td><td>Units sold per day across the brand's measured lines</td><td>Profit that takes a year to realise is not profit</td></tr>
+<tr><td>The opening order</td><td>The cheapest order from one supplier that would open the gate, and whether it is itself worth owning</td><td>A great brand can still be out of reach this month</td></tr>
+</tbody>
+<caption>Table 2. How a brand is judged. A count of locked products, the original ranking, is not among the four, because a count says nothing about value.</caption>
+</table></div>
+
+<h3>The believability gate</h3>
+<p>Any ranking by profit is vulnerable to the optimizer's curse described in Part 1, where the top of the list fills with estimates that were wrong in the favourable direction [10]. The wholesale catalogue made this vivid. The first ranking put a graphics card maker at the top with a payback of forty-one times, on a line offering that maker's flagship card, a product costing around two thousand euros, for seventy. The price was the supplier's own entry, not a parsing fault, and the other half of a pair can be broken just as easily, as with a mid-range phone at a sane wholesale price matched to an Amazon price of almost three thousand euros.</p>
+<p>The agent therefore applies a believability test to the two observed prices, before any fee or tax model touches them, since a margin model would only disguise how wrong a broken pair is. The test has two rules, both calibrated on the catalogue itself. Above an Amazon price of one hundred euros, a ratio of more than five between the Amazon and wholesale prices is refused. Below that price, large ratios are normal, since a cheap cable selling at ten times its wholesale price is the whole accessory trade and Amazon's fixed fees alone force such multiples. The second rule refuses a ratio above twenty at any price, which catches the case where a supplier prices one piece and Amazon lists the pack of a hundred. Lines whose Amazon side has never been ranked are kept apart as unproven, because a listed product nobody buys is not profit. Nothing refused is hidden. Every brand reports how many lines were set aside and how much profit they claimed.</p>
+
+<div class="logbook"><span class="tag">From the logbook</span>
+<p>The calibration came from looking at the refused lines one by one. A flat ratio of five refused 2,403 lines on the first electronics catalogue, and inspection showed two unrelated populations, broken pairs such as a memory kit at three euros against five hundred and forty, and perfectly real patch cables at a euro or two selling for ten times that. Restricting the ratio to products above one hundred euros cut the refusals to 164 and still caught every broken pair. The second rule was added when a connector sold by the piece at two cents was matched to an Amazon listing of a hundred pieces, a line that would have looked like the best deal in the catalogue and delivered no sellable units at all.</p>
+</div>
+
+<h3>The same question from the shop side</h3>
+<p>The catalogue ranking starts from a distributor. A sibling planner answers the same question from the products the retail agent of Part 1 already found and could not sell. Those products were never priced, because the retail screener stops at a lock, so the planner prices them on purpose, through a fixed share of the agent's Amazon budget, about a fifth, that the screening lane cannot take away. The budget is spread across the candidate brands in turn rather than spent brand by brand, after an early run used 319 of 320 calls on the first brand in alphabetical order and compared it against seven brands with no data at all. Within a brand, the dearest shelf prices are priced first, since an expensive item can carry a margin a cheap one cannot, and if the budget runs out it should run out on the least promising rows.</p>
+<p>Every locked product is then priced through exactly the same profit calculation as an open one, VAT regime, fees, preparation and freight included, so that the profit behind a door is directly comparable to the deals already on the buy list. The output is a working document, one entry per lock, listing the three most profitable products behind it with their barcodes, shelf and Amazon prices, returns and the companies that might write the invoice. Because a brand approval covers every product of the brand, the ten units on the invoice need not be the product that was blocked. The cheapest product that is also profitable is usually the right one to buy, since it puts the least capital at risk on an application that might be refused.</p>
+
+<h3>What the ranking found</h3>
+<p>Figure 6 splits the catalogue into the brands this account may already sell and the brands locked for it, and runs both through the same filters. The striking number is in the last row. Summing one unit of each believable profitable line, the locked brands hold about €235,000 of estimated profit across 19,402 lines, and the open brands about €11,000 across 907 lines.</p>
+
+<figure>
+<svg viewBox="0 0 700 396" role="img" aria-label="The wholesale catalogue split into brands already open and brands locked for this account, with the ranking filters applied in turn. Screened and decided, 1,907 open and 4,793 locked. With a believable profitable line, 342 and 2,196. Five or more such lines, 32 and 711. Selling 0.2 a day at the median, 8 and 191. Believable profitable lines, 907 and 19,402. Estimated profit at one unit per line, 11,130 euros and 235,090 euros, about twenty-one times as much behind the locks." class="chart butterfly">
+<rect class="bf-qcol" x="612" y="0" width="88" height="368" rx="4"/>
+<text class="bf-h" x="142" y="16" text-anchor="end">ALREADY OPEN</text>
+<text class="bf-h bf-hl" x="370" y="16">LOCKED FOR THIS ACCOUNT</text>
+<text class="bf-h" x="696" y="16" text-anchor="end">LOCKED PER OPEN</text>
+<line class="bf-rule" x1="0" y1="34" x2="700" y2="34"/>
+<text class="bf-sec" x="256.0" y="50" text-anchor="middle">BRANDS, ON ONE SCALE</text>
+<text class="bf-t" x="256.0" y="75" text-anchor="middle">Screened and decided</text>
+<text class="bf-s" x="256.0" y="90" text-anchor="middle">Amazon has answered for the brand</text>
+<rect class="bf-open" x="52.1" y="65" width="89.9" height="22" rx="2"/>
+<text class="bf-v" x="46.1" y="80" text-anchor="end">1,907</text>
+<rect class="bf-lock" x="370" y="65" width="226.0" height="22" rx="2"/>
+<text class="bf-vin" x="590.0" y="80" text-anchor="end">4,793</text>
+<text class="bf-q" x="696" y="81" text-anchor="end">2.5×</text>
+<text class="bf-t" x="256.0" y="121" text-anchor="middle">A believable profitable line</text>
+<text class="bf-s" x="256.0" y="136" text-anchor="middle">at least one, after fees and VAT</text>
+<rect class="bf-open" x="125.9" y="111" width="16.1" height="22" rx="2"/>
+<text class="bf-v" x="119.9" y="126" text-anchor="end">342</text>
+<rect class="bf-lock" x="370" y="111" width="103.5" height="22" rx="2"/>
+<text class="bf-vin" x="467.5" y="126" text-anchor="end">2,196</text>
+<text class="bf-q" x="696" y="127" text-anchor="end">6.4×</text>
+<text class="bf-t" x="256.0" y="167" text-anchor="middle">Five or more such lines</text>
+<text class="bf-s" x="256.0" y="182" text-anchor="middle">enough for a qualifying order</text>
+<rect class="bf-open" x="140.0" y="157" width="2.0" height="22" rx="2"/>
+<text class="bf-v" x="134.0" y="172" text-anchor="end">32</text>
+<rect class="bf-lock" x="370" y="157" width="33.5" height="22" rx="2"/>
+<text class="bf-v" x="409.5" y="172">711</text>
+<text class="bf-q" x="696" y="173" text-anchor="end">22×</text>
+<text class="bf-t" x="256.0" y="213" text-anchor="middle">And selling 0.2 a day</text>
+<text class="bf-s" x="256.0" y="228" text-anchor="middle">median of the measured lines</text>
+<rect class="bf-open" x="140.0" y="203" width="2.0" height="22" rx="2"/>
+<text class="bf-v" x="134.0" y="218" text-anchor="end">8</text>
+<rect class="bf-lock" x="370" y="203" width="9.0" height="22" rx="2"/>
+<text class="bf-v" x="385.0" y="218">191</text>
+<text class="bf-q" x="696" y="219" text-anchor="end">24×</text>
+<line class="bf-rule" x1="0" y1="250" x2="700" y2="250"/>
+<text class="bf-sec" x="256.0" y="266" text-anchor="middle">WHAT THOSE BRANDS HOLD, EACH ROW ON ITS OWN SCALE</text>
+<text class="bf-t" x="256.0" y="291" text-anchor="middle">Believable profitable lines</text>
+<text class="bf-s" x="256.0" y="306" text-anchor="middle">summed over those brands</text>
+<rect class="bf-open" x="131.4" y="281" width="10.6" height="22" rx="2"/>
+<text class="bf-v" x="125.4" y="296" text-anchor="end">907</text>
+<rect class="bf-lock" x="370" y="281" width="226.0" height="22" rx="2"/>
+<text class="bf-vin" x="590.0" y="296" text-anchor="end">19,402</text>
+<text class="bf-q" x="696" y="297" text-anchor="end">21×</text>
+<text class="bf-t" x="256.0" y="337" text-anchor="middle">Estimated profit</text>
+<text class="bf-s" x="256.0" y="352" text-anchor="middle">one unit of each line</text>
+<rect class="bf-open" x="131.3" y="327" width="10.7" height="22" rx="2"/>
+<text class="bf-v" x="125.3" y="342" text-anchor="end">€11,130</text>
+<rect class="bf-lock" x="370" y="327" width="226.0" height="22" rx="2"/>
+<text class="bf-vin" x="590.0" y="342" text-anchor="end">€235,090</text>
+<text class="bf-q" x="696" y="343" text-anchor="end">21×</text>
+<line class="bf-rule" x1="0" y1="368" x2="700" y2="368"/>
+<text class="bf-note" x="0" y="388">8,214 brands in the catalogue. The 1,514 that no screening pass has reached yet are left out.</text>
+</svg>
+<figcaption><b>Figure 6.</b> Where the money is. Each row applies one more of the ranking's filters to both halves of the catalogue, and the right-hand column divides one side by the other. The stricter the filter, the more lopsided the split, from two and a half locked brands for every open one to twenty-four. The profit row is not a forecast, since no one would buy one of everything, but the ratio shows why the strategy exists. Ranking of 13 October 2026.</figcaption>
+</figure>
+
+<p>The ratio deserves a sober reading. It says that the market for openly sellable electronics is crowded, which is what the economics of Part 1 predicted, and that the margin sits where entry is restricted. That is the textbook purpose of a barrier to entry. It also says that for a reseller, permission is the scarcest input, scarcer than capital or goods, and that a sourcing system which ignores it optimises the wrong constraint.</p>
+
+<h2 id="s6"><span class="num">VI</span>The order that opens it</h2>
+<p class="q">How do you buy your way through a gate without wasting the money?</p>
+<p>Two constraints meet in an opening order and neither can be negotiated. Amazon wants an invoice showing roughly ten units of the brand. The supplier wants an order above its minimum value, and the minimum belongs to one supplier, so lines from two suppliers do not add up. Within those, the agent looks for an order that is worth owning, not one that merely qualifies. An invoice bought only as a cost of admission is money spent on paperwork, while the same money spent on the brand's profitable lines is stock that happens to open a door as well.</p>
+<p>The retail buy list of Part 1 has the same shape in a milder form. There, missing a free-delivery threshold costs a few euros. Here, missing a minimum means there is no order at all. So a profitable wholesale line is not a recommendation on its own. What can be recommended is a basket, one anchor line that justifies talking to this supplier and as many filler lines from the same supplier as it takes to clear the minimum. Fillers must still earn their place, at a true return of at least fifteen percent after the VAT correction of Chapter IV, because a filler at four percent drags the whole order towards the margin of its worst line. When the minimum cannot be reached with lines that earn, the agent says so and proposes nothing, rather than padding the order with stock that loses money.</p>
+
+<figure>
+<svg viewBox="0 0 700 406" role="img" aria-label="An illustrative opening order built line by line. The anchor, 10 units at 18 euros with a 50 percent return, comes first. Line F is skipped because it is from another supplier, line G because only 3 are in stock. Lines B, C and D are added in order of return, taking the order to 330, 450 and 530 euros, which clears the 500 euro minimum within the 625 euro overshoot limit. Line E at 9 percent is under the 15 percent floor. The order is 530 euros, 42 units, about 181 euros of estimated profit, a 34 percent true return." class="chart basket">
+<rect class="bk-over" x="443.7" y="52" width="66.9" height="272"/>
+<text class="bk-col" x="0" y="16">LINES FROM ONE SUPPLIER</text>
+<text class="bk-col" x="0" y="30">BEST TRUE RETURN FIRST</text>
+<text class="bk-col" x="176" y="16">ORDER VALUE AS EACH LINE IS ADDED</text>
+<text class="bk-col" x="552" y="16">RUNNING TOTAL</text>
+<line class="bk-minl" x1="443.7" y1="50" x2="443.7" y2="324"/>
+<line class="bk-capl" x1="510.6" y1="50" x2="510.6" y2="324"/>
+<text class="bk-min" x="437.7" y="44" text-anchor="end">supplier minimum €500</text>
+<text class="bk-ot" x="477.2" y="30" text-anchor="middle">up to a quarter over</text>
+<line class="bk-row" x1="0" y1="96.0" x2="700" y2="96.0"/>
+<text class="bk-name" x="0" y="75.0">Anchor</text>
+<text class="bk-sub" x="0" y="90.0">10 × €18, 50% return</text>
+<rect class="bk-anchor" x="176.0" y="67.0" width="96.4" height="20" rx="2"/>
+<text class="bk-in" x="224.2" y="81.0" text-anchor="middle">€180</text>
+<text class="bk-tot" x="552" y="81.0">€180</text>
+<line class="bk-row" x1="0" y1="134.0" x2="700" y2="134.0"/>
+<text class="bk-name bk-dim" x="0" y="113.0">Line F</text>
+<text class="bk-sub bk-dim" x="0" y="128.0">10 × €12, 40% return</text>
+<rect class="bk-ghost" x="272.4" y="105.0" width="64.2" height="20" rx="2"/>
+<text class="bk-why" x="552" y="119.0">skipped, another supplier</text>
+<line class="bk-row" x1="0" y1="172.0" x2="700" y2="172.0"/>
+<text class="bk-name bk-dim" x="0" y="151.0">Line G</text>
+<text class="bk-sub bk-dim" x="0" y="166.0">3 × €20, 35% return</text>
+<rect class="bk-ghost" x="272.4" y="143.0" width="32.1" height="20" rx="2"/>
+<text class="bk-why" x="552" y="157.0">skipped, 3 in stock</text>
+<line class="bk-row" x1="0" y1="210.0" x2="700" y2="210.0"/>
+<text class="bk-name" x="0" y="189.0">Line B</text>
+<text class="bk-sub" x="0" y="204.0">10 × €15, 32% return</text>
+<line class="bk-step" x1="272.4" y1="163.0" x2="272.4" y2="181.0"/>
+<rect class="bk-fill" x="272.4" y="181.0" width="80.3" height="20" rx="2"/>
+<text class="bk-in" x="312.5" y="195.0" text-anchor="middle">€150</text>
+<text class="bk-tot" x="552" y="195.0">€330</text>
+<line class="bk-row" x1="0" y1="248.0" x2="700" y2="248.0"/>
+<text class="bk-name" x="0" y="227.0">Line C</text>
+<text class="bk-sub" x="0" y="242.0">12 × €10, 24% return</text>
+<line class="bk-step" x1="352.7" y1="201.0" x2="352.7" y2="219.0"/>
+<rect class="bk-fill" x="352.7" y="219.0" width="64.2" height="20" rx="2"/>
+<text class="bk-in" x="384.8" y="233.0" text-anchor="middle">€120</text>
+<text class="bk-tot" x="552" y="233.0">€450</text>
+<line class="bk-row" x1="0" y1="286.0" x2="700" y2="286.0"/>
+<text class="bk-name" x="0" y="265.0">Line D</text>
+<text class="bk-sub" x="0" y="280.0">10 × €8, 18% return</text>
+<line class="bk-step" x1="416.9" y1="239.0" x2="416.9" y2="257.0"/>
+<rect class="bk-fill" x="416.9" y="257.0" width="42.8" height="20" rx="2"/>
+<text class="bk-in" x="438.3" y="271.0" text-anchor="middle">€80</text>
+<text class="bk-tot" x="552" y="271.0">€530</text>
+<text class="bk-done" x="592" y="271.0">cleared, stop</text>
+<line class="bk-row" x1="0" y1="324.0" x2="700" y2="324.0"/>
+<text class="bk-name bk-dim" x="0" y="303.0">Line E</text>
+<text class="bk-sub bk-dim" x="0" y="318.0">10 × €6, 9% return</text>
+<rect class="bk-ghost" x="459.8" y="295.0" width="32.1" height="20" rx="2"/>
+<text class="bk-why" x="552" y="309.0">skipped, under 15%</text>
+<text class="tick" x="176.0" y="340" text-anchor="middle">€0</text>
+<text class="tick" x="229.5" y="340" text-anchor="middle">€100</text>
+<text class="tick" x="283.1" y="340" text-anchor="middle">€200</text>
+<text class="tick" x="336.6" y="340" text-anchor="middle">€300</text>
+<text class="tick" x="390.2" y="340" text-anchor="middle">€400</text>
+<text class="tick" x="443.7" y="340" text-anchor="middle">€500</text>
+<text class="tick" x="497.2" y="340" text-anchor="middle">€600</text>
+<rect class="bk-sum" x="0" y="360" width="700" height="44" rx="4"/>
+<text class="bk-st" x="14" y="379">The order</text>
+<text class="bk-ss" x="14" y="395">four lines, one supplier</text>
+<text class="bk-fv" x="176" y="380">€530</text>
+<text class="bk-ss" x="176" y="395">order value</text>
+<text class="bk-fv" x="308" y="380">42</text>
+<text class="bk-ss" x="308" y="395">units, none under ten</text>
+<text class="bk-fv" x="440" y="380">€181</text>
+<text class="bk-ss" x="440" y="395">estimated profit</text>
+<text class="bk-fv" x="572" y="380">34%</text>
+<text class="bk-ss" x="572" y="395">true return on the order</text>
+</svg>
+<figcaption><b>Figure 7.</b> How the agent fills one opening order, with illustrative numbers. It starts from the anchor, the line that would have been a deal on its own, and adds the supplier's other lines in order of true return. Each new bar starts where the last one ended. A line from another supplier, a line with fewer than ten units and a line under fifteen percent are passed over. The order stops at the first line that clears the minimum, and may overshoot it by at most a quarter, the shaded band.</figcaption>
+</figure>
+
+<p>Readers from operations research will recognise a covering version of the knapsack problem [11], choosing items to exceed a capacity rather than to stay under it, with a profit to maximise along the way. With a handful of lines per supplier, the agent uses the greedy rule that Dantzig proposed for the fractional knapsack in 1957 [12], taking lines in order of profit per euro, and adds three practical refinements that the theory does not need but the warehouse does.</p>
+
+<details class="hood"><summary>Under the hood. Three refinements to a greedy basket</summary>
+<p>Two builders apply these ideas, one for orders meant to open a gate and one for the live wholesale buy list. The refinements below come from both.</p>
+<p><b>Ten units is a floor, not a preference.</b> Preparing a product for an Amazon warehouse costs mostly per product rather than per unit, since each line needs its own labels, its own entry on the shipping plan and its own handling. A three-unit line carries the overhead of a thirty-unit line spread over a tenth of the goods. Every wholesale line is therefore at least ten units, and demand decides where between ten and thirty it lands.</p>
+<p><b>Overshoot is bounded.</b> An order may exceed the minimum by at most a quarter, so that clearing a five-hundred-euro threshold never turns into a two-thousand-euro commitment.</p>
+<p><b>The fill escalates when the first pass fails.</b> On the first real catalogue most brands produced no basket at all, because their profitable lines were so cheap that even the per-line caps could not reach the minimum. One cable brand earned around twenty-two euros on lines costing under three, and a cap of twelve units on eight lines reached only about two hundred and seventy euros. A cap meant to prevent overcommitment had quietly become a rule against buying the best stock. The basket builder now tries cheapest lines first, then dearest, and lifts the per-line cap to the supplier's stock only as a last resort, because that is the step that changes what actually arrives on the pallet.</p>
+</details>
+
+<h2 id="s7"><span class="num">VII</span>Where it stands</h2>
+<p class="q">What has the machinery produced, and what has it not?</p>
+<p>The strategic half works and is in daily use. The agent has screened 87 percent of the electronics catalogue, measured demand for most of what exists on Amazon, ranked every brand, and produced short lists of doors worth opening, with the products to put on each opening order and the evidence for each. The approvals list has sent more than two thousand stale refusals back to be asked again, and the record of locks has removed from consideration whole groups of brands that no invoice could ever open.</p>
+<p>The tactical half, the live wholesale buy list, has not yet produced an order. Its most recent pass took two hundred candidate barcodes from the retail watchlist, found that 189 of them were not offered by any supplier on the marketplace, that ten had no sellers, and that the one it could price had no ninety-day price history and was therefore dropped by the believability rules of Part 1. The live view in Biryar says exactly that, as Figure 8 shows. The pass's own log names the cause. The candidates are drawn from the wrong source, retail shops rather than the wholesale catalogue the strategic half has already screened, and the natural fix is to seed the live pass from the gate ranking.</p>
+
+<figure>
+  <div class="shot"><img src="fig/wholesale-live.png" alt="The wholesale section of the Deals page in Biryar, stating that no basket clears a supplier minimum"></div>
+  <figcaption><b>Figure 8.</b> The wholesale section of the Deals page on 2 October 2026. An empty result stated plainly is the intended behaviour. The alternative, a padded basket that clears the minimum with lines that lose money, is the failure the basket rules exist to prevent. The marketplace's name is blurred.</figcaption>
+</figure>
+
+<h3>Limits worth stating</h3>
+<p><b>Estimates, not quotes.</b> The gate ranking prices each line at a flat referral rate and a typical fulfilment fee, at catalogue prices that may be days old. It is a shortlist for a decision, and the exact fees and live prices are read only once a brand is worth a real look.</p>
+<p><b>Unproven lines in the opening order.</b> Lines that pass the believability test but have never been ranked on Amazon are kept out of the profit statistics and still allowed into opening orders, on the grounds that their margin is real and only their demand is unknown. That choice lets an occasional mispriced listing without sales history inflate an order's estimated profit, and it should be tightened.</p>
+<p><b>Approval is not certain.</b> The ranking assumes that an invoice of the right shape opens the door. Amazon decides each application on its own terms and may ask to contact the supplier. A refused application turns the opening order into ordinary stock, which is why the order must be worth owning in the first place.</p>
+<p><b>One catalogue.</b> Every number in Chapters IV to VI comes from one supplier marketplace and one category. Electronics are dominated by large brands with established distribution, and the shape of the ranking may look quite different for toys, drugstore goods or books.</p>
+
+<div class="coda">
+<p><b>Coda.</b> The first report of this series concluded that a sourcing system earns its keep by the errors it removes. This one adds a second lesson. In a regulated marketplace the scarcest input is permission, and the platform's own screening device, the costly invoice, can be read backwards as a guide to where margin survives. Biryar now searches in three directions at once, from shops towards Amazon, from approvals towards supply, and from distributors towards the locks they can open. The machinery to choose a door is in place. The next step is to let the live buy list draw on what the ranking already knows, so that the choice of a door and the order that opens it come from the same evidence.</p>
+</div>
+
+<h2 id="refs" style="margin-top:60px">Sources</h2>
+<ol class="refs">
+<li>Boudreau, K. J., and Hagiu, A. (2009). Platform rules. Multi-sided platforms as regulators. In A. Gawer (ed.), <i>Platforms, Markets and Innovation</i>, 163–191. Edward Elgar.</li>
+<li>Spence, M. (1973). Job market signaling. <i>Quarterly Journal of Economics</i>, 87(3), 355–374.</li>
+<li>Dixit, A. K., and Pindyck, R. S. (1994). <i>Investment under Uncertainty</i>. Princeton University Press.</li>
+<li>Brynjolfsson, E., Hu, Y. J., and Smith, M. D. (2003). Consumer surplus in the digital economy. Estimating the value of increased product variety at online booksellers. <i>Management Science</i>, 49(11), 1580–1596.</li>
+<li>Christen, P. (2012). <i>Data Matching. Concepts and Techniques for Record Linkage, Entity Resolution, and Duplicate Detection</i>. Springer.</li>
+<li>Council of the European Union (2006). Council Directive 2006/112/EC on the common system of value added tax, Articles 141 and 197. <i>Official Journal of the European Union</i>, L 347, 1–118.</li>
+<li>Monahan, J. P. (1984). A quantity discount pricing model to increase vendor profits. <i>Management Science</i>, 30(6), 720–726.</li>
+<li>Dolan, R. J. (1987). Quantity discounts. Managerial issues and research opportunities. <i>Marketing Science</i>, 6(1), 1–22.</li>
+<li>Keeney, R. L., and Raiffa, H. (1976). <i>Decisions with Multiple Objectives. Preferences and Value Tradeoffs</i>. Wiley.</li>
+<li>Smith, J. E., and Winkler, R. L. (2006). The optimizer's curse. Skepticism and postdecision surprise in decision analysis. <i>Management Science</i>, 52(3), 311–322.</li>
+<li>Kellerer, H., Pferschy, U., and Pisinger, D. (2004). <i>Knapsack Problems</i>. Springer.</li>
+<li>Dantzig, G. B. (1957). Discrete-variable extremum problems. <i>Operations Research</i>, 5(2), 266–288.</li>
+</ol>
+<p class="byline" style="margin-top:36px">Written from the live system's databases, configuration and design notes. Counts were read from the production server on 2 October 2026. Brand, supplier and retailer names are withheld. Biryar is a Ciya Labs project.</p>
+</div>
+<script>
+(function(){
+  var root=document.documentElement,key="biryar-report-theme",btn=document.getElementById("themetoggle");
+  var saved=null;
+  try{saved=localStorage.getItem(key)}catch(e){}
+  if(saved==="light"||saved==="dark"){root.setAttribute("data-theme",saved)}
+  function current(){
+    var set=root.getAttribute("data-theme");
+    if(set)return set;
+    return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  }
+  btn.addEventListener("click",function(){
+    var next=current()==="dark"?"light":"dark";
+    root.setAttribute("data-theme",next);
+    try{localStorage.setItem(key,next)}catch(e){}
+  });
+})();
+</script>
+<!-- inline citations: begin -->
+<style>
+a.cite{color:var(--accent);text-decoration:none;border-bottom:1px dotted currentColor;font-variant-numeric:tabular-nums}
+a.cite:hover,a.cite:focus-visible{border-bottom-style:solid}
+a.cite:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.cite-tip{position:absolute;z-index:40;max-width:min(460px,calc(100vw - 32px));padding:10px 14px;background:var(--bg-2);color:var(--ink);border:1px solid var(--rule);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:13.5px;line-height:1.45;pointer-events:none;opacity:0;transition:opacity .12s}
+.cite-tip.on{opacity:1}
+.cite-tip .n{color:var(--ink-2);font-weight:600;margin-right:6px}
+ol.refs li:target{background:var(--accent-soft);outline:6px solid var(--accent-soft)}
+@media print{.cite-tip{display:none}a.cite{color:inherit;border:0}}
+</style>
+<script>
+/* Inline citations. Each [n], [n, m] or [n–m] in the text links to reference n
+   in the list at the end and shows that reference on hover or keyboard focus.
+   Figures, the list itself and existing links are left alone, and without
+   JavaScript the text reads exactly as written. */
+(function () {
+  var list = document.querySelector("ol.refs");
+  if (!list) return;
+  var items = Array.prototype.slice.call(list.children);
+  items.forEach(function (li, i) { if (!li.id) li.id = "ref-" + (i + 1); });
+  var pattern = /\[(\d+(?:\s*[,–-]\s*\d+)*)\]/g;
+  function skipped(el) {
+    return !el || el.closest("svg, ol.refs, a, code, pre, script, style");
+  }
+  var nodes = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+  while (walker.nextNode()) {
+    var n = walker.currentNode;
+    pattern.lastIndex = 0;
+    if (pattern.test(n.nodeValue) && !skipped(n.parentElement)) nodes.push(n);
+  }
+  function link(num) {
+    var a = document.createElement("a");
+    a.className = "cite";
+    a.href = "#ref-" + num;
+    a.textContent = num;
+    a.setAttribute("data-ref", num);
+    return a;
+  }
+  nodes.forEach(function (node) {
+    var text = node.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
+    pattern.lastIndex = 0;
+    while ((m = pattern.exec(text))) {
+      var numbers = m[1].match(/\d+/g);
+      if (!numbers.every(function (x) { return +x >= 1 && +x <= items.length; })) continue;
+      frag.appendChild(document.createTextNode(text.slice(last, m.index) + "["));
+      var parts = m[1].split(/(\d+)/);
+      parts.forEach(function (p) {
+        if (/^\d+$/.test(p)) frag.appendChild(link(p));
+        else if (p) frag.appendChild(document.createTextNode(p));
+      });
+      frag.appendChild(document.createTextNode("]"));
+      last = m.index + m[0].length;
+    }
+    if (!last) return;
+    frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+
+  var tip = document.createElement("div");
+  tip.className = "cite-tip";
+  tip.setAttribute("role", "tooltip");
+  tip.id = "cite-tip";
+  document.body.appendChild(tip);
+  function show(a) {
+    var li = document.getElementById("ref-" + a.getAttribute("data-ref"));
+    if (!li) return;
+    tip.innerHTML = '<span class="n">[' + a.getAttribute("data-ref") + ']</span>' + li.innerHTML;
+    tip.classList.add("on");
+    a.setAttribute("aria-describedby", "cite-tip");
+    var r = a.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+    var top = r.top - h - 10;
+    if (top < 8) top = r.bottom + 10;
+    tip.style.left = (left + window.scrollX) + "px";
+    tip.style.top = (top + window.scrollY) + "px";
+  }
+  function hide(a) {
+    tip.classList.remove("on");
+    if (a) a.removeAttribute("aria-describedby");
+  }
+  document.addEventListener("mouseover", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) show(a);
+  });
+  document.addEventListener("mouseout", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) hide(a);
+  });
+  document.addEventListener("focusin", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) show(e.target);
+  });
+  document.addEventListener("focusout", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) hide(e.target);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", function () { hide(); }, { passive: true });
+})();
+</script>
+<!-- inline citations: end -->
+</body>
+</html>

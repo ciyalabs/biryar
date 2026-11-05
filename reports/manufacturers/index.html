@@ -1,0 +1,1235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biryar Upstream</title>
+<meta name="description" content="How Biryar moves up the supply chain, from shops to wholesalers to manufacturers. Two case files on direct suppliers, a census of German makers built from public registers, and the product-first view of what they sell.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f7f7f4; --bg-2:#eeeee9; --bg-3:#e4e4dd;
+  --ink:#1b1d26; --ink-2:#555869; --ink-3:#8b8d99; --rule:#d9d9d2;
+  --accent:#3f3aa8; --accent-soft:#e6e5f6;
+  --s1:#3f3aa8; --s2:#e0663a; --s3:#13957f; --s4:#c18b12; --s5:#9aa0b4;
+  --good:#1a7f4b; --bad:#b93a32;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#13141a; --bg-2:#1c1d25; --bg-3:#262833;
+    --ink:#e7e8ee; --ink-2:#b0b2c0; --ink-3:#7e8091; --rule:#2e3040;
+    --accent:#a6a3f2; --accent-soft:#25244a;
+    --s1:#8e8af0; --s2:#ef7f55; --s3:#2fbfa6; --s4:#dcaa3d; --s5:#5d6275;
+    --good:#4fc47f; --bad:#e2685f;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#13141a; --bg-2:#1c1d25; --bg-3:#262833;
+  --ink:#e7e8ee; --ink-2:#b0b2c0; --ink-3:#7e8091; --rule:#2e3040;
+  --accent:#a6a3f2; --accent-soft:#25244a;
+  --s1:#8e8af0; --s2:#ef7f55; --s3:#2fbfa6; --s4:#dcaa3d; --s5:#5d6275;
+  --good:#4fc47f; --bad:#e2685f;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,"Times New Roman",serif;font-size:18px;line-height:1.62;padding-block:0 96px;padding-inline:16px}
+.page{max-width:700px;margin:0 auto}
+h1,h2,h3,h4{font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;text-wrap:balance;line-height:1.2;color:var(--ink);font-weight:600}
+h1{font-size:clamp(34px,6vw,50px);margin:24px 0 8px;letter-spacing:-0.01em}
+h2{font-size:26px;margin:80px 0 18px}
+h2 .kicker{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-weight:600}
+h3{font-size:19px;margin:34px 0 10px}
+p{margin:0 0 18px}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+sup a{text-decoration:none;font-family:"IBM Plex Sans",sans-serif;font-size:12px;font-weight:600;padding:0 1px}
+.eyebrow{font-family:"IBM Plex Sans",sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-2)}
+.byline{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0 28px}
+.lede{font-size:21px;line-height:1.5;color:var(--ink-2);margin:0 0 20px;font-style:italic}
+.hero{margin:20px 0 8px;aspect-ratio:21/9;background:linear-gradient(135deg,var(--bg-3),var(--bg-2));display:grid;place-items:center;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;font-size:14px;overflow:hidden}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero.missing img{display:none}
+.hero.missing::after{content:"Header image to add. fig/header.jpg"}
+.hero-credit{font-family:"IBM Plex Sans",sans-serif;font-size:0.8rem;color:var(--ink-3);font-style:italic;text-align:right;margin-top:8px}
+.guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:30px 0}
+.guide a{display:block;text-decoration:none;color:var(--ink);background:var(--bg-2);border-top:3px solid var(--accent);padding:14px 16px 12px;font-family:"IBM Plex Sans",sans-serif;font-size:14px;line-height:1.45}
+.guide a:hover{background:var(--accent-soft)}
+.guide b{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.summary{font-size:17px;border-left:3px solid var(--accent);padding:4px 0 4px 20px;margin:26px 0;color:var(--ink)}
+.casecard{border:1px solid var(--rule);margin:22px 0 28px;font-family:"IBM Plex Sans",sans-serif;font-size:14px}
+.casecard .hd{background:var(--accent);color:#fff;padding:10px 16px;font-weight:600;letter-spacing:.04em}
+:root[data-theme="dark"] .casecard .hd{color:#13141a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .casecard .hd{color:#13141a}}
+.casecard dl{display:grid;grid-template-columns:150px 1fr;margin:0;padding:12px 16px;gap:6px 14px}
+.casecard dt{color:var(--ink-2)}
+.casecard dd{margin:0}
+@media (max-width:520px){.casecard dl{grid-template-columns:1fr}.casecard dt{margin-top:6px}}
+figure{margin:32px 0}
+figcaption{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);line-height:1.5;margin-top:10px}
+figcaption b{color:var(--ink);font-weight:600}
+.chart,.diagram{width:100%;height:auto;display:block;font-family:"IBM Plex Sans",sans-serif;color:var(--ink)}
+.chart .grid{stroke:var(--rule);stroke-width:1}
+.chart .axis{stroke:var(--ink-3);stroke-width:1}
+.chart .tick{fill:var(--ink-3);font-size:11px}
+.chart .label{fill:var(--ink-2);font-size:12px}
+.chart .value{fill:var(--ink);font-size:12px;font-weight:600}
+.chart .value-in{fill:#fff;font-size:12px;font-weight:600}
+.chart .ann{fill:var(--ink-2);font-size:11.5px}
+.chart .curve{fill:none;stroke:var(--s2);stroke-width:2.6;stroke-linejoin:round}
+.chart .pt{fill:var(--s2);stroke:var(--bg);stroke-width:2}
+.chart .band{fill:var(--s3);fill-opacity:.16}
+.chart .median{stroke:var(--s3);stroke-width:1.6;stroke-dasharray:6 4}
+.chart .col{fill:var(--s1)} .chart .col-last{fill:var(--s2)}
+.chart .c1{fill:var(--s3)} .chart .c2{fill:var(--s1)} .chart .c3{fill:var(--s4)} .chart .c4{fill:var(--bad)} .chart .c5{fill:var(--s5)}
+.chart .sq-off{fill:var(--bg-3)} .chart .sq-on{fill:var(--s3)} .chart .sq-hot{fill:var(--s2)}
+.chart .bar-flat{fill:var(--s5)} .chart .bar-band{fill:var(--s1)}
+.chart .hd{fill:var(--ink-3);font-size:9.5px;letter-spacing:.09em;font-weight:500}
+.chart .sg-keep{fill:var(--s1)} .chart .sg-sell{fill:var(--s3)} .chart .sg-drop{fill:var(--bg-3)}
+.chart .sg-gate{fill:var(--bad)} .chart .sg-pend{fill:var(--s4)}
+.chart .nest{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:2 3;fill:none}
+.chart .lead{stroke:var(--ink-3);stroke-width:1;fill:none}
+.chart .pt-fee{fill:var(--s1);fill-opacity:.42;stroke:var(--s1);stroke-opacity:.8;stroke-width:.8}
+.chart .flat{stroke:var(--ink-3);stroke-width:1.6;stroke-dasharray:6 4}
+.chart .flat-l{fill:var(--ink-2);font-size:11px;font-style:italic}
+.chart .step{fill:none;stroke:var(--s2);stroke-width:2.6;stroke-linejoin:round}
+.chart .step-l{fill:var(--s2);font-size:11.5px;font-weight:600}
+.chart .halo{paint-order:stroke;stroke:var(--bg);stroke-width:3.5px;stroke-linejoin:round}
+.chart .bound{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:2 3}
+.chart .cell{fill:var(--s1)}
+.chart .med{stroke:var(--ink-2);stroke-width:1.2;stroke-dasharray:5 4}
+.chart .be-full{fill:none;stroke:var(--s2);stroke-width:2.6;stroke-linejoin:round}
+.chart .be-real{fill:none;stroke:var(--s2);stroke-width:2.2;stroke-dasharray:7 5}
+.chart .be-l,.chart .be-l2{fill:var(--s2);font-size:11.5px;font-weight:600}
+.chart .big{fill:var(--ink);font-size:26px;font-weight:600}
+.chart .card{fill:var(--bg-2)} .chart .card-last{fill:var(--accent-soft);stroke:var(--s2);stroke-width:1.2}
+.chart .ct{fill:var(--ink);font-size:10.5px}
+.chart .ck{fill:var(--ink);font-size:12px;font-weight:600}
+.chart .cc{fill:var(--ink-2);font-size:10.5px;font-style:italic}
+.chart .crule{stroke:var(--rule);stroke-width:1}
+.chart .carrow{stroke:var(--ink-3);stroke-width:1.2;fill:none}
+.chart .b0{fill:var(--bg-3)} .chart .b1{fill:var(--s3);fill-opacity:.3} .chart .b2{fill:var(--s3);fill-opacity:.6} .chart .b3{fill:var(--s3)} .chart .b4{fill:var(--s2)}
+.chart .rib{fill-opacity:.18} .chart .rib.b1{fill-opacity:.12} .chart .rib.b2{fill-opacity:.16} .chart .rib.b0{fill:var(--ink-3);fill-opacity:.12}
+.chart .seg.b1{fill-opacity:.32} .chart .seg.b2{fill-opacity:.62}
+.chart .callout{fill:var(--ink);font-size:12px;font-style:italic}
+.diagram text{fill:currentColor;font-size:12px}
+.diagram .title{font-weight:600;font-size:13.5px}
+.diagram .small{font-size:11px;fill:var(--ink-2)}
+.diagram .muted{font-size:11px;fill:var(--ink-3);letter-spacing:.08em}
+.diagram .box{fill:var(--bg-2);stroke:var(--ink-3);stroke-width:1}
+.diagram .box-acc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.diagram .rowlab{font-size:9.5px;fill:var(--ink-3);letter-spacing:.09em;font-weight:500}
+.diagram .col{fill:var(--bg-2)}
+.diagram .col-acc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.diagram .sep{stroke:var(--rule);stroke-width:1}
+.diagram .big{font-size:15px;font-weight:600}
+.diagram .numl{font-family:"IBM Plex Mono",monospace;font-size:11px;fill:var(--ink);font-weight:500}
+.diagram .ref{font-size:11px;fill:var(--accent);font-weight:500}
+.diagram .flow{stroke:var(--ink-3);stroke-width:1.2;fill:none}
+.diagram .n-maker{fill:var(--bg);stroke:var(--ink-2);stroke-width:1.3}
+.diagram .n-mid{fill:var(--s2)} .diagram .n-you{fill:var(--s3)}
+.diagram .nl{fill:#fff;font-size:10.5px;font-weight:600} .diagram .nl-dark{fill:var(--ink);font-size:10.5px;font-weight:600}
+.diagram .pip-margin{fill:var(--s2)} .diagram .pip-off{fill:none;stroke:var(--ink-3);stroke-width:1;stroke-dasharray:2 2}
+.diagram .pip-ob{fill:var(--s4)}
+.diagram .w-keep{fill:var(--s3);fill-opacity:.55} .diagram .w-ob{fill:var(--s4);fill-opacity:.55}
+.diagram .wl{font-size:11px;fill:var(--ink-2);font-style:italic}
+.diagram .edge{stroke:var(--accent);stroke-width:2;fill:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:"IBM Plex Sans",sans-serif;font-size:13px;color:var(--ink-2);margin:8px 0 0}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--sw)}
+.formula{background:var(--bg-2);border:1px solid var(--rule);padding:18px 22px;margin:24px 0;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:14px;line-height:1.9;overflow-x:auto}
+.formula .lhs{color:var(--accent);font-weight:500}
+.formula div{white-space:pre}
+.formula.math{font-family:"IBM Plex Sans",sans-serif;font-size:15px;line-height:1.5;padding:22px 24px 18px}
+.formula.math .tex{font-size:18px;overflow-x:auto;overflow-y:hidden;padding:4px 0 10px;color:var(--ink)}
+.formula.math .tex .katex-display{margin:0}
+.formula.math div{white-space:normal}
+@media (max-width:560px){.formula.math{padding:18px 14px 14px}.formula.math .tex{font-size:15px}.formula.math .symbols dt{min-width:38px}}
+.formula.math .symbols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:6px 22px;margin:14px 0 0;padding-top:14px;border-top:1px solid var(--rule);font-size:13.5px;color:var(--ink-2)}
+.formula.math .symbols>div{display:flex;gap:10px;align-items:baseline}
+.formula.math .symbols dt{min-width:44px;color:var(--ink);font-size:15px}
+.formula.math .symbols dd{margin:0}
+.formula.math .c{white-space:normal;margin:12px 0 0;font-size:13.5px;color:var(--ink-3)}
+.formula .c{color:var(--ink-3);white-space:normal;margin-top:6px}
+.lessons{counter-reset:l;margin:26px 0;padding:0;list-style:none}
+.lessons li{counter-increment:l;background:var(--bg-2);margin:0 0 12px;padding:14px 18px 14px 64px;position:relative;font-size:17px}
+.lessons li::before{content:counter(l);position:absolute;left:18px;top:10px;font-family:"Newsreader",serif;font-size:36px;line-height:1;color:var(--accent)}
+.lessons li b{font-family:"IBM Plex Sans",sans-serif;font-size:15px;display:block;margin-bottom:4px}
+.tablewrap{overflow-x:auto;margin:24px 0}
+table{border-collapse:collapse;width:100%;font-family:"IBM Plex Sans",sans-serif;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--ink-2);font-size:13px}
+td.num,th.num{text-align:right;white-space:nowrap}
+caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--ink-2);padding:8px 0 0}
+.shot{border:1px solid var(--rule);background:var(--bg-2)}
+.shot img{width:100%;height:auto;display:block}
+.shot.missing{aspect-ratio:16/9;display:grid;place-items:center;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;font-size:14px;text-align:center;padding:16px}
+.shot.missing img{display:none}
+.shot.missing::after{content:attr(data-placeholder)}
+.notes{font-size:15.5px;padding-left:26px}
+.notes li{margin:0 0 12px}
+.notes a.back{text-decoration:none;font-family:"IBM Plex Sans",sans-serif;font-size:13px;margin-left:4px}
+.refs{font-size:15px;padding-left:28px}
+.refs li{margin:0 0 10px}
+@media (max-width:600px){body{font-size:17px} h2{margin-top:60px}}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:20;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--rule);border-radius:999px;background:var(--bg-2);color:var(--ink-2);font-family:"IBM Plex Sans",sans-serif;font-size:13px;cursor:pointer;line-height:1}
+.themetoggle:hover{color:var(--ink);border-color:var(--ink-3)}
+.themetoggle svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.themetoggle .sun{display:none}
+:root[data-theme="dark"] .themetoggle .sun,:root[data-theme="dark"] .themetoggle .lbl-l{display:inline}
+:root[data-theme="dark"] .themetoggle .moon,:root[data-theme="dark"] .themetoggle .lbl-d{display:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .themetoggle .sun{display:inline}:root:not([data-theme="light"]) .themetoggle .moon{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-d{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-l{display:inline}}
+.themetoggle .lbl-l{display:none}
+@media print{.themetoggle{display:none}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+</head>
+<body>
+<button class="themetoggle" id="themetoggle" type="button" aria-label="Switch between light and dark theme">
+<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+<span class="lbl-d">Dark</span><span class="lbl-l">Light</span>
+</button>
+<div class="page">
+
+<div class="eyebrow">Technical report · Biryar, part 3 · Manufacturers and direct supply</div>
+<h1>Going Upstream</h1>
+<p class="lede">Every middleman between a factory and an Amazon customer takes a margin. This report follows Biryar as it climbs towards the factory, first through two suppliers it knows well and then through a census of every German maker it could find, and asks what is gained and what new costs appear with each step.</p>
+<div class="byline"><span>Loghman Samani</span><span>Ciya Labs</span><span>October 2026</span></div>
+
+<figure>
+  <div class="hero"><img src="fig/header.jpg" alt="" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption class="hero-credit">Generated with OpenAI Image Generator</figcaption>
+</figure>
+
+<div class="summary">
+<p>Shops are where reselling starts, and Parts 1 and 2 of this series showed how thin and how restricted that ground is. Going upstream removes intermediaries and their margins, but it replaces them with obligations, trade accounts, packing units, minimum orders and safety paperwork. <b>Biryar</b> handles the upstream in three ways. It reads the dealer shops of suppliers it already trades with and turns their catalogues into ranked order lists. It screens wholesale assortments before an account is even opened, to learn whether the trade terms can ever pay. And it builds a census of German manufacturers from public registers, 125,626 companies, filtered down to roughly two thousand that sell on Amazon, make German products, have measurable demand and could be written to.</p>
+</div>
+
+<nav class="guide" aria-label="Reading guide">
+  <a href="#prologue"><b>Five minutes</b>Read the prologue and the lessons. They carry the argument without the machinery.</a>
+  <a href="#case-a"><b>You run a business</b>Read the two case files. They show what direct supply looks like in numbers.</a>
+  <a href="#census"><b>You build systems</b>Read the census and the notes at the end, which hold the engineering detail.</a>
+</nav>
+
+<h2 id="prologue"><span class="kicker">Prologue</span>Climbing the supply chain</h2>
+<p>A product sold on Amazon by a reseller usually passes through several hands. The manufacturer sells to a wholesaler, the wholesaler to a shop, the shop to the reseller, and each of them adds a margin to cover its costs and earn a living. Spengler showed in 1950 that a chain of independent firms, each pricing for its own margin, ends with a higher final price and lower joint profit than a single firm would choose, an effect now called double marginalisation [1]. For a reseller the practical reading is simpler. Every link removed is a margin that no longer has to be paid.</p>
+<p>The reason intermediaries exist at all is the other half of the story. Coase asked why firms exist when markets could coordinate everything, and answered that using a market has costs of its own, finding partners, negotiating, contracting, checking [2]. Williamson developed this into transaction-cost economics, in which the choice between buying through intermediaries and dealing directly depends on how specific, frequent and uncertain the transactions are [3]. A shop sells one unit to anyone with no questions asked. A manufacturer wants a trade account, a minimum order, a business registration, sometimes a phone call, and it ships in fixed packing units that do not care how many a reseller actually wants. Going upstream exchanges margin for transaction costs, and the interesting question is where the exchange is favourable.</p>
+
+<figure>
+<svg viewBox="0 0 700 552" role="img" aria-label="Three rungs of the supply chain compared, from the shop to the manufacturer. Buying from a shop, goods pass maker, wholesaler and shop before the reseller, so two margins are paid on the way and there are no obligations. Buying from a wholesaler, one margin is paid, and the reseller takes on a trade account and a minimum order per supplier, in return for an invoice that can open brand gates. Buying from the manufacturer, no margin is paid in between, and the obligations are a trade account, packing units, a supplier minimum and safety documents, in return for an open brand gate. Biryar reads shop catalogues for the first rung, screens wholesale assortments before an account exists for the second, and for the third turns a dealer shop into an order list and builds a census of German makers. Moving upstream, the margin the reseller keeps grows and so do the obligations." class="diagram rungs">
+<defs><marker id="up" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker><marker id="flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-3)"/></marker></defs>
+<text class="muted" x="132" y="16" text-anchor="start">DOWNSTREAM</text>
+<text class="muted" x="696" y="16" text-anchor="end">UPSTREAM</text>
+<path class="edge" d="M224,12 H614" marker-end="url(#up)"/>
+<rect class="col" x="132" y="28" width="180" height="410" rx="6"/>
+<rect class="col" x="324" y="28" width="180" height="410" rx="6"/>
+<rect class="col-acc" x="516" y="28" width="180" height="410" rx="6"/>
+<text class="title" x="222" y="52" text-anchor="middle">Shop</text>
+<text class="small" x="222" y="68" text-anchor="middle">the reseller buys retail</text>
+<text class="title" x="414" y="52" text-anchor="middle">Wholesaler</text>
+<text class="small" x="414" y="68" text-anchor="middle">the reseller buys trade</text>
+<text class="title" x="606" y="52" text-anchor="middle">Manufacturer</text>
+<text class="small" x="606" y="68" text-anchor="middle">the reseller buys at source</text>
+<line class="sep" x1="8" y1="80" x2="696" y2="80"/>
+<text class="rowlab" x="8" y="101.5" text-anchor="start">WHO THE GOODS</text>
+<text class="rowlab" x="8" y="114.5" text-anchor="start">PASS THROUGH</text>
+<line class="sep" x1="8" y1="128" x2="696" y2="128"/>
+<text class="rowlab" x="8" y="149.5" text-anchor="start">MARGINS PAID</text>
+<text class="rowlab" x="8" y="162.5" text-anchor="start">ON THE WAY</text>
+<line class="sep" x1="8" y1="176" x2="696" y2="176"/>
+<text class="rowlab" x="8" y="221.5" text-anchor="start">OBLIGATIONS</text>
+<text class="rowlab" x="8" y="234.5" text-anchor="start">TAKEN ON</text>
+<line class="sep" x1="8" y1="272" x2="696" y2="272"/>
+<text class="rowlab" x="8" y="292.5" text-anchor="start">WHAT IT</text>
+<text class="rowlab" x="8" y="305.5" text-anchor="start">UNLOCKS</text>
+<line class="sep" x1="8" y1="318" x2="696" y2="318"/>
+<text class="rowlab" x="8" y="358.5" text-anchor="start">HOW BIRYAR</text>
+<text class="rowlab" x="8" y="371.5" text-anchor="start">WORKS IT</text>
+<line class="sep" x1="8" y1="404" x2="696" y2="404"/>
+<text class="rowlab" x="8" y="418.5" text-anchor="start">IN THIS</text>
+<text class="rowlab" x="8" y="431.5" text-anchor="start">SERIES</text>
+<path class="flow" d="M173.0,104 H190.0" marker-end="url(#flow)"/>
+<path class="flow" d="M213.0,104 H230.0" marker-end="url(#flow)"/>
+<path class="flow" d="M253.0,104 H270.0" marker-end="url(#flow)"/>
+<circle class="n-maker" cx="162" cy="104" r="10"/>
+<text class="nl-dark" x="162" y="108" text-anchor="middle">M</text>
+<circle class="n-mid" cx="202" cy="104" r="10"/>
+<text class="nl" x="202" y="108" text-anchor="middle">W</text>
+<circle class="n-mid" cx="242" cy="104" r="10"/>
+<text class="nl" x="242" y="108" text-anchor="middle">S</text>
+<circle class="n-you" cx="282" cy="104" r="10"/>
+<text class="nl" x="282" y="108" text-anchor="middle">R</text>
+<path class="flow" d="M385.0,104 H402.0" marker-end="url(#flow)"/>
+<path class="flow" d="M425.0,104 H442.0" marker-end="url(#flow)"/>
+<circle class="n-maker" cx="374" cy="104" r="10"/>
+<text class="nl-dark" x="374" y="108" text-anchor="middle">M</text>
+<circle class="n-mid" cx="414" cy="104" r="10"/>
+<text class="nl" x="414" y="108" text-anchor="middle">W</text>
+<circle class="n-you" cx="454" cy="104" r="10"/>
+<text class="nl" x="454" y="108" text-anchor="middle">R</text>
+<path class="flow" d="M597.0,104 H614.0" marker-end="url(#flow)"/>
+<circle class="n-maker" cx="586" cy="104" r="10"/>
+<text class="nl-dark" x="586" y="108" text-anchor="middle">M</text>
+<circle class="n-you" cx="626" cy="104" r="10"/>
+<text class="nl" x="626" y="108" text-anchor="middle">R</text>
+<text class="big" x="208" y="158" text-anchor="end">two</text>
+<rect class="pip-margin" x="220" y="146" width="11" height="11" rx="2"/>
+<rect class="pip-margin" x="236" y="146" width="11" height="11" rx="2"/>
+<text class="big" x="400" y="158" text-anchor="end">one</text>
+<rect class="pip-margin" x="412" y="146" width="11" height="11" rx="2"/>
+<rect class="pip-off" x="428" y="146" width="11" height="11" rx="2"/>
+<text class="big" x="592" y="158" text-anchor="end">none</text>
+<rect class="pip-off" x="604" y="146" width="11" height="11" rx="2"/>
+<rect class="pip-off" x="620" y="146" width="11" height="11" rx="2"/>
+<text class="small" x="222" y="214" text-anchor="middle">none</text>
+<text class="small" x="222" y="230" text-anchor="middle">one unit, any day,</text>
+<text class="small" x="222" y="244" text-anchor="middle">no account</text>
+<rect class="pip-ob" x="342" y="189" width="11" height="11" rx="2"/>
+<text class="small" x="361" y="198" text-anchor="start">trade account</text>
+<rect class="pip-ob" x="342" y="208" width="11" height="11" rx="2"/>
+<text class="small" x="361" y="217" text-anchor="start">minimum order per supplier</text>
+<rect class="pip-ob" x="534" y="189" width="11" height="11" rx="2"/>
+<text class="small" x="553" y="198" text-anchor="start">trade account</text>
+<rect class="pip-ob" x="534" y="208" width="11" height="11" rx="2"/>
+<text class="small" x="553" y="217" text-anchor="start">fixed packing units</text>
+<rect class="pip-ob" x="534" y="227" width="11" height="11" rx="2"/>
+<text class="small" x="553" y="236" text-anchor="start">supplier minimum</text>
+<rect class="pip-ob" x="534" y="246" width="11" height="11" rx="2"/>
+<text class="small" x="553" y="255" text-anchor="start">safety documents</text>
+<text class="small" x="222" y="295" text-anchor="middle">any product, one at a time</text>
+<text class="small" x="414" y="288" text-anchor="middle">an invoice that can</text>
+<text class="small" x="414" y="302" text-anchor="middle">open brand gates</text>
+<text class="small" x="606" y="288" text-anchor="middle">the brand gate itself,</text>
+<text class="small" x="606" y="302" text-anchor="middle">from the brand owner</text>
+<text class="small" x="222" y="347" text-anchor="middle">reads shop catalogues,</text>
+<text class="small" x="222" y="362" text-anchor="middle">watches shelf prices</text>
+<text class="numl" x="222" y="377" text-anchor="middle">875,963 products</text>
+<text class="small" x="414" y="347" text-anchor="middle">screens the assortment</text>
+<text class="small" x="414" y="362" text-anchor="middle">before an account exists</text>
+<text class="numl" x="414" y="377" text-anchor="middle">4,909 articles</text>
+<text class="small" x="606" y="339.5" text-anchor="middle">dealer shop to order list,</text>
+<text class="numl" x="606" y="354.5" text-anchor="middle">1,632 articles</text>
+<text class="small" x="606" y="369.5" text-anchor="middle">census of German makers,</text>
+<text class="numl" x="606" y="384.5" text-anchor="middle">125,626 to 2,010</text>
+<text class="ref" x="222" y="425" text-anchor="middle">Parts 1 and 2</text>
+<text class="ref" x="414" y="425" text-anchor="middle">Part 2 and Case B</text>
+<text class="ref" x="606" y="425" text-anchor="middle">Case A and the census</text>
+<path class="w-keep" d="M132,470 L696,454 L696,470 Z"/>
+<path class="w-ob" d="M132,475 L696,475 L696,491 Z"/>
+<text class="rowlab" x="8" y="476" text-anchor="start">THE TRADE</text>
+<text class="wl" x="132" y="464" text-anchor="start">margin the reseller keeps</text>
+<text class="wl" x="132" y="490" text-anchor="start">obligations the reseller carries</text>
+<circle class="n-mid" cx="138" cy="522" r="6"/>
+<text class="small" x="149" y="526" text-anchor="start">intermediary, takes a margin</text>
+<circle class="n-you" cx="340.4" cy="522" r="6"/>
+<text class="small" x="351.4" y="526" text-anchor="start">the reseller</text>
+<rect class="pip-ob" x="444.0" y="516" width="11" height="11" rx="2"/>
+<text class="small" x="461" y="526" text-anchor="start">one obligation</text>
+<text class="small" x="132" y="544" text-anchor="start">M maker, W wholesaler, S shop, R reseller. The wedges show direction, not scale.</text>
+</svg>
+<figcaption><b>Figure 1.</b> Three ways to buy the same product, compared row by row. Each step upstream removes a margin paid to someone in between and adds obligations the reseller has to carry, in exchange for access a shop cannot give. Biryar works all three rungs, and this report is organised around the trade at the top two.</figcaption>
+</figure>
+
+<p>Two suppliers in Biryar's records illustrate the two ends of the trade. They are described here as Manufacturer A and Wholesaler B, without names. The rest of the report generalises from them.</p>
+
+<h2 id="case-a"><span class="kicker">Case file A</span>A manufacturer with a dealer shop</h2>
+
+<div class="casecard">
+<div class="hd">Manufacturer A</div>
+<dl>
+<dt>Who</dt><dd>A German maker of gift and children's products, selling under its own brand</dd>
+<dt>Relationship</dt><dd>Direct trade account, orders placed by the owner once or twice a month</dd>
+<dt>Interface</dt><dd>A dealer web shop, readable only when signed in, no data interface</dd>
+<dt>Assortment</dt><dd>1,632 articles, 72 percent of them listed on Amazon.de</dd>
+<dt>On Amazon</dt><dd>Brand open for this account, 940 articles measured as selling</dd>
+<dt>Constraints</dt><dd>Fixed packing units per article, a supplier minimum, safety documentation for children's items</dd>
+</dl>
+</div>
+
+<p>Manufacturer A is the shape of supply that works for this business. Its trade prices sit well below its recommended retail prices, its minimums are small enough for a young company, and many of its products already sell on Amazon.de under its own brand. Because the account buys directly from the brand owner, the brand gate that blocks most resellers is open. It is also the supplier that taught the system most of what direct supply involves.</p>
+
+<h3>From a spreadsheet to a shop</h3>
+<p>Before the first order there was no shop to read. The assortment arrived as a spreadsheet by email, and the first version of the pipeline was a file reader. Three lessons from that period survive in the current code. Rows describing display cartons, a case of thirty-seven pieces listed as one line with the summed retail price, were being costed as single Amazon units and inventing margins that did not exist, so they are now recognised and dropped. A listing whose Amazon price sat far above the recommended retail price usually turned out to be one opportunistic reseller with no buyers, not a market, so such ratios are capped. And the stock column in an emailed list was days old, so it ranks candidates but never promises delivery.</p>
+<p>After the first order the supplier opened its dealer shop to the account, and the file reader gave way to a shop reader. The shop exposes no data interface, so the agent reads its pages the polite way. It uses the shop's own sitemap to list every article in two requests, then reads each article page at one request every three seconds, honouring the site's robots rules and announcing itself as an automated reader.<sup><a href="#n1" id="r1">1</a></sup> A full read of the assortment takes a little over an hour and runs weekly, because a manufacturer's range changes at the pace of a season and this account orders once or twice a month. An update button in Biryar closes the gap on the day an order is placed.</p>
+<p>Two details of the shop decide whether its data can be trusted. Trade prices appear only to a signed-in dealer, and a lapsed session does not announce itself. It returns the same page with the price missing. A reader that accepted such a page would write a catalogue of zero-priced articles, each of which would look infinitely profitable to the ranking. So a page without a price is refused, the reader signs in again and tries once more, and a second failure stops the run. The other detail is stock. The shop shows no stock figure anywhere, but it renders one option in the quantity menu for each orderable step up to the lower of stock and maximum purchase, so the packing unit and the available quantity are read off that menu.</p>
+
+<h3>The catalogue against Amazon</h3>
+<p>The shop reader deliberately never calls Amazon. It writes every article's barcode and net price into the same catalogue table the wholesale screener of Part 2 reads, and that screener resolves each barcode to an Amazon listing, checks the gate, reads the featured offer, the sales rank and the competition, and stores the Amazon identifier the first time it is found. The last point mattered to the owner more than any ranking. Listing a new article used to begin with searching Amazon for it by hand and copying attributes such as material, filling, age recommendation and dimensions from the supplier's page into Amazon's form, one field at a time. All of those now sit in the database before the form is opened. Figure 2 shows how the assortment divides.</p>
+
+<figure>
+<svg viewBox="0 0 700 278" role="img" aria-label="Manufacturer A's 1,632 articles split in four steps on one scale. 1,182, or 72 percent, are listed on Amazon.de and 450 are not. Of the listed articles, 1,178 are open to this account and 4 are gated. Of the open articles, 940 are measured as selling, 222 had no sale in 90 days and 16 are not yet measured." class="chart split">
+<text class="hd" x="132" y="14">ARTICLES, ONE SCALE FOR ALL ROWS</text><text class="hd" x="500" y="14">WHAT THE ROW SAYS</text>
+<text class="label" x="122" y="48.5" text-anchor="end">In the dealer shop</text>
+<rect class="sg-keep" x="132.0" y="30" width="340.0" height="28"/>
+<text class="value-in" x="302.0" y="48.5" text-anchor="middle">1,632 articles</text>
+<text class="value" x="500" y="41">1,632 articles</text><text class="ann" x="500" y="56">the assortment, October 2026</text>
+<path class="nest" d="M132,58 L132,84 M472.0,58 L472.0,84"/>
+<text class="label" x="122" y="102.5" text-anchor="end">Listed on Amazon.de</text>
+<rect class="sg-keep" x="132.0" y="84" width="246.2" height="28"/>
+<text class="value-in" x="255.1" y="102.5" text-anchor="middle">1,182 listed</text>
+<rect class="sg-drop" x="378.2" y="84" width="93.8" height="28"/>
+<text class="value" x="425.1" y="102.5" text-anchor="middle">450 not listed</text>
+<text class="value" x="500" y="95">72% listed</text><text class="ann" x="500" y="110">450 have no Amazon page</text>
+<path class="nest" d="M132,112 L132,138 M378.2,112 L378.2,138"/>
+<text class="label" x="122" y="156.5" text-anchor="end">Open to this account</text>
+<rect class="sg-keep" x="132.0" y="138" width="245.4" height="28"/>
+<text class="value-in" x="254.7" y="156.5" text-anchor="middle">1,178 open</text>
+<rect class="sg-gate" x="377.4" y="138" width="2.0" height="28"/>
+<text class="value" x="500" y="149">99.7% open</text><text class="ann" x="500" y="164">bought from the brand owner</text>
+<path class="nest" d="M132,166 L132,192 M377.4,166 L377.4,192"/>
+<text class="label" x="122" y="210.5" text-anchor="end">Measured demand</text>
+<rect class="sg-sell" x="132.0" y="192" width="195.8" height="28"/>
+<text class="value-in" x="229.9" y="210.5" text-anchor="middle">940 selling</text>
+<rect class="sg-drop" x="327.8" y="192" width="46.2" height="28"/>
+<text class="value" x="351.0" y="210.5" text-anchor="middle">222</text>
+<rect class="sg-pend" x="374.1" y="192" width="3.3" height="28"/>
+<text class="value" x="500" y="203">80% of open articles sell</text><text class="ann" x="500" y="218">222 had no sale in 90 days</text>
+<path class="lead" d="M380.4,152.0 H392.4"/><text class="ann" x="396.4" y="156.0">4 gated</text>
+<path class="lead" d="M380.1,206.0 H391.1"/><text class="ann" x="395.1" y="210.0">16 unmeasured</text>
+<line class="axis" x1="132" y1="232" x2="472.0" y2="232"/>
+<line class="axis" x1="132.0" y1="232" x2="132.0" y2="236"/><text class="tick" x="132.0" y="249" text-anchor="middle">0</text>
+<line class="axis" x1="236.2" y1="232" x2="236.2" y2="236"/><text class="tick" x="236.2" y="249" text-anchor="middle">500</text>
+<line class="axis" x1="340.3" y1="232" x2="340.3" y2="236"/><text class="tick" x="340.3" y="249" text-anchor="middle">1,000</text>
+<line class="axis" x1="444.5" y1="232" x2="444.5" y2="236"/><text class="tick" x="444.5" y="249" text-anchor="middle">1,500</text>
+</svg>
+<figcaption><b>Figure 2.</b> Manufacturer A's assortment, joined to Amazon by barcode. Each row splits the coloured part of the row above, on the same scale, and grey marks what drops out. Buying direct from the brand owner leaves almost nothing gated. The real filters are whether an article is listed at all and whether it sells.</figcaption>
+</figure>
+
+<h3>The order list</h3>
+<p>The question asked of this catalogue is not which brand to open, since it is one brand and already open, but which articles to put in the next box and how many of each. The answer is an order list, every article with both sides of the trade on one row, sorted by expected profit per day, the unit margin multiplied by the account's measured share of daily sales. A nine-euro margin that sells twice a year ranks below a one-euro-twenty margin that sells daily, because the second is the one that pays rent.</p>
+<p>Profit per day has a precondition, namely that demand was measured. Where it was not, the honest answer is unknown, not zero and not fine. So the list is tiered first and sorted second. Measured and profitable articles come first, then profitable articles whose demand has not been measured yet, then articles that are listed but unprofitable, then gated, unlisted and unscreened ones, each carrying the reason. Nothing is filtered out of sight, because the question a filtered list always raises next is why something is missing, and the answer is usually the part worth reading.</p>
+<p>The fee model behind each margin was fitted to this supplier rather than assumed. Amazon had already priced fulfilment for 142 of its articles on this account. The referral fee came out at exactly fifteen percent, and the fulfilment fee ran from €1.89 for its smallest article to €7.03 for its largest. A single flat fee at the median, €3.86, is wrong at both ends of that range, so the fee is now estimated in bands of parcel volume fitted to the 125 measured articles whose dimensions are known, which nearly halves the error, as Figure 3 shows. With unit margins of one to eight euros, half a euro of fee error is the difference between a good line and a bad one.</p>
+
+<figure>
+<svg viewBox="0 0 700 340" role="img" aria-label="Scatter of 125 fulfilment fees Amazon charged for Manufacturer A's articles against parcel volume on a logarithmic scale, from 0.11 litres and 1.89 euros to 55 litres and 7.03 euros. A single flat fee of 3.86 euros misses both ends. Three volume bands, 3.08 euros up to 5.5 litres, 4.00 euros up to 12.5 litres and 5.16 euros above, follow the cloud. Average error per unit falls from 0.77 euros to 0.42 euros, and the share of articles estimated within 50 cents rises from 34 to 66 percent." class="chart fees">
+<line class="grid" x1="64" y1="269.2" x2="470" y2="269.2"/><text class="tick" x="56" y="273.2" text-anchor="end">€2</text>
+<line class="grid" x1="64" y1="227.5" x2="470" y2="227.5"/><text class="tick" x="56" y="231.5" text-anchor="end">€3</text>
+<line class="grid" x1="64" y1="185.8" x2="470" y2="185.8"/><text class="tick" x="56" y="189.8" text-anchor="end">€4</text>
+<line class="grid" x1="64" y1="144.2" x2="470" y2="144.2"/><text class="tick" x="56" y="148.2" text-anchor="end">€5</text>
+<line class="grid" x1="64" y1="102.5" x2="470" y2="102.5"/><text class="tick" x="56" y="106.5" text-anchor="end">€6</text>
+<line class="grid" x1="64" y1="60.8" x2="470" y2="60.8"/><text class="tick" x="56" y="64.8" text-anchor="end">€7</text>
+<line class="axis" x1="64.0" y1="290" x2="64.0" y2="294"/><text class="tick" x="64.0" y="307" text-anchor="middle">0.1</text>
+<line class="axis" x1="133.7" y1="290" x2="133.7" y2="294"/><text class="tick" x="133.7" y="307" text-anchor="middle">0.3</text>
+<line class="axis" x1="210.1" y1="290" x2="210.1" y2="294"/><text class="tick" x="210.1" y="307" text-anchor="middle">1</text>
+<line class="axis" x1="279.9" y1="290" x2="279.9" y2="294"/><text class="tick" x="279.9" y="307" text-anchor="middle">3</text>
+<line class="axis" x1="356.3" y1="290" x2="356.3" y2="294"/><text class="tick" x="356.3" y="307" text-anchor="middle">10</text>
+<line class="axis" x1="426.0" y1="290" x2="426.0" y2="294"/><text class="tick" x="426.0" y="307" text-anchor="middle">30</text>
+<line class="axis" x1="64" y1="290" x2="470" y2="290"/>
+<text class="ann" x="267.0" y="326" text-anchor="middle">Parcel volume in litres, logarithmic</text>
+<text class="hd" x="24" y="22">FEE AMAZON CHARGED PER UNIT</text>
+<line class="bound" x1="318.3" y1="34" x2="318.3" y2="290"/>
+<line class="bound" x1="370.4" y1="34" x2="370.4" y2="290"/>
+<text class="tick" x="314.3" y="30" text-anchor="end">5.5 L</text><text class="tick" x="374.4" y="30">12.5 L</text>
+<circle class="pt-fee" cx="71.2" cy="273.8" r="3.3"/>
+<circle class="pt-fee" cx="81.6" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="95.0" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="99.5" cy="273.8" r="3.3"/>
+<circle class="pt-fee" cx="99.5" cy="273.8" r="3.3"/>
+<circle class="pt-fee" cx="99.5" cy="273.8" r="3.3"/>
+<circle class="pt-fee" cx="99.5" cy="273.8" r="3.3"/>
+<circle class="pt-fee" cx="99.5" cy="273.8" r="3.3"/>
+<circle class="pt-fee" cx="99.5" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="99.5" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="104.4" cy="240.4" r="3.3"/>
+<circle class="pt-fee" cx="134.1" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="135.0" cy="240.4" r="3.3"/>
+<circle class="pt-fee" cx="135.0" cy="240.4" r="3.3"/>
+<circle class="pt-fee" cx="135.0" cy="240.4" r="3.3"/>
+<circle class="pt-fee" cx="139.8" cy="241.7" r="3.3"/>
+<circle class="pt-fee" cx="152.0" cy="226.2" r="3.3"/>
+<circle class="pt-fee" cx="194.7" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="196.0" cy="211.7" r="3.3"/>
+<circle class="pt-fee" cx="204.8" cy="207.1" r="3.3"/>
+<circle class="pt-fee" cx="208.7" cy="208.8" r="3.3"/>
+<circle class="pt-fee" cx="208.7" cy="207.1" r="3.3"/>
+<circle class="pt-fee" cx="208.7" cy="207.1" r="3.3"/>
+<circle class="pt-fee" cx="208.7" cy="207.1" r="3.3"/>
+<circle class="pt-fee" cx="208.7" cy="207.1" r="3.3"/>
+<circle class="pt-fee" cx="211.4" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="211.4" cy="207.1" r="3.3"/>
+<circle class="pt-fee" cx="214.5" cy="209.2" r="3.3"/>
+<circle class="pt-fee" cx="214.5" cy="208.8" r="3.3"/>
+<circle class="pt-fee" cx="219.6" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="220.1" cy="226.2" r="3.3"/>
+<circle class="pt-fee" cx="220.1" cy="226.2" r="3.3"/>
+<circle class="pt-fee" cx="228.3" cy="215.4" r="3.3"/>
+<circle class="pt-fee" cx="233.3" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="234.1" cy="227.1" r="3.3"/>
+<circle class="pt-fee" cx="257.2" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="257.6" cy="265.4" r="3.3"/>
+<circle class="pt-fee" cx="263.0" cy="212.1" r="3.3"/>
+<circle class="pt-fee" cx="264.1" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="265.7" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="273.0" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="273.2" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="273.2" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="279.9" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="279.9" cy="186.2" r="3.3"/>
+<circle class="pt-fee" cx="289.8" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="290.0" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="291.2" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="291.3" cy="211.7" r="3.3"/>
+<circle class="pt-fee" cx="291.3" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="294.5" cy="218.3" r="3.3"/>
+<circle class="pt-fee" cx="295.7" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="296.5" cy="218.3" r="3.3"/>
+<circle class="pt-fee" cx="298.1" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="298.4" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="301.0" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="304.5" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="305.6" cy="227.1" r="3.3"/>
+<circle class="pt-fee" cx="309.7" cy="227.1" r="3.3"/>
+<circle class="pt-fee" cx="309.7" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="318.3" cy="224.2" r="3.3"/>
+<circle class="pt-fee" cx="318.4" cy="167.9" r="3.3"/>
+<circle class="pt-fee" cx="319.5" cy="227.1" r="3.3"/>
+<circle class="pt-fee" cx="319.6" cy="186.2" r="3.3"/>
+<circle class="pt-fee" cx="321.3" cy="212.1" r="3.3"/>
+<circle class="pt-fee" cx="324.7" cy="191.7" r="3.3"/>
+<circle class="pt-fee" cx="324.7" cy="185.4" r="3.3"/>
+<circle class="pt-fee" cx="324.7" cy="160.4" r="3.3"/>
+<circle class="pt-fee" cx="325.5" cy="160.4" r="3.3"/>
+<circle class="pt-fee" cx="328.0" cy="185.4" r="3.3"/>
+<circle class="pt-fee" cx="328.0" cy="160.4" r="3.3"/>
+<circle class="pt-fee" cx="332.2" cy="215.4" r="3.3"/>
+<circle class="pt-fee" cx="332.2" cy="186.2" r="3.3"/>
+<circle class="pt-fee" cx="335.4" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="345.2" cy="218.3" r="3.3"/>
+<circle class="pt-fee" cx="345.2" cy="218.3" r="3.3"/>
+<circle class="pt-fee" cx="345.2" cy="215.4" r="3.3"/>
+<circle class="pt-fee" cx="346.3" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="346.5" cy="164.6" r="3.3"/>
+<circle class="pt-fee" cx="349.1" cy="185.4" r="3.3"/>
+<circle class="pt-fee" cx="349.6" cy="191.7" r="3.3"/>
+<circle class="pt-fee" cx="350.4" cy="191.7" r="3.3"/>
+<circle class="pt-fee" cx="355.0" cy="218.3" r="3.3"/>
+<circle class="pt-fee" cx="359.4" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="360.1" cy="218.3" r="3.3"/>
+<circle class="pt-fee" cx="360.1" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="360.1" cy="185.4" r="3.3"/>
+<circle class="pt-fee" cx="366.2" cy="168.3" r="3.3"/>
+<circle class="pt-fee" cx="366.2" cy="168.3" r="3.3"/>
+<circle class="pt-fee" cx="366.2" cy="167.9" r="3.3"/>
+<circle class="pt-fee" cx="366.5" cy="191.7" r="3.3"/>
+<circle class="pt-fee" cx="367.3" cy="160.4" r="3.3"/>
+<circle class="pt-fee" cx="370.4" cy="185.4" r="3.3"/>
+<circle class="pt-fee" cx="373.5" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="374.2" cy="129.2" r="3.3"/>
+<circle class="pt-fee" cx="377.0" cy="207.1" r="3.3"/>
+<circle class="pt-fee" cx="377.0" cy="207.1" r="3.3"/>
+<circle class="pt-fee" cx="377.0" cy="160.4" r="3.3"/>
+<circle class="pt-fee" cx="377.0" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="377.0" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="377.0" cy="132.1" r="3.3"/>
+<circle class="pt-fee" cx="386.1" cy="167.9" r="3.3"/>
+<circle class="pt-fee" cx="386.1" cy="167.9" r="3.3"/>
+<circle class="pt-fee" cx="387.4" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="390.0" cy="153.8" r="3.3"/>
+<circle class="pt-fee" cx="390.0" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="394.4" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="394.8" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="396.1" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="398.5" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="411.1" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="411.8" cy="160.4" r="3.3"/>
+<circle class="pt-fee" cx="413.1" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="413.1" cy="185.8" r="3.3"/>
+<circle class="pt-fee" cx="413.1" cy="132.1" r="3.3"/>
+<circle class="pt-fee" cx="413.1" cy="132.1" r="3.3"/>
+<circle class="pt-fee" cx="413.1" cy="132.1" r="3.3"/>
+<circle class="pt-fee" cx="413.1" cy="132.1" r="3.3"/>
+<circle class="pt-fee" cx="422.0" cy="145.4" r="3.3"/>
+<circle class="pt-fee" cx="422.0" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="422.0" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="427.3" cy="137.5" r="3.3"/>
+<circle class="pt-fee" cx="442.2" cy="137.1" r="3.3"/>
+<circle class="pt-fee" cx="461.5" cy="83.7" r="3.3"/>
+<circle class="pt-fee" cx="464.7" cy="59.6" r="3.3"/>
+<line class="flat" x1="64" y1="191.7" x2="470" y2="191.7"/>
+<text class="flat-l halo" x="70" y="184.7">one flat fee €3.86</text>
+<path class="step" d="M64.0,224.2 318.3,224.2 L318.3,185.8 370.4,185.8 L370.4,137.5 470.0,137.5"/>
+<text class="step-l halo" x="221.7" y="242.2" text-anchor="middle">band €3.08</text>
+<text class="step-l halo" x="344.4" y="177.8" text-anchor="middle">€4.00</text>
+<text class="step-l halo" x="416.9" y="155.5" text-anchor="middle">€5.16</text>
+<text class="ann halo" x="69.2" y="262.8">keyring, 0.11 L</text>
+<text class="ann halo" x="467.7" y="49.6" text-anchor="end">large plush, 55 L</text>
+<text class="hd" x="520" y="22">HOW GOOD IS EACH ESTIMATE</text>
+<text class="label" x="520" y="62">Average error per unit</text>
+<text class="ann" x="520" y="83">one flat fee</text>
+<rect class="bar-flat" x="520" y="88" width="113.6" height="9" rx="2"/>
+<text class="value" x="639.6" y="97">€0.77</text>
+<text class="ann" x="520" y="113">three bands</text>
+<rect class="bar-band" x="520" y="118" width="61.9" height="9" rx="2"/>
+<text class="value" x="588.0" y="127">€0.42</text>
+<text class="label" x="520" y="170">Within €0.50 of the real fee</text>
+<text class="ann" x="520" y="191">one flat fee</text>
+<rect class="bar-flat" x="520" y="196" width="40.1" height="9" rx="2"/>
+<text class="value" x="566.1" y="205">34%</text>
+<text class="ann" x="520" y="221">three bands</text>
+<rect class="bar-band" x="520" y="226" width="77.9" height="9" rx="2"/>
+<text class="value" x="603.9" y="235">66%</text>
+<text class="ann" x="520" y="272">125 articles with both a</text><text class="ann" x="520" y="287">measured fee and dimensions</text>
+</svg>
+<figcaption><b>Figure 3.</b> Fulfilment fees Amazon charged for 125 of Manufacturer A's articles, against parcel volume. A flat fee overstates the fee of small articles and understates it for large ones. Three bands, each the median fee of an equal share of the articles, follow the cloud and nearly halve the average error. The spread at any one volume is what bands cannot remove, because a porcelain mug and a plush toy of the same size are billed differently. Where Amazon has priced an article, its own figure replaces any estimate.</figcaption>
+</figure>
+
+<p>Two constraints come from the supplier rather than from the arithmetic. Every quantity is a multiple of the article's packing unit, because a quantity that is not is a phone call rather than an order. And the order as a whole must clear the supplier's minimum, which the list makes visible as it is built. An earlier version of the order builder, written for the first order when cash was the binding constraint, ranked by profit per euro of stock instead, and capped each article at a set number of weeks of cover so that a single high-margin line could not absorb a third of the budget.<sup><a href="#n2" id="r2">2</a></sup></p>
+
+<figure>
+  <div class="shot" data-placeholder="Screenshot to add. fig/order-list.png, the supplier order list page."><img src="fig/order-list.png" alt="The order list for Manufacturer A in Biryar" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 4.</b> The order list in Biryar. Supplier facts and Amazon facts share each row, sorted by what owning the article earns per day. Supplier and product names are blurred.</figcaption>
+</figure>
+
+<h2 id="case-b"><span class="kicker">Case file B</span>A wholesaler, read before signing up</h2>
+
+<div class="casecard">
+<div class="hd">Wholesaler B</div>
+<dl>
+<dt>Who</dt><dd>A German toy wholesaler supplying independent shops, carrying several hundred brands</dd>
+<dt>Relationship</dt><dd>A demonstration account for prospective customers, able to browse and see prices, unable to order</dd>
+<dt>Interface</dt><dd>A trade web shop whose prices are loaded separately as small data responses</dd>
+<dt>Assortment read</dt><dd>4,909 articles across 38 brands</dd>
+<dt>Trade discount</dt><dd>Median 38 percent below recommended retail, most between 29 and 46 percent</dd>
+<dt>Verdict</dt><dd>Seven of seventy deep-discount candidates profitable, almost all gated</dd>
+</dl>
+</div>
+
+<p>Wholesaler B is the opposite case. Opening a trade account means a first order of several thousand euros, and the question the agent was asked to answer before that commitment was simple. At these trade terms, can the lines make money on Amazon at all?</p>
+
+<h3>Reading a shop the way the shop reads itself</h3>
+<p>A product page in this shop is about 190 kilobytes and contains no price. The page loads a placeholder, and the browser then asks the shop for the price through a small request that returns about one kilobyte of data, net trade price, list price, recommended retail price and packing unit. The agent asks the same question the same way, in batches, so pricing an article costs a fraction of a page. Brand listing pages carry up to sixty articles each, with their barcodes, so a brand of three hundred articles costs five page reads and a handful of price requests instead of six hundred page reads.<sup><a href="#n3" id="r3">3</a></sup> The article number the price service uses is also the number the wholesaler's order form asks for, so pricing an article and being able to order it are the same lookup.</p>
+<p>The demonstration account brought one failure mode worth recording. The session dropped silently in the middle of runs, with the shop answering the same address with the signed-out page and the price service answering with nothing. The first run reported thirty brands as missing and one as "forty listed, none priced". Both paths now detect a signed-out answer and sign in again, because a truncation that looks like an empty catalogue is the worst error a reader of this kind can make.</p>
+
+<h3>The arithmetic of a trade discount</h3>
+<p>A business under the German small-business VAT rule pays nineteen percent VAT on a domestic wholesale invoice and never reclaims it, as Part 2 explained. On top of that come Amazon's referral fee and the reverse-charge VAT on it, the fulfilment fee, preparation and inbound freight. Together these set a floor on the trade discount a line needs merely to break even, even if it sells at the full recommended retail price. Figure 5 plots that floor, computed by the agent's cost model at the ten-unit depth an initial order implies, against the discounts Wholesaler B actually offers.</p>
+
+<figure>
+<svg viewBox="0 0 700 340" role="img" aria-label="Density map of Wholesaler B's 4,367 priced articles by recommended retail price and trade discount, with two break-even curves. Selling at full retail price, a 10 euro article needs 88 percent off, a 50 euro article 46 percent and a 120 euro article 39 percent. Selling at a typical Amazon price of 74 percent of retail, every point moves up by about 18 points, so cheap articles cannot break even at any discount. Most discounts lie between 29 and 46 percent with a median of 38. 117 articles clear the full-price curve and 10 clear the typical-price curve." class="chart dens">
+<defs><clipPath id="plot5"><rect x="60" y="30" width="480" height="260"/></clipPath></defs>
+<text class="hd" x="16" y="16">TRADE DISCOUNT OFF RETAIL</text>
+<line class="grid" x1="60" y1="290.0" x2="540" y2="290.0"/><text class="tick" x="52" y="294.0" text-anchor="end">0%</text>
+<line class="grid" x1="60" y1="238.0" x2="540" y2="238.0"/><text class="tick" x="52" y="242.0" text-anchor="end">20%</text>
+<line class="grid" x1="60" y1="186.0" x2="540" y2="186.0"/><text class="tick" x="52" y="190.0" text-anchor="end">40%</text>
+<line class="grid" x1="60" y1="134.0" x2="540" y2="134.0"/><text class="tick" x="52" y="138.0" text-anchor="end">60%</text>
+<line class="grid" x1="60" y1="82.0" x2="540" y2="82.0"/><text class="tick" x="52" y="86.0" text-anchor="end">80%</text>
+<line class="grid" x1="60" y1="30.0" x2="540" y2="30.0"/><text class="tick" x="52" y="34.0" text-anchor="end">100%</text>
+<rect class="cell" x="60.0" y="217.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="60.0" y="206.8" width="17.5" height="9.4" fill-opacity="0.35"/>
+<rect class="cell" x="60.0" y="196.4" width="17.5" height="9.4" fill-opacity="0.50"/>
+<rect class="cell" x="60.0" y="186.0" width="17.5" height="9.4" fill-opacity="0.57"/>
+<rect class="cell" x="60.0" y="175.6" width="17.5" height="9.4" fill-opacity="0.63"/>
+<rect class="cell" x="60.0" y="165.2" width="17.5" height="9.4" fill-opacity="0.37"/>
+<rect class="cell" x="60.0" y="154.8" width="17.5" height="9.4" fill-opacity="0.38"/>
+<rect class="cell" x="60.0" y="144.4" width="17.5" height="9.4" fill-opacity="0.32"/>
+<rect class="cell" x="60.0" y="134.0" width="17.5" height="9.4" fill-opacity="0.39"/>
+<rect class="cell" x="60.0" y="123.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="60.0" y="92.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="78.5" y="217.2" width="17.5" height="9.4" fill-opacity="0.35"/>
+<rect class="cell" x="78.5" y="206.8" width="17.5" height="9.4" fill-opacity="0.55"/>
+<rect class="cell" x="78.5" y="196.4" width="17.5" height="9.4" fill-opacity="0.66"/>
+<rect class="cell" x="78.5" y="186.0" width="17.5" height="9.4" fill-opacity="0.73"/>
+<rect class="cell" x="78.5" y="175.6" width="17.5" height="9.4" fill-opacity="1.00"/>
+<rect class="cell" x="78.5" y="165.2" width="17.5" height="9.4" fill-opacity="0.57"/>
+<rect class="cell" x="78.5" y="154.8" width="17.5" height="9.4" fill-opacity="0.43"/>
+<rect class="cell" x="78.5" y="144.4" width="17.5" height="9.4" fill-opacity="0.39"/>
+<rect class="cell" x="78.5" y="134.0" width="17.5" height="9.4" fill-opacity="0.42"/>
+<rect class="cell" x="78.5" y="123.6" width="17.5" height="9.4" fill-opacity="0.30"/>
+<rect class="cell" x="78.5" y="113.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="78.5" y="102.8" width="17.5" height="9.4" fill-opacity="0.31"/>
+<rect class="cell" x="78.5" y="92.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="78.5" y="82.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="96.9" y="217.2" width="17.5" height="9.4" fill-opacity="0.50"/>
+<rect class="cell" x="96.9" y="206.8" width="17.5" height="9.4" fill-opacity="0.63"/>
+<rect class="cell" x="96.9" y="196.4" width="17.5" height="9.4" fill-opacity="0.66"/>
+<rect class="cell" x="96.9" y="186.0" width="17.5" height="9.4" fill-opacity="0.68"/>
+<rect class="cell" x="96.9" y="175.6" width="17.5" height="9.4" fill-opacity="0.84"/>
+<rect class="cell" x="96.9" y="165.2" width="17.5" height="9.4" fill-opacity="0.62"/>
+<rect class="cell" x="96.9" y="154.8" width="17.5" height="9.4" fill-opacity="0.49"/>
+<rect class="cell" x="96.9" y="144.4" width="17.5" height="9.4" fill-opacity="0.37"/>
+<rect class="cell" x="96.9" y="134.0" width="17.5" height="9.4" fill-opacity="0.36"/>
+<rect class="cell" x="96.9" y="123.6" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="96.9" y="113.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="96.9" y="102.8" width="17.5" height="9.4" fill-opacity="0.31"/>
+<rect class="cell" x="96.9" y="92.4" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="115.4" y="248.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="115.4" y="227.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="115.4" y="217.2" width="17.5" height="9.4" fill-opacity="0.39"/>
+<rect class="cell" x="115.4" y="206.8" width="17.5" height="9.4" fill-opacity="0.56"/>
+<rect class="cell" x="115.4" y="196.4" width="17.5" height="9.4" fill-opacity="0.66"/>
+<rect class="cell" x="115.4" y="186.0" width="17.5" height="9.4" fill-opacity="0.70"/>
+<rect class="cell" x="115.4" y="175.6" width="17.5" height="9.4" fill-opacity="0.78"/>
+<rect class="cell" x="115.4" y="165.2" width="17.5" height="9.4" fill-opacity="0.58"/>
+<rect class="cell" x="115.4" y="154.8" width="17.5" height="9.4" fill-opacity="0.39"/>
+<rect class="cell" x="115.4" y="144.4" width="17.5" height="9.4" fill-opacity="0.39"/>
+<rect class="cell" x="115.4" y="134.0" width="17.5" height="9.4" fill-opacity="0.35"/>
+<rect class="cell" x="115.4" y="123.6" width="17.5" height="9.4" fill-opacity="0.29"/>
+<rect class="cell" x="115.4" y="92.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="133.8" y="217.2" width="17.5" height="9.4" fill-opacity="0.41"/>
+<rect class="cell" x="133.8" y="206.8" width="17.5" height="9.4" fill-opacity="0.51"/>
+<rect class="cell" x="133.8" y="196.4" width="17.5" height="9.4" fill-opacity="0.55"/>
+<rect class="cell" x="133.8" y="186.0" width="17.5" height="9.4" fill-opacity="0.64"/>
+<rect class="cell" x="133.8" y="175.6" width="17.5" height="9.4" fill-opacity="0.54"/>
+<rect class="cell" x="133.8" y="165.2" width="17.5" height="9.4" fill-opacity="0.52"/>
+<rect class="cell" x="133.8" y="154.8" width="17.5" height="9.4" fill-opacity="0.35"/>
+<rect class="cell" x="133.8" y="144.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="133.8" y="134.0" width="17.5" height="9.4" fill-opacity="0.35"/>
+<rect class="cell" x="133.8" y="113.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="133.8" y="102.8" width="17.5" height="9.4" fill-opacity="0.29"/>
+<rect class="cell" x="133.8" y="92.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="152.3" y="227.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="152.3" y="217.2" width="17.5" height="9.4" fill-opacity="0.44"/>
+<rect class="cell" x="152.3" y="206.8" width="17.5" height="9.4" fill-opacity="0.55"/>
+<rect class="cell" x="152.3" y="196.4" width="17.5" height="9.4" fill-opacity="0.72"/>
+<rect class="cell" x="152.3" y="186.0" width="17.5" height="9.4" fill-opacity="0.57"/>
+<rect class="cell" x="152.3" y="175.6" width="17.5" height="9.4" fill-opacity="0.55"/>
+<rect class="cell" x="152.3" y="165.2" width="17.5" height="9.4" fill-opacity="0.48"/>
+<rect class="cell" x="152.3" y="154.8" width="17.5" height="9.4" fill-opacity="0.32"/>
+<rect class="cell" x="152.3" y="144.4" width="17.5" height="9.4" fill-opacity="0.30"/>
+<rect class="cell" x="152.3" y="134.0" width="17.5" height="9.4" fill-opacity="0.35"/>
+<rect class="cell" x="152.3" y="123.6" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="152.3" y="113.2" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="152.3" y="92.4" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="152.3" y="30.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="170.8" y="238.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="170.8" y="217.2" width="17.5" height="9.4" fill-opacity="0.44"/>
+<rect class="cell" x="170.8" y="206.8" width="17.5" height="9.4" fill-opacity="0.48"/>
+<rect class="cell" x="170.8" y="196.4" width="17.5" height="9.4" fill-opacity="0.49"/>
+<rect class="cell" x="170.8" y="186.0" width="17.5" height="9.4" fill-opacity="0.39"/>
+<rect class="cell" x="170.8" y="175.6" width="17.5" height="9.4" fill-opacity="0.46"/>
+<rect class="cell" x="170.8" y="165.2" width="17.5" height="9.4" fill-opacity="0.39"/>
+<rect class="cell" x="170.8" y="154.8" width="17.5" height="9.4" fill-opacity="0.29"/>
+<rect class="cell" x="170.8" y="144.4" width="17.5" height="9.4" fill-opacity="0.31"/>
+<rect class="cell" x="170.8" y="134.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="170.8" y="123.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="170.8" y="113.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="189.2" y="217.2" width="17.5" height="9.4" fill-opacity="0.38"/>
+<rect class="cell" x="189.2" y="206.8" width="17.5" height="9.4" fill-opacity="0.56"/>
+<rect class="cell" x="189.2" y="196.4" width="17.5" height="9.4" fill-opacity="0.39"/>
+<rect class="cell" x="189.2" y="186.0" width="17.5" height="9.4" fill-opacity="0.49"/>
+<rect class="cell" x="189.2" y="175.6" width="17.5" height="9.4" fill-opacity="0.46"/>
+<rect class="cell" x="189.2" y="165.2" width="17.5" height="9.4" fill-opacity="0.38"/>
+<rect class="cell" x="189.2" y="154.8" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="189.2" y="144.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="189.2" y="134.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="189.2" y="123.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="189.2" y="113.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="189.2" y="102.8" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="207.7" y="217.2" width="17.5" height="9.4" fill-opacity="0.34"/>
+<rect class="cell" x="207.7" y="206.8" width="17.5" height="9.4" fill-opacity="0.43"/>
+<rect class="cell" x="207.7" y="196.4" width="17.5" height="9.4" fill-opacity="0.38"/>
+<rect class="cell" x="207.7" y="186.0" width="17.5" height="9.4" fill-opacity="0.32"/>
+<rect class="cell" x="207.7" y="175.6" width="17.5" height="9.4" fill-opacity="0.38"/>
+<rect class="cell" x="207.7" y="165.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="207.7" y="154.8" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="207.7" y="134.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="207.7" y="123.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="207.7" y="113.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="226.2" y="217.2" width="17.5" height="9.4" fill-opacity="0.34"/>
+<rect class="cell" x="226.2" y="206.8" width="17.5" height="9.4" fill-opacity="0.60"/>
+<rect class="cell" x="226.2" y="196.4" width="17.5" height="9.4" fill-opacity="0.41"/>
+<rect class="cell" x="226.2" y="186.0" width="17.5" height="9.4" fill-opacity="0.30"/>
+<rect class="cell" x="226.2" y="175.6" width="17.5" height="9.4" fill-opacity="0.42"/>
+<rect class="cell" x="226.2" y="165.2" width="17.5" height="9.4" fill-opacity="0.33"/>
+<rect class="cell" x="226.2" y="154.8" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="226.2" y="134.0" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="226.2" y="113.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="244.6" y="217.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="244.6" y="206.8" width="17.5" height="9.4" fill-opacity="0.38"/>
+<rect class="cell" x="244.6" y="196.4" width="17.5" height="9.4" fill-opacity="0.37"/>
+<rect class="cell" x="244.6" y="186.0" width="17.5" height="9.4" fill-opacity="0.33"/>
+<rect class="cell" x="244.6" y="175.6" width="17.5" height="9.4" fill-opacity="0.30"/>
+<rect class="cell" x="244.6" y="165.2" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="263.1" y="217.2" width="17.5" height="9.4" fill-opacity="0.30"/>
+<rect class="cell" x="263.1" y="206.8" width="17.5" height="9.4" fill-opacity="0.54"/>
+<rect class="cell" x="263.1" y="196.4" width="17.5" height="9.4" fill-opacity="0.33"/>
+<rect class="cell" x="263.1" y="186.0" width="17.5" height="9.4" fill-opacity="0.36"/>
+<rect class="cell" x="263.1" y="175.6" width="17.5" height="9.4" fill-opacity="0.40"/>
+<rect class="cell" x="263.1" y="165.2" width="17.5" height="9.4" fill-opacity="0.29"/>
+<rect class="cell" x="263.1" y="134.0" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="263.1" y="61.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="281.5" y="238.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="281.5" y="217.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="281.5" y="206.8" width="17.5" height="9.4" fill-opacity="0.38"/>
+<rect class="cell" x="281.5" y="196.4" width="17.5" height="9.4" fill-opacity="0.35"/>
+<rect class="cell" x="281.5" y="186.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="281.5" y="175.6" width="17.5" height="9.4" fill-opacity="0.31"/>
+<rect class="cell" x="281.5" y="165.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="281.5" y="113.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="300.0" y="217.2" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="300.0" y="206.8" width="17.5" height="9.4" fill-opacity="0.48"/>
+<rect class="cell" x="300.0" y="196.4" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="300.0" y="186.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="300.0" y="175.6" width="17.5" height="9.4" fill-opacity="0.36"/>
+<rect class="cell" x="300.0" y="165.2" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="318.5" y="217.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="318.5" y="206.8" width="17.5" height="9.4" fill-opacity="0.36"/>
+<rect class="cell" x="318.5" y="196.4" width="17.5" height="9.4" fill-opacity="0.30"/>
+<rect class="cell" x="318.5" y="186.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="318.5" y="175.6" width="17.5" height="9.4" fill-opacity="0.29"/>
+<rect class="cell" x="318.5" y="154.8" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="336.9" y="279.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="336.9" y="217.2" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="336.9" y="206.8" width="17.5" height="9.4" fill-opacity="0.48"/>
+<rect class="cell" x="336.9" y="196.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="336.9" y="186.0" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="336.9" y="175.6" width="17.5" height="9.4" fill-opacity="0.34"/>
+<rect class="cell" x="336.9" y="165.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="336.9" y="144.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="355.4" y="206.8" width="17.5" height="9.4" fill-opacity="0.30"/>
+<rect class="cell" x="355.4" y="186.0" width="17.5" height="9.4" fill-opacity="0.29"/>
+<rect class="cell" x="355.4" y="175.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="355.4" y="165.2" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="373.8" y="217.2" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="373.8" y="206.8" width="17.5" height="9.4" fill-opacity="0.44"/>
+<rect class="cell" x="373.8" y="196.4" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="373.8" y="175.6" width="17.5" height="9.4" fill-opacity="0.31"/>
+<rect class="cell" x="373.8" y="165.2" width="17.5" height="9.4" fill-opacity="0.30"/>
+<rect class="cell" x="392.3" y="206.8" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="392.3" y="186.0" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="410.8" y="217.2" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="410.8" y="206.8" width="17.5" height="9.4" fill-opacity="0.50"/>
+<rect class="cell" x="410.8" y="196.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="410.8" y="175.6" width="17.5" height="9.4" fill-opacity="0.34"/>
+<rect class="cell" x="410.8" y="154.8" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="429.2" y="206.8" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="429.2" y="196.4" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="429.2" y="186.0" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="429.2" y="175.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="429.2" y="165.2" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="447.7" y="217.2" width="17.5" height="9.4" fill-opacity="0.32"/>
+<rect class="cell" x="447.7" y="196.4" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="447.7" y="175.6" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="447.7" y="165.2" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="466.2" y="227.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="466.2" y="206.8" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="484.6" y="227.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="484.6" y="217.2" width="17.5" height="9.4" fill-opacity="0.38"/>
+<rect class="cell" x="484.6" y="196.4" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="484.6" y="186.0" width="17.5" height="9.4" fill-opacity="0.29"/>
+<rect class="cell" x="484.6" y="175.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="521.5" y="227.6" width="17.5" height="9.4" fill-opacity="0.29"/>
+<rect class="cell" x="521.5" y="217.2" width="17.5" height="9.4" fill-opacity="0.37"/>
+<rect class="cell" x="521.5" y="206.8" width="17.5" height="9.4" fill-opacity="0.28"/>
+<rect class="cell" x="521.5" y="196.4" width="17.5" height="9.4" fill-opacity="0.26"/>
+<rect class="cell" x="521.5" y="175.6" width="17.5" height="9.4" fill-opacity="0.26"/>
+<line class="med" x1="60" y1="191.2" x2="540" y2="191.2"/>
+<text class="ann halo" x="536" y="206.2" text-anchor="end">median discount 38%</text>
+<g clip-path="url(#plot5)"><path class="be-full" d="M93.2,44.7 L96.9,61.2 L100.6,73.0 L104.3,82.9 L108.0,91.2 L111.7,98.3 L115.4,104.5 L119.1,110.0 L122.8,114.7 L126.5,119.0 L130.2,122.8 L133.8,126.2 L137.5,129.5 L141.2,132.6 L144.9,135.4 L148.6,137.9 L152.3,140.2 L156.0,142.4 L159.7,144.4 L163.4,146.3 L167.1,148.0 L170.8,149.6 L174.5,151.3 L178.2,152.8 L181.8,154.3 L185.5,155.7 L189.2,157.0 L192.9,158.3 L196.6,159.4 L200.3,160.5 L204.0,161.6 L207.7,162.6 L211.4,163.6 L215.1,164.5 L218.8,165.3 L222.5,166.1 L226.2,166.9 L229.8,167.7 L233.5,168.4 L237.2,169.1 L240.9,169.8 L244.6,170.4 L248.3,170.9 L252.0,171.5 L255.7,172.0 L259.4,172.5 L263.1,172.9 L266.8,173.4 L270.5,173.8 L274.2,174.2 L277.8,174.6 L281.5,175.0 L285.2,175.4 L288.9,175.8 L292.6,176.1 L296.3,176.5 L300.0,176.8 L303.7,177.1 L307.4,177.4 L311.1,177.7 L314.8,178.0 L318.5,178.3 L322.2,178.6 L325.8,178.9 L329.5,179.1 L333.2,179.4 L336.9,179.6 L340.6,179.9 L344.3,180.1 L348.0,180.4 L351.7,180.6 L355.4,180.8 L359.1,181.1 L362.8,181.4 L366.5,181.6 L370.2,181.9 L373.8,182.2 L377.5,182.4 L381.2,182.7 L384.9,182.9 L388.6,183.2 L392.3,183.4 L396.0,183.6 L399.7,183.9 L403.4,184.1 L407.1,184.3 L410.8,184.5 L414.5,184.7 L418.2,184.9 L421.8,185.1 L425.5,185.3 L429.2,185.5 L432.9,185.7 L436.6,185.8 L440.3,186.0 L444.0,186.2 L447.7,186.4 L451.4,186.5 L455.1,186.7 L458.8,186.9 L462.5,187.0 L466.2,187.2 L469.8,187.3 L473.5,187.5 L477.2,187.6 L480.9,187.8 L484.6,187.9 L488.3,188.1 L492.0,188.2 L495.7,188.3 L499.4,188.5 L503.1,188.6 L506.8,188.8 L510.5,188.9 L514.2,189.1 L517.8,189.3 L521.5,189.4 L525.2,189.6 L528.9,189.8 L532.6,189.9 L536.3,190.1 L540.0,190.2"/><path class="be-real" d="M104.3,36.2 L108.0,44.5 L111.7,51.7 L115.4,57.9 L119.1,63.3 L122.8,68.1 L126.5,72.3 L130.2,76.1 L133.8,79.5 L137.5,82.9 L141.2,85.9 L144.9,88.7 L148.6,91.2 L152.3,93.6 L156.0,95.7 L159.7,97.7 L163.4,99.6 L167.1,101.3 L170.8,102.9 L174.5,104.6 L178.2,106.2 L181.8,107.7 L185.5,109.1 L189.2,110.4 L192.9,111.6 L196.6,112.8 L200.3,113.9 L204.0,114.9 L207.7,115.9 L211.4,116.9 L215.1,117.8 L218.8,118.7 L222.5,119.5 L226.2,120.3 L229.8,121.0 L233.5,121.7 L237.2,122.4 L240.9,123.1 L244.6,123.7 L248.3,124.3 L252.0,124.8 L255.7,125.3 L259.4,125.8 L263.1,126.3 L266.8,126.7 L270.5,127.1 L274.2,127.6 L277.8,128.0 L281.5,128.4 L285.2,128.7 L288.9,129.1 L292.6,129.5 L296.3,129.8 L300.0,130.1 L303.7,130.5 L307.4,130.8 L311.1,131.1 L314.8,131.4 L318.5,131.7 L322.2,131.9 L325.8,132.2 L329.5,132.5 L333.2,132.7 L336.9,133.0 L340.6,133.2 L344.3,133.5 L348.0,133.7 L351.7,133.9 L355.4,134.1 L359.1,134.4 L362.8,134.7 L366.5,135.0 L370.2,135.2 L373.8,135.5 L377.5,135.8 L381.2,136.0 L384.9,136.3 L388.6,136.5 L392.3,136.7 L396.0,137.0 L399.7,137.2 L403.4,137.4 L407.1,137.6 L410.8,137.8 L414.5,138.0 L418.2,138.2 L421.8,138.4 L425.5,138.6 L429.2,138.8 L432.9,139.0 L436.6,139.2 L440.3,139.4 L444.0,139.5 L447.7,139.7 L451.4,139.9 L455.1,140.0 L458.8,140.2 L462.5,140.4 L466.2,140.5 L469.8,140.7 L473.5,140.8 L477.2,141.0 L480.9,141.1 L484.6,141.3 L488.3,141.4 L492.0,141.5 L495.7,141.7 L499.4,141.8 L503.1,141.9 L506.8,142.1 L510.5,142.3 L514.2,142.4 L517.8,142.6 L521.5,142.8 L525.2,142.9 L528.9,143.1 L532.6,143.2 L536.3,143.4 L540.0,143.5"/></g>
+<circle class="pt" cx="96.9" cy="61.2" r="3.6"/>
+<circle class="pt" cx="133.8" cy="126.2" r="3.6"/>
+<circle class="pt" cx="170.8" cy="149.6" r="3.6"/>
+<circle class="pt" cx="244.6" cy="170.4" r="3.6"/>
+<circle class="pt" cx="355.4" cy="180.8" r="3.6"/>
+<circle class="pt" cx="503.1" cy="188.6" r="3.6"/>
+<text class="be-l halo" x="525.2" y="174.6" text-anchor="end">break-even at full retail price</text>
+<text class="be-l2 halo" x="525.2" y="127.9" text-anchor="end">break-even at a typical Amazon price</text>
+<text class="ann halo" x="525.2" y="56.0" text-anchor="end">above a curve, the article pays</text>
+<line class="axis" x1="60" y1="290" x2="540" y2="290"/>
+<text class="tick" x="60.0" y="307" text-anchor="middle">€0</text>
+<text class="tick" x="152.3" y="307" text-anchor="middle">€25</text>
+<text class="tick" x="244.6" y="307" text-anchor="middle">€50</text>
+<text class="tick" x="336.9" y="307" text-anchor="middle">€75</text>
+<text class="tick" x="429.2" y="307" text-anchor="middle">€100</text>
+<text class="tick" x="521.5" y="307" text-anchor="middle">€125</text>
+<text class="ann" x="300.0" y="328" text-anchor="middle">Recommended retail price of the article</text>
+<text class="hd" x="566" y="16">WHAT CLEARS THE BAR</text>
+<text class="big" x="566" y="58">117</text><text class="ann" x="566" y="76">articles break even</text><text class="ann" x="566" y="91">at full retail price</text>
+<text class="big" x="566" y="134">10</text><text class="ann" x="566" y="152">at a typical Amazon</text><text class="ann" x="566" y="167">price, 74% of retail</text>
+<text class="ann" x="566" y="200">out of 4,367 priced</text><text class="ann" x="566" y="215">articles</text>
+<text class="ann" x="566" y="252">articles per cell</text>
+<rect class="cell" x="566" y="260" width="18" height="12" fill-opacity="0.25"/>
+<rect class="cell" x="586" y="260" width="18" height="12" fill-opacity="0.5"/>
+<rect class="cell" x="606" y="260" width="18" height="12" fill-opacity="0.75"/>
+<rect class="cell" x="626" y="260" width="18" height="12" fill-opacity="1.0"/>
+<text class="tick" x="566" y="286">few</text><text class="tick" x="644" y="286" text-anchor="end">many</text>
+<text class="tick" x="566" y="318">96 articles above €130</text><text class="tick" x="566" y="331">lie off the chart</text>
+</svg>
+<figcaption><b>Figure 5.</b> Where a trade discount can pay. Each cell counts Wholesaler B's articles at that retail price and discount, and the curves give the discount an article needs merely to break even. Selling at full retail price, a ten-euro article needs 88 percent off, and the median discount reaches the curve only near one hundred and twenty euros. Amazon prices in practice sit near 74 percent of retail, which lifts the curve by about eighteen points and leaves nothing under about twelve euros able to break even at any discount. Counts use the fees of the six marked points, interpolated between them.</figcaption>
+</figure>
+
+<p>The figure explains the screen's result before it is read. Of the 4,909 articles, the agent shortlisted about 160 with a discount of at least 45 percent and a recommended price of at least twenty euros, and sent the seventy whose prices looked plausible to Amazon. Sixty-two of them were gated for this account, and seven would have been profitable at the measured featured-offer price. The largest brands in the catalogue, the ones most resellers would want, offered discounts of thirty to forty-two percent, which by Figure 5 makes most of their range structurally unprofitable for a buyer who cannot reclaim VAT. The agent's own note adds the arithmetic of the alternative. A VAT-registered buyer needs roughly fifteen points less discount on every line, which turns the small-business rule from a simplification into a strategic variable.</p>
+<p>Two further caveats are recorded beside the numbers. Every price came from a demonstration tier, flagged as such in each response, and whether a real account would see the same terms is unconfirmed. And across the earlier screen of Manufacturer A's spreadsheet, the median featured-offer price on Amazon came in at 74 percent of the recommended retail price, so screening at full retail price is optimistic by about a quarter. The screen's pre-filter was built around that factor.</p>
+<p><b>Case B ended without an order, which is the result the screen was built to make possible. A decision not to commit several thousand euros, taken on evidence before the commitment, is the cheapest outcome a sourcing system can produce</b>.</p>
+
+<h2 id="census"><span class="kicker">The census</span>Finding the next Manufacturer A</h2>
+<p>Case A showed the shape that works, a German maker with a dealer channel, small minimums, real demand on Amazon and its own brand. Finding the next twenty such makers one trade fair and one email at a time does not scale. The census builds the long list from organisations that already keep one, throws most of it away with cheap checks, and hands the owner a short list with the evidence behind every score.</p>
+
+<h3>The long list</h3>
+<p>Two public directories provide the base. The first is the national register that every company placing electrical or electronic equipment on the German market must join, which lists each registrant with its brands, device categories and registration dates. Being on it is itself proof of one compliance obligation met. The second is a national export database of German manufacturers organised by product group, which covers everything that is not electronics. Both are read at the same pace and with the same rules as the retail harvest of Part 1, region by region and sector by sector, so that a run that stops part-way keeps what it finished.<sup><a href="#n4" id="r4">4</a></sup> Trade-fair exhibitor lists were considered and dropped, because their directories are applications behind private interfaces rather than pages meant to be read.</p>
+<p>The two sources disagree about almost everything except a company's name, so companies are merged on a normalised name with legal forms, punctuation and case removed.<sup><a href="#n5" id="r5">5</a></sup> The result is 125,626 companies. The first filter is free. The electrical register also lists authorised representatives, German firms registering on behalf of foreign manufacturers, recognisable by the wording of their entries. They are on the register but they are not makers anyone could buy from directly, and they account for 84,909 of the entries. That leaves 40,717 German companies that make or brand something.</p>
+
+<h3>Five filters, cheapest first</h3>
+<p>Each filter is cheap relative to the next and removes most of what the previous one let through. Every company records the stage it stopped at and why, so a company missing from the short list can always be explained.</p>
+
+<figure>
+<svg viewBox="0 0 700 486" role="img" aria-label="Census funnel on a logarithmic scale, with the test behind each step. 125,626 companies from two public registers merged on company name. 40,717 German makers after removing authorised representatives of foreign makers, 32 percent kept, at no cost. 21,903 found on Amazon.de by brand search in three tiers with distributors set aside, 54 percent kept. 10,836 with most barcodes in the GS1 Germany range, 49 percent kept, at no cost. 3,867 with a sale in 90 days measured on every product, 57 percent of the 6,781 measured so far, at one token per product. 2,010 where Amazon is not the seller on every listing, 99 percent of the 2,024 checked." class="chart census">
+<defs><marker id="c6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-3)"/></marker></defs>
+<line class="grid" x1="40" y1="48.2" x2="694" y2="48.2"/>
+<text class="tick" x="36" y="52.2" text-anchor="end">100k</text>
+<line class="grid" x1="40" y1="139.1" x2="694" y2="139.1"/>
+<text class="tick" x="36" y="143.1" text-anchor="end">10k</text>
+<text class="tick" x="36" y="234" text-anchor="end">1k</text>
+<line class="axis" x1="40" y1="230" x2="694" y2="230"/>
+<rect class="col" x="54.0" y="39.2" width="76" height="190.8" rx="2"/>
+<text class="value" x="92.0" y="32.2" text-anchor="middle">125,626</text>
+<text class="label" x="92.0" y="248" text-anchor="middle">Directories</text>
+<rect class="card" x="40" y="262" width="104" height="172" rx="5"/>
+<text class="hd" x="49" y="279">LONG LIST</text>
+<text class="ct" x="49" y="297">Two public</text>
+<text class="ct" x="49" y="311">registers, merged</text>
+<text class="ct" x="49" y="325">on company name</text>
+<line class="crule" x1="49" y1="346" x2="135" y2="346"/>
+<text class="hd" x="49" y="362">EACH ENTRY</text>
+<text class="ck" x="49" y="378">name, brands</text>
+<text class="hd" x="49" y="402">COST</text>
+<text class="cc" x="49" y="418">public pages</text>
+<path class="carrow" d="M145,348.0 l4,0" marker-end="url(#c6)"/>
+<rect class="col" x="164.0" y="83.7" width="76" height="146.3" rx="2"/>
+<text class="value" x="202.0" y="76.7" text-anchor="middle">40,717</text>
+<text class="label" x="202.0" y="248" text-anchor="middle">German makers</text>
+<rect class="card" x="150" y="262" width="104" height="172" rx="5"/>
+<text class="hd" x="159" y="279">FILTER 1</text>
+<text class="ct" x="159" y="297">Authorised</text>
+<text class="ct" x="159" y="311">representatives of</text>
+<text class="ct" x="159" y="325">foreign makers out</text>
+<line class="crule" x1="159" y1="346" x2="245" y2="346"/>
+<text class="hd" x="159" y="362">KEPT</text>
+<text class="ck" x="159" y="378">32%</text>
+<text class="hd" x="159" y="402">COST</text>
+<text class="cc" x="159" y="418">free</text>
+<path class="carrow" d="M255,348.0 l4,0" marker-end="url(#c6)"/>
+<rect class="col" x="274.0" y="108.1" width="76" height="121.9" rx="2"/>
+<text class="value" x="312.0" y="101.1" text-anchor="middle">21,903</text>
+<text class="label" x="312.0" y="248" text-anchor="middle">On Amazon.de</text>
+<rect class="card" x="260" y="262" width="104" height="172" rx="5"/>
+<text class="hd" x="269" y="279">FILTER 2</text>
+<text class="ct" x="269" y="297">Brand searched in</text>
+<text class="ct" x="269" y="311">three tiers,</text>
+<text class="ct" x="269" y="325">distributors out</text>
+<line class="crule" x1="269" y1="346" x2="355" y2="346"/>
+<text class="hd" x="269" y="362">KEPT</text>
+<text class="ck" x="269" y="378">54%</text>
+<text class="hd" x="269" y="402">COST</text>
+<text class="cc" x="269" y="418">catalogue search</text>
+<path class="carrow" d="M365,348.0 l4,0" marker-end="url(#c6)"/>
+<rect class="col" x="384.0" y="135.9" width="76" height="94.1" rx="2"/>
+<text class="value" x="422.0" y="128.9" text-anchor="middle">10,836</text>
+<text class="label" x="422.0" y="248" text-anchor="middle">German barcodes</text>
+<rect class="card" x="370" y="262" width="104" height="172" rx="5"/>
+<text class="hd" x="379" y="279">FILTER 3</text>
+<text class="ct" x="379" y="297">Most barcodes in</text>
+<text class="ct" x="379" y="311">the GS1 Germany</text>
+<text class="ct" x="379" y="325">range 400 to 440</text>
+<line class="crule" x1="379" y1="346" x2="465" y2="346"/>
+<text class="hd" x="379" y="362">KEPT</text>
+<text class="ck" x="379" y="378">49%</text>
+<text class="hd" x="379" y="402">COST</text>
+<text class="cc" x="379" y="418">free, reused</text>
+<path class="carrow" d="M475,348.0 l4,0" marker-end="url(#c6)"/>
+<rect class="col" x="494.0" y="176.6" width="76" height="53.4" rx="2"/>
+<text class="value" x="532.0" y="169.6" text-anchor="middle">3,867</text>
+<text class="label" x="532.0" y="248" text-anchor="middle">Selling</text>
+<rect class="card" x="480" y="262" width="104" height="172" rx="5"/>
+<text class="hd" x="489" y="279">FILTER 4</text>
+<text class="ct" x="489" y="297">A sale in 90 days,</text>
+<text class="ct" x="489" y="311">measured on</text>
+<text class="ct" x="489" y="325">every product</text>
+<line class="crule" x1="489" y1="346" x2="575" y2="346"/>
+<text class="hd" x="489" y="362">KEPT</text>
+<text class="ck" x="489" y="378">57% of 6,781</text>
+<text class="hd" x="489" y="402">COST</text>
+<text class="cc" x="489" y="418">a token a product</text>
+<path class="carrow" d="M585,348.0 l4,0" marker-end="url(#c6)"/>
+<rect class="col-last" x="604.0" y="202.4" width="76" height="27.6" rx="2"/>
+<text class="value" x="642.0" y="195.4" text-anchor="middle">2,010</text>
+<text class="label" x="642.0" y="248" text-anchor="middle">Sellable, scored</text>
+<rect class="card card-last" x="590" y="262" width="104" height="172" rx="5"/>
+<text class="hd" x="599" y="279">FILTER 5</text>
+<text class="ct" x="599" y="297">Amazon is not</text>
+<text class="ct" x="599" y="311">the seller on</text>
+<text class="ct" x="599" y="325">every listing</text>
+<line class="crule" x1="599" y1="346" x2="685" y2="346"/>
+<text class="hd" x="599" y="362">KEPT</text>
+<text class="ck" x="599" y="378">99% of 2,024</text>
+<text class="hd" x="599" y="402">COST</text>
+<text class="cc" x="599" y="418">gate and offers</text>
+<text class="ann" x="40" y="458">Logarithmic scale. Kept is the share of the column before, or, for filters 4 and 5,</text>
+<text class="ann" x="40" y="474">of the companies the test has reached so far. Demand measurement is still running.</text>
+</svg>
+<figcaption><b>Figure 6.</b> The census in October 2026, from a long list of 125,626 companies to about two thousand that could be written to with evidence in hand. Each card names the test a company must pass to reach that column, how much of the previous column survives it, and what the test costs. The two free filters do as much work as the paid ones, which is why they run first. The last two columns cover only the companies measured and checked so far, and will grow.</figcaption>
+</figure>
+
+<p><b>On Amazon at all.</b> For each company the agent searches Amazon's catalogue by brand and pages through every result, so that the company's complete product list is on record rather than a first page. It searches in tiers and stops at the first that finds anything, the brands the directories declared, then the company's name stripped of legal form, then its first word. The first 1,800 companies taught two corrections. A global brand that ten registrants declare belongs to the one that carries its name, and the other nine are distributors whose search should not include it. And a founder's first name is not a brand, after a company named after its founder was searched by first name alone and returned 960 listings of sheet music. A company that declares thirty brands or more is a distributor, not a maker, and is set aside. Of 40,717 companies, 21,903 were found on Amazon.de.</p>
+<p><b>German from the shelf.</b> The first three digits of a barcode say which national organisation licensed the company's prefix, and 400 to 440 belong to GS1 Germany [4]. This is not proof of German manufacture, since a German importer of foreign goods licenses German barcodes too, but it confirms from the product side what the directory said about the company. The verdict is a share of the company's barcodes, not a count, and costs nothing because the barcodes were collected in the previous step. Half the companies on Amazon passed.</p>
+<p><b>Demand, on every product.</b> Sales rates are measured from counted improvements in sales rank, as in Parts 1 and 2, on every product of every company that reached this stage. There is no sampling. Sampling theory gives the reason directly. A brand's median over ten of its two hundred articles carries a large sampling error [5], and here the cost of that error is a wrong order, while the cost of a census is one token per product, paid once. Products Amazon has never ranked are recorded as unsold without spending a token, and a product shared by several sister companies is measured once and copied to the others.<sup><a href="#n6" id="r6">6</a></sup> So far 6,781 companies have complete measurements, 3,867 of them with at least one product sold in ninety days.</p>
+<p><b>Sellable by this account.</b> For each product the agent checks the gate and reads the offers, including whether Amazon itself is among the sellers. A gate never fails a company, because a manufacturer's own invoice opens its brand gate almost without exception, so for a company one would buy from directly the gate is a form, not a filter. Amazon selling everything itself does fail a company, since Amazon as the featured seller on every listing leaves no room for a reseller. Of 2,024 companies checked, 14 failed for that reason.</p>
+<p><b>Compliance class.</b> Each surviving company is assigned the compliance regime its products fall under, read from what the sources say rather than guessed from a name, and recorded as a cost of entry rather than as a veto. Experience with direct supply showed why this is a first-class input. Safety documentation for one children's line and registration questions for two computer-hardware brands each cost more time than the deals were worth.</p>
+
+<div class="tablewrap"><table>
+<thead><tr><th>Class</th><th>Regime</th><th>What entry costs</th><th class="num">Scored companies</th></tr></thead>
+<tbody>
+<tr><td>Electrical, registered</td><td>German electrical equipment law implementing the WEEE Directive [6, 7]</td><td>Already met by the maker, which is why it is on the register</td><td class="num">1,984</td></tr>
+<tr><td>Toys and children's goods</td><td>Toy Safety Directive and the General Product Safety Regulation [8, 9]</td><td>Safety documents, labelling, a named responsible person</td><td class="num">11</td></tr>
+<tr><td>Cosmetics</td><td>Cosmetics Regulation, notification in the EU portal [10]</td><td>Product notification and safety assessment by the maker</td><td class="num">5</td></tr>
+<tr><td>Food</td><td>Food information to consumers regulation [11]</td><td>German labelling, expiry handling, a gated Amazon category</td><td class="num">1</td></tr>
+<tr><td>General</td><td>General Product Safety Regulation [9]</td><td>Basic product safety information on the listing</td><td class="num">9</td></tr>
+</tbody>
+<caption>Table 1. Compliance classes among the 2,010 scored companies. The electrical register dominates the census so far because it is the larger directory, and its members arrive with their main obligation already met.</caption>
+</table></div>
+
+<h3>One number to sort by, and every input beside it</h3>
+<p>Profitability cannot be ranked before contact, because profit needs a buy price and the buy price is what a manufacturer sends after being written to. What can be ranked is attractiveness, expressed as the euros a day the company's whole catalogue would earn if the account bought at an assumed trade discount and sold at today's prices against today's competition.</p>
+
+<div class="formula math" role="figure" aria-label="The contact score. The typical price is the median Amazon price over the company's measured products. Margin per unit is that price times one minus the referral rate, minus the fulfilment fee at that price, minus 1.19 times the assumed trade share times the price, minus handling. Units per day is the sum over every measured product of its sales per day divided by its rival offers plus one. The score is the margin, floored at zero, times units per day times the compliance factor.">
+<div class="tex">\begin{aligned}
+\tilde p &= \operatorname{median}_{i}\; p_i \\[4pt]
+m &= \tilde p\,(1-r) \;-\; f(\tilde p) \\ &\qquad -\; 1.19\,s\,\tilde p \;-\; h \\[4pt]
+u &= \sum_{i=1}^{N} \frac{d_i}{k_i + 1} \\[10pt]
+\text{score} &= \max(m,\,0)\cdot u\cdot c
+\end{aligned}</div>
+<dl class="symbols">
+<div><dt><span class="tex-i">p_i</span></dt><dd>today's Amazon price of product <span class="tex-i">i</span>, and <span class="tex-i">\tilde p</span> the company's typical price</dd></div>
+<div><dt><span class="tex-i">N</span></dt><dd>every product of the company with a measured sales rate, with no sampling</dd></div>
+<div><dt><span class="tex-i">r</span></dt><dd>Amazon's referral rate</dd></div>
+<div><dt><span class="tex-i">f(\tilde p)</span></dt><dd>the fulfilment fee, estimated from price bands because no sizes are known at this stage</dd></div>
+<div><dt><span class="tex-i">s</span></dt><dd>the assumed trade price as a share of the Amazon price, the one input that is not measured</dd></div>
+<div><dt><span class="tex-i">1.19</span></dt><dd>German VAT on the supplier's invoice, which a small business cannot reclaim</dd></div>
+<div><dt><span class="tex-i">h</span></dt><dd>preparation and handling per unit</dd></div>
+<div><dt><span class="tex-i">d_i</span></dt><dd>units of product <span class="tex-i">i</span> sold per day, from counted sales-rank drops</dd></div>
+<div><dt><span class="tex-i">k_i</span></dt><dd>rival offers on its listing, so <span class="tex-i">d_i/(k_i+1)</span> is this account's fair share</dd></div>
+<div><dt><span class="tex-i">c</span></dt><dd>the compliance factor of the company's class, a cost of entry rather than a veto</dd></div>
+</dl>
+<p class="c">The score reads as euros a day. The brand gate does not enter it, because a manufacturer's own invoice opens its gate almost without exception, and the share of open products is shown beside the score instead.</p>
+</div>
+
+<p>Every input except one is measured. The trade share is a stated prior, taken from the one manufacturer whose terms the business knows, and it is the number the owner should expect to be wrong by a third in either direction. In Bayesian terms it is an informative prior that the first price list will replace with data [12]. The inputs are stored with each score, so that the Manufacturers page can show the arithmetic and the owner can disagree with a term instead of with a number. The owner writes to the top of the list, and the page records where each conversation stands, contacted, price list received, declined or supplier. When a price list arrives, it goes through the same pipeline as Manufacturer A's catalogue, and the order-list ranking takes over. Nothing in the census sends anything.</p>
+
+<figure>
+  <div class="shot" data-placeholder="Screenshot to add. fig/manufacturers.png, the Manufacturers page with the funnel and the short list."><img src="fig/manufacturers.png" alt="The Manufacturers page of Biryar" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 7.</b> The Manufacturers page. The funnel across the top starts from the 40,717 German makers, after the authorised representatives have been removed, and the short list below shows each score beside its inputs. Company and brand names are blurred.</figcaption>
+</figure>
+
+<h2 id="bestsellers"><span class="kicker">The product view</span>Best sellers</h2>
+<p>The census measures products in order to judge companies. Read the other way round, the same measurements answer a buyer's question rather than a writer's, namely what sells, who makes it, and whether this account may list it. The Best sellers page sorts every measured product by demand, with its maker beside it, and filters by brand, category, competition and gate.</p>
+<p>The scale of the underlying data is worth stating. The census has collected 4.66 million product records for its companies, 3.02 million distinct Amazon products, and by 12 October had measured or settled 1.21 million of them. Figure 8 shows how few of those sell at all, and how much of the selling the few do.</p>
+
+<figure>
+<svg viewBox="0 0 700 254" role="img" aria-label="Two bars compare Manufacturer products by sales rate. Of 1,214,125 measured products, 75.2 percent had no sale in 90 days and account for none of the units sold. 8.3 percent sell under one a month, 4.0 percent of units. 6.8 percent sell one a month to one a week, 11.4 percent of units. 9.2 percent sell one a week to one a day, 72.4 percent of units. 0.5 percent sell one a day or more, 12.3 percent of units." class="chart tail">
+<text class="label" x="138" y="55" text-anchor="end">Products</text><text class="ann" x="138" y="70" text-anchor="end">1,214,125</text>
+<text class="label" x="138" y="207" text-anchor="end">Units sold</text><text class="ann" x="138" y="222" text-anchor="end">60,284 a day</text>
+<path class="rib b0" d="M150.0,74 L548.6,74 L150.0,192 L150.0,192 Z"/>
+<path class="rib b1" d="M548.6,74 L592.6,74 L171.1,192 L150.0,192 Z"/>
+<path class="rib b2" d="M592.6,74 L628.5,74 L231.6,192 L171.1,192 Z"/>
+<path class="rib b3" d="M628.5,74 L677.3,74 L615.1,192 L231.6,192 Z"/>
+<path class="rib b4" d="M677.3,74 L680.0,74 L680.0,192 L615.1,192 Z"/>
+<rect class="seg b0" x="150.0" y="40" width="398.6" height="34"/>
+<rect class="seg b1" x="548.6" y="40" width="44.0" height="34"/>
+<rect class="seg b2" x="592.6" y="40" width="35.9" height="34"/>
+<rect class="seg b3" x="628.5" y="40" width="48.8" height="34"/>
+<rect class="seg b4" x="677.3" y="40" width="2.7" height="34"/>
+<rect class="seg b1" x="150.0" y="192" width="21.1" height="34"/>
+<rect class="seg b2" x="171.1" y="192" width="60.5" height="34"/>
+<rect class="seg b3" x="231.6" y="192" width="383.5" height="34"/>
+<rect class="seg b4" x="615.1" y="192" width="64.9" height="34"/>
+<text class="value" x="349.3" y="61.5" text-anchor="middle">75.2%</text>
+<text class="value-in" x="570.6" y="61.5" text-anchor="middle">8.3%</text>
+<text class="value-in" x="610.5" y="61.5" text-anchor="middle">6.8%</text>
+<text class="value-in" x="652.9" y="61.5" text-anchor="middle">9.2%</text>
+<text class="value-in" x="201.4" y="213.5" text-anchor="middle">11.4%</text>
+<text class="value-in" x="423.3" y="213.5" text-anchor="middle">72.4%</text>
+<text class="value-in" x="647.5" y="213.5" text-anchor="middle">12.2%</text>
+<text class="value" x="160.6" y="243" text-anchor="middle">4.0%</text>
+<text class="callout halo" x="158" y="137.0">75% of products, 0% of sales</text>
+<text class="callout halo" x="680" y="31" text-anchor="end">0.5% of products, 12% of sales</text>
+</svg>
+<div class="legend"><span style="--sw:var(--bg-3)">No sale in 90 days</span><span style="--sw:color-mix(in srgb, var(--s3) 30%, var(--bg))">Under one a month</span><span style="--sw:color-mix(in srgb, var(--s3) 60%, var(--bg))">One a month to one a week</span><span style="--sw:var(--s3)">One a week to one a day</span><span style="--sw:var(--s2)">One a day or more</span></div>
+<figcaption><b>Figure 8.</b> Demand in German manufacturers' Amazon catalogues, 12 October 2026. The top bar splits the measured products by how often they sell, the bottom bar splits the units they sell, and each ribbon joins the two shares of one band. Three quarters of the products sold nothing in ninety days. The half percent that sells daily moves an eighth of all units, the top tenth of products moves 85 percent, and the long tail found in online retail [13] is very long here. The daily band is a floor, because sales-rank drops undercount products that sell more than once a day.</figcaption>
+</figure>
+
+<p>Two measures of demand appear on the page, because each is right in a different range. The rate counted from sales-rank improvements is exact for products selling up to about one unit a day, but above that the rank cannot fall on every sale and the count lags. For those products Amazon's own "bought in the past month" figure, relayed by Keepa, is coarse, a floor rounded to a round number, but it does not lag, so for a best seller it is the figure to read. The top of the list is re-measured daily within a fixed token budget, so the page shows this month's demand rather than the month the product was first measured.<sup><a href="#n7" id="r7">7</a></sup></p>
+
+<figure>
+  <div class="shot" data-placeholder="Screenshot to add. fig/bestsellers.png, the Best sellers page with its filters."><img src="fig/bestsellers.png" alt="The Best sellers page of Biryar" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 9.</b> The Best sellers page. What sells, who makes it, and whether this account may list it. The count at the top of the page covers only products with measured sales, before products shared by sister companies are folded together, which is why it differs from the figures above. Product, brand and company names are blurred.</figcaption>
+</figure>
+
+<h2 id="lessons"><span class="kicker">Across the three</span>Lessons</h2>
+<ol class="lessons">
+<li><b>Upstream trades margin for obligations.</b>Each removed intermediary is a margin kept, and each brings a trade account, a packing unit, a minimum order or a safety document in exchange. The trade is favourable when the obligations are small relative to the order, which is why small-minimum makers with their own dealer channel are the target.</li>
+<li><b>Rank attractiveness before contact, profit after.</b>A score built on a stated prior is honest about what it does not know. Ranking by profit before a price list exists would have been ranking by guesswork with more decimal places.</li>
+<li><b>Measure everything that decides money.</b>Demand is measured on every product rather than a sample, and fees are fitted to fees actually charged. Sampling and assumption are cheaper only until the first wrong order.</li>
+<li><b>Hide nothing, explain everything.</b>Every company records where it left the funnel, every article carries the reason it is not buyable, and every score shows its inputs. A list that silently omits things invites the wrong question.</li>
+<li><b>Tax status is a sourcing variable.</b>For a buyer who cannot reclaim VAT, wholesale lines below about fifty euros of retail price rarely pay at typical trade discounts. That is a fact about the business model as much as about any supplier.</li>
+<li><b>An empty result is a result.</b>The wholesaler case produced no order, and that was its value. The cheapest decision a sourcing system can support is a well-founded no.</li>
+</ol>
+
+<h2 id="limits"><span class="kicker">Honest margins</span>Limitations</h2>
+<p><b>The census is unfinished.</b> Demand has been measured for about two thirds of the companies that reached that stage, and the export database has so far been read for thirteen sectors. The short list will change as both complete.</p>
+<p><b>The census leans towards electronics.</b> The electrical register is by far the larger source, so electronics makers dominate the scored companies, while the products that worked best in direct supply so far come from other categories. A broader non-electrical source would rebalance the list.</p>
+<p><b>The score rests on one prior.</b> The assumed trade share comes from a single supplier's terms, and fulfilment fees in the census are estimated from price bands rather than measured. Both are stated on the page, and both are replaced by real figures once a price list arrives.</p>
+<p><b>Names are an imperfect key.</b> Merging directories on normalised names can join two companies that share a trading name, and searching Amazon by name can still attribute a distributor's listings to a maker. The tiers and the distributor rule catch the common cases, not all of them.</p>
+<p><b>Wholesale terms were seen through a demonstration account.</b> Case B's conclusion holds for the prices that account showed. A real trade account might offer different terms.</p>
+
+<h2 id="notes"><span class="kicker">For the technical reader</span>Notes</h2>
+<ol class="notes">
+<li id="n1">The shop is a standard commercial storefront whose data interface requires an access key the storefront never exposes, and whose listing pages are rendered on the server with no data behind them. The page markup is therefore the interface. The parser is kept separate from the session and the pacing, so that the fragile part, the markup, can be pinned in recorded pages and tested offline indefinitely. A product's barcode is a row of the attribute table rather than a field, and a page that parses without one is rejected, because the barcode is the only key Amazon can be searched by. <a class="back" href="#r1" aria-label="Back to text">↩</a></li>
+<li id="n2">Both ranking keys answer a real question. Profit per euro of stock asks how hard the first order's limited cash works, and suits a first purchase when capital binds. Profit per day asks what owning the stock earns, and suits a running relationship once demand is measured. The current list uses the second and shows the cash committed beside it. <a class="back" href="#r2" aria-label="Back to text">↩</a></li>
+<li id="n3">Each article card on a listing page ends with the placeholder for its price, so the page splits cleanly into cards at that marker, and every barcode, link and title within a card belongs to that article. Matching by position instead would occasionally assign a barcode to its neighbour, an error that would reach a purchase order without anyone noticing. <a class="back" href="#r3" aria-label="Back to text">↩</a></li>
+<li id="n4">The electrical register is a form-driven web application that requires a session token to be echoed with every request and identifies its buttons by generated names. The reader finds every control by its visible label and reads the generated name afresh on each page, since nothing promises the names are stable. It reads two views per region, brands and categories in one and postcodes in the other, and merges them on the registration number. The export database is read by category tree, and its links to company websites, which its robots rules disallow, are never fetched. The domain is read off the link instead. <a class="back" href="#r4" aria-label="Back to text">↩</a></li>
+<li id="n5">Name normalisation lower-cases, folds accents and German umlauts, and strips legal forms such as GmbH and KG together with punctuation, so that two spellings of the same company meet. Two different companies with the same trading name will collide, which was accepted because the directories carry no shared identifier that would do better. <a class="back" href="#r5" aria-label="Back to text">↩</a></li>
+<li id="n6">The census runs as one always-on service with three lanes, because its stages wait on different resources. Searching Amazon's catalogue is limited by the seller interface's rate, demand by Keepa's token refill, and access checks by the pricing interface. In a single loop the demand lane's waiting idled the search lane for twenty minutes at a time, so each lane now runs on its own and paces itself against its own limit. The catalogue search runs at one request a second, half the documented ceiling, after a first night at twice that speed collected fifty throttling responses an hour. <a class="back" href="#r6" aria-label="Back to text">↩</a></li>
+<li id="n7">Sister companies share catalogues, so one product can sit under several makers, and the list has to show it once. Removing duplicates with an aggregate query forced the database to read the whole register before returning the first row, and the page timed out. Duplicates are now removed after the query, which returns within the page's time limit. <a class="back" href="#r7" aria-label="Back to text">↩</a></li>
+</ol>
+
+<h2 id="refs"><span class="kicker">References</span>Sources</h2>
+<ol class="refs">
+<li>Spengler, J. J. (1950). Vertical integration and antitrust policy. <i>Journal of Political Economy</i>, 58(4), 347–352.</li>
+<li>Coase, R. H. (1937). The nature of the firm. <i>Economica</i>, 4(16), 386–405.</li>
+<li>Williamson, O. E. (1979). Transaction-cost economics. The governance of contractual relations. <i>Journal of Law and Economics</i>, 22(2), 233–261.</li>
+<li>GS1 (2024). <i>GS1 General Specifications</i>, Release 24.0. GS1 AISBL.</li>
+<li>Cochran, W. G. (1977). <i>Sampling Techniques</i> (3rd ed.). Wiley.</li>
+<li>European Parliament and Council (2012). Directive 2012/19/EU on waste electrical and electronic equipment (WEEE). <i>Official Journal of the European Union</i>, L 197, 38–71.</li>
+<li>Elektro- und Elektronikgerätegesetz (ElektroG) of 20 October 2015. <i>Bundesgesetzblatt</i> I, 1739.</li>
+<li>European Parliament and Council (2009). Directive 2009/48/EC on the safety of toys. <i>Official Journal of the European Union</i>, L 170, 1–37.</li>
+<li>European Parliament and Council (2023). Regulation (EU) 2023/988 on general product safety. <i>Official Journal of the European Union</i>, L 135, 1–51.</li>
+<li>European Parliament and Council (2009). Regulation (EC) No 1223/2009 on cosmetic products. <i>Official Journal of the European Union</i>, L 342, 59–209.</li>
+<li>European Parliament and Council (2011). Regulation (EU) No 1169/2011 on the provision of food information to consumers. <i>Official Journal of the European Union</i>, L 304, 18–63.</li>
+<li>Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., and Rubin, D. B. (2013). <i>Bayesian Data Analysis</i> (3rd ed.). CRC Press.</li>
+<li>Brynjolfsson, E., Hu, Y. J., and Smith, M. D. (2003). Consumer surplus in the digital economy. Estimating the value of increased product variety at online booksellers. <i>Management Science</i>, 49(11), 1580–1596.</li>
+</ol>
+<p class="byline" style="margin-top:36px">Written from the live system's databases, configuration and design notes. Counts were read from the production server on 2 October 2026. Supplier, company and brand names are withheld. Biryar is a Ciya Labs project.</p>
+</div>
+<script>
+(function(){
+  var root=document.documentElement,key="biryar-report-theme",btn=document.getElementById("themetoggle");
+  var saved=null;
+  try{saved=localStorage.getItem(key)}catch(e){}
+  if(saved==="light"||saved==="dark"){root.setAttribute("data-theme",saved)}
+  function current(){
+    var set=root.getAttribute("data-theme");
+    if(set)return set;
+    return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  }
+  btn.addEventListener("click",function(){
+    var next=current()==="dark"?"light":"dark";
+    root.setAttribute("data-theme",next);
+    try{localStorage.setItem(key,next)}catch(e){}
+  });
+})();
+</script>
+<script>
+// Typeset the equations. Each .tex block is display math, each .tex-i inline.
+window.addEventListener("DOMContentLoaded", function () {
+  if (!window.katex) return;
+  document.querySelectorAll(".tex, .tex-i").forEach(function (el) {
+    katex.render(el.textContent, el, {displayMode: el.classList.contains("tex"), throwOnError: false});
+  });
+});
+</script>
+<!-- inline citations: begin -->
+<style>
+a.cite{color:var(--accent);text-decoration:none;border-bottom:1px dotted currentColor;font-variant-numeric:tabular-nums}
+a.cite:hover,a.cite:focus-visible{border-bottom-style:solid}
+a.cite:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.cite-tip{position:absolute;z-index:40;max-width:min(460px,calc(100vw - 32px));padding:10px 14px;background:var(--bg-2);color:var(--ink);border:1px solid var(--rule);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:13.5px;line-height:1.45;pointer-events:none;opacity:0;transition:opacity .12s}
+.cite-tip.on{opacity:1}
+.cite-tip .n{color:var(--ink-2);font-weight:600;margin-right:6px}
+ol.refs li:target{background:var(--accent-soft);outline:6px solid var(--accent-soft)}
+@media print{.cite-tip{display:none}a.cite{color:inherit;border:0}}
+</style>
+<script>
+/* Inline citations. Each [n], [n, m] or [n–m] in the text links to reference n
+   in the list at the end and shows that reference on hover or keyboard focus.
+   Figures, the list itself and existing links are left alone, and without
+   JavaScript the text reads exactly as written. */
+(function () {
+  var list = document.querySelector("ol.refs");
+  if (!list) return;
+  var items = Array.prototype.slice.call(list.children);
+  items.forEach(function (li, i) { if (!li.id) li.id = "ref-" + (i + 1); });
+  var pattern = /\[(\d+(?:\s*[,–-]\s*\d+)*)\]/g;
+  function skipped(el) {
+    return !el || el.closest("svg, ol.refs, a, code, pre, script, style");
+  }
+  var nodes = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+  while (walker.nextNode()) {
+    var n = walker.currentNode;
+    pattern.lastIndex = 0;
+    if (pattern.test(n.nodeValue) && !skipped(n.parentElement)) nodes.push(n);
+  }
+  function link(num) {
+    var a = document.createElement("a");
+    a.className = "cite";
+    a.href = "#ref-" + num;
+    a.textContent = num;
+    a.setAttribute("data-ref", num);
+    return a;
+  }
+  nodes.forEach(function (node) {
+    var text = node.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
+    pattern.lastIndex = 0;
+    while ((m = pattern.exec(text))) {
+      var numbers = m[1].match(/\d+/g);
+      if (!numbers.every(function (x) { return +x >= 1 && +x <= items.length; })) continue;
+      frag.appendChild(document.createTextNode(text.slice(last, m.index) + "["));
+      var parts = m[1].split(/(\d+)/);
+      parts.forEach(function (p) {
+        if (/^\d+$/.test(p)) frag.appendChild(link(p));
+        else if (p) frag.appendChild(document.createTextNode(p));
+      });
+      frag.appendChild(document.createTextNode("]"));
+      last = m.index + m[0].length;
+    }
+    if (!last) return;
+    frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+
+  var tip = document.createElement("div");
+  tip.className = "cite-tip";
+  tip.setAttribute("role", "tooltip");
+  tip.id = "cite-tip";
+  document.body.appendChild(tip);
+  function show(a) {
+    var li = document.getElementById("ref-" + a.getAttribute("data-ref"));
+    if (!li) return;
+    tip.innerHTML = '<span class="n">[' + a.getAttribute("data-ref") + ']</span>' + li.innerHTML;
+    tip.classList.add("on");
+    a.setAttribute("aria-describedby", "cite-tip");
+    var r = a.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+    var top = r.top - h - 10;
+    if (top < 8) top = r.bottom + 10;
+    tip.style.left = (left + window.scrollX) + "px";
+    tip.style.top = (top + window.scrollY) + "px";
+  }
+  function hide(a) {
+    tip.classList.remove("on");
+    if (a) a.removeAttribute("aria-describedby");
+  }
+  document.addEventListener("mouseover", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) show(a);
+  });
+  document.addEventListener("mouseout", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) hide(a);
+  });
+  document.addEventListener("focusin", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) show(e.target);
+  });
+  document.addEventListener("focusout", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) hide(e.target);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", function () { hide(); }, { passive: true });
+})();
+</script>
+<!-- inline citations: end -->
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!-- inline citations: begin -->
+<style>
+a.cite{color:var(--accent);text-decoration:none;border-bottom:1px dotted currentColor;font-variant-numeric:tabular-nums}
+a.cite:hover,a.cite:focus-visible{border-bottom-style:solid}
+a.cite:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.cite-tip{position:absolute;z-index:40;max-width:min(460px,calc(100vw - 32px));padding:10px 14px;background:var(--bg-2);color:var(--ink);border:1px solid var(--rule);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:13.5px;line-height:1.45;pointer-events:none;opacity:0;transition:opacity .12s}
+.cite-tip.on{opacity:1}
+.cite-tip .n{color:var(--ink-2);font-weight:600;margin-right:6px}
+ol.refs li:target{background:var(--accent-soft);outline:6px solid var(--accent-soft)}
+@media print{.cite-tip{display:none}a.cite{color:inherit;border:0}}
+</style>
+<script>
+/* Inline citations. Each [n], [n, m] or [n–m] in the text links to reference n
+   in the list at the end and shows that reference on hover or keyboard focus.
+   Figures, the list itself and existing links are left alone, and without
+   JavaScript the text reads exactly as written. */
+(function () {
+  var list = document.querySelector("ol.refs");
+  if (!list) return;
+  var items = Array.prototype.slice.call(list.children);
+  items.forEach(function (li, i) { if (!li.id) li.id = "ref-" + (i + 1); });
+  var pattern = /\[(\d+(?:\s*[,–-]\s*\d+)*)\]/g;
+  function skipped(el) {
+    return !el || el.closest("svg, ol.refs, a, code, pre, script, style");
+  }
+  var nodes = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+  while (walker.nextNode()) {
+    var n = walker.currentNode;
+    pattern.lastIndex = 0;
+    if (pattern.test(n.nodeValue) && !skipped(n.parentElement)) nodes.push(n);
+  }
+  function link(num) {
+    var a = document.createElement("a");
+    a.className = "cite";
+    a.href = "#ref-" + num;
+    a.textContent = num;
+    a.setAttribute("data-ref", num);
+    return a;
+  }
+  nodes.forEach(function (node) {
+    var text = node.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
+    pattern.lastIndex = 0;
+    while ((m = pattern.exec(text))) {
+      var numbers = m[1].match(/\d+/g);
+      if (!numbers.every(function (x) { return +x >= 1 && +x <= items.length; })) continue;
+      frag.appendChild(document.createTextNode(text.slice(last, m.index) + "["));
+      var parts = m[1].split(/(\d+)/);
+      parts.forEach(function (p) {
+        if (/^\d+$/.test(p)) frag.appendChild(link(p));
+        else if (p) frag.appendChild(document.createTextNode(p));
+      });
+      frag.appendChild(document.createTextNode("]"));
+      last = m.index + m[0].length;
+    }
+    if (!last) return;
+    frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+
+  var tip = document.createElement("div");
+  tip.className = "cite-tip";
+  tip.setAttribute("role", "tooltip");
+  tip.id = "cite-tip";
+  document.body.appendChild(tip);
+  function show(a) {
+    var li = document.getElementById("ref-" + a.getAttribute("data-ref"));
+    if (!li) return;
+    tip.innerHTML = '<span class="n">[' + a.getAttribute("data-ref") + ']</span>' + li.innerHTML;
+    tip.classList.add("on");
+    a.setAttribute("aria-describedby", "cite-tip");
+    var r = a.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+    var top = r.top - h - 10;
+    if (top < 8) top = r.bottom + 10;
+    tip.style.left = (left + window.scrollX) + "px";
+    tip.style.top = (top + window.scrollY) + "px";
+  }
+  function hide(a) {
+    tip.classList.remove("on");
+    if (a) a.removeAttribute("aria-describedby");
+  }
+  document.addEventListener("mouseover", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) show(a);
+  });
+  document.addEventListener("mouseout", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) hide(a);
+  });
+  document.addEventListener("focusin", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) show(e.target);
+  });
+  document.addEventListener("focusout", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) hide(e.target);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", function () { hide(); }, { passive: true });
+})();
+</script>
+<!-- inline citations: end -->

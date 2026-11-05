@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biryar Repricing</title>
+<meta name="description" content="How Biryar sets the prices of its own Amazon listings every fifteen minutes. Why a learned pricing agent was replaced by a policy that first names the situation it is in, the floors no decision may cross, and a model that learns who holds the Featured Offer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f8f6f4; --bg-2:#efebe8; --bg-3:#e5dfdb;
+  --ink:#221a1a; --ink-2:#5f5352; --ink-3:#938786; --rule:#dcd5d2;
+  --accent:#b0202e; --accent-soft:#f6e3e4;
+  --c-hold:#2a78d6; --c-chase:#b0202e; --c-out:#c98a00; --c-sole:#1a8f6f; --c-unk:#8f8a8a;
+  --good:#1a7f4b;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#161212; --bg-2:#1f1a1a; --bg-3:#2a2323;
+    --ink:#efe8e7; --ink-2:#bdb1af; --ink-3:#8a7f7e; --rule:#352d2d;
+    --accent:#f07f88; --accent-soft:#3a2023;
+    --c-hold:#5b9df0; --c-chase:#f07f88; --c-out:#e0aa3c; --c-sole:#3cc29b; --c-unk:#7c7676;
+    --good:#4fc47f;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#161212; --bg-2:#1f1a1a; --bg-3:#2a2323;
+  --ink:#efe8e7; --ink-2:#bdb1af; --ink-3:#8a7f7e; --rule:#352d2d;
+  --accent:#f07f88; --accent-soft:#3a2023;
+  --c-hold:#5b9df0; --c-chase:#f07f88; --c-out:#e0aa3c; --c-sole:#3cc29b; --c-unk:#7c7676;
+  --good:#4fc47f;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,"Times New Roman",serif;font-size:18px;line-height:1.62;padding-block:0 96px;padding-inline:16px}
+.page{max-width:700px;margin:0 auto}
+h1,h2,h3{font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;text-wrap:balance;line-height:1.2;color:var(--ink);font-weight:600}
+h1{font-size:clamp(34px,6vw,50px);margin:24px 0 8px;letter-spacing:-0.01em}
+h2{font-size:25px;margin:76px 0 16px;display:flex;gap:14px;align-items:baseline}
+h2 .layer{flex:none;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--accent);padding:4px 9px;border-radius:3px;transform:translateY(-3px)}
+:root[data-theme="dark"] h2 .layer{color:#161212}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) h2 .layer{color:#161212}}
+h3{font-size:19px;margin:32px 0 10px}
+p{margin:0 0 18px}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-family:"IBM Plex Sans",sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-2)}
+.byline{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0 28px}
+.lede{font-size:21px;line-height:1.5;color:var(--ink-2);margin:0 0 20px;font-style:italic}
+.hero{margin:20px 0 8px;aspect-ratio:21/9;background:linear-gradient(135deg,var(--bg-3),var(--bg-2));display:grid;place-items:center;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;font-size:14px;overflow:hidden}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero.missing img{display:none}
+.hero.missing::after{content:"Header image to add. fig/header.jpg"}
+.hero-credit{font-family:"IBM Plex Sans",sans-serif;font-size:0.8rem;color:var(--ink-3);font-style:italic;text-align:right;margin-top:8px}
+.coldopen{border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);margin:30px 0;padding:18px 0 4px}
+.coldopen .tag{font-family:"IBM Plex Sans",sans-serif;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.timeline{list-style:none;margin:16px 0 18px 8px;padding:0;border-left:2px solid var(--rule)}
+.timeline li{position:relative;padding:0 0 14px 22px;font-size:16.5px}
+.timeline li::before{content:"";position:absolute;left:-7px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.timeline b{font-family:"IBM Plex Sans",sans-serif;font-size:13px;display:block;color:var(--ink-2);letter-spacing:.02em}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px;margin:30px 0}
+.figs div{font-family:"IBM Plex Sans",sans-serif;border-left:3px solid var(--accent);padding-left:12px}
+.figs .v{font-size:27px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.figs .k{font-size:13px;color:var(--ink-2);margin-top:4px;line-height:1.35}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 10px;padding:0;list-style:none}
+.chips a{display:inline-block;font-family:"IBM Plex Sans",sans-serif;font-size:13px;text-decoration:none;color:var(--ink);background:var(--bg-2);border:1px solid var(--rule);border-radius:999px;padding:5px 12px}
+.chips a:hover{border-color:var(--accent);color:var(--accent)}
+figure{margin:32px 0}
+figcaption{font-family:"IBM Plex Sans",sans-serif;font-size:14px;color:var(--ink-2);line-height:1.5;margin-top:10px}
+figcaption b{color:var(--ink);font-weight:600}
+.chart,.diagram{width:100%;height:auto;display:block;font-family:"IBM Plex Sans",sans-serif;color:var(--ink)}
+.chart .grid{stroke:var(--rule);stroke-width:1}
+.chart .axis{stroke:var(--ink-3);stroke-width:1}
+.chart .tick{fill:var(--ink-3);font-size:11px}
+.chart .label{fill:var(--ink-2);font-size:12px}
+.chart .value{fill:var(--ink);font-size:12px;font-weight:600}
+.chart .value-in{fill:#fff;font-size:12px;font-weight:600}
+.chart .ann{fill:var(--ink-2);font-size:11.5px}
+.chart .line{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+.chart .dot{fill:var(--accent);stroke:var(--bg);stroke-width:1.5}
+.chart .mean{stroke:var(--ink-3);stroke-width:1.3;stroke-dasharray:5 4}
+.chart .band{fill:var(--accent);fill-opacity:.18;stroke:var(--accent);stroke-width:1.4}
+.chart .stepzone{fill:var(--ink-3);fill-opacity:.12}
+.chart .bound{stroke:var(--ink);stroke-width:1.6}
+.chart .us{fill:var(--accent)}
+.chart .rival{fill:var(--bg);stroke:var(--ink-2);stroke-width:2}
+.chart .rival-win{fill:var(--ink-2)}
+.chart .arrow{stroke:var(--accent);stroke-width:2;fill:none}
+.chart .bar-a{fill:var(--ink-3)} .chart .bar-b{fill:var(--c-hold)} .chart .bar-c{fill:var(--accent)}
+.chart .ring-held{stroke:var(--c-unk)} .chart .ring-sub{stroke:var(--accent)} .chart .ring-q{stroke:var(--c-out)} .chart .ring-qo{stroke:var(--c-hold)} .chart .ring-ref{stroke:var(--ink)}
+.diagram text{fill:currentColor;font-size:12px}
+.diagram .q{font-size:12px}
+.diagram .title{font-weight:600;font-size:12.5px}
+.diagram .small{font-size:11px;fill:var(--ink-2)}
+.diagram .yn{font-size:11px;fill:var(--ink-3);font-weight:600}
+.diagram .qbox{fill:var(--bg-2);stroke:var(--ink-3);stroke-width:1}
+.diagram .edge{stroke:var(--ink-3);stroke-width:1.2;fill:none}
+.diagram .leaf{stroke-width:1.6}
+.diagram .l-hold{fill:var(--bg);stroke:var(--c-hold)} .diagram .l-chase{fill:var(--bg);stroke:var(--c-chase)} .diagram .l-out{fill:var(--bg);stroke:var(--c-out)} .diagram .l-sole{fill:var(--bg);stroke:var(--c-sole)} .diagram .l-unk{fill:var(--bg);stroke:var(--c-unk)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:"IBM Plex Sans",sans-serif;font-size:13px;color:var(--ink-2);margin:8px 0 0}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--sw)}
+.formula{background:var(--bg-2);border-left:3px solid var(--accent);padding:16px 20px;margin:24px 0;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:14px;line-height:1.9;overflow-x:auto}
+.formula div{white-space:pre}
+.formula .c{color:var(--ink-3);white-space:normal;font-family:"IBM Plex Sans",sans-serif;font-size:13px;margin-top:6px}
+.tablewrap{overflow-x:auto;margin:24px 0}
+table{border-collapse:collapse;width:100%;font-family:"IBM Plex Sans",sans-serif;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--ink-2);font-size:13px}
+td.num,th.num{text-align:right;white-space:nowrap}
+caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--ink-2);padding:8px 0 0}
+.case{display:inline-block;font-family:"IBM Plex Sans",sans-serif;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:1px 7px;border-radius:3px;border:1.5px solid}
+.case.hold{border-color:var(--c-hold);color:var(--c-hold)} .case.chase{border-color:var(--c-chase);color:var(--c-chase)} .case.out{border-color:var(--c-out);color:var(--c-out)} .case.sole{border-color:var(--c-sole);color:var(--c-sole)} .case.unk{border-color:var(--c-unk);color:var(--c-unk)}
+.aside{font-family:"IBM Plex Sans",sans-serif;font-size:15px;line-height:1.55;background:var(--bg-2);padding:14px 18px;margin:24px 0;border-radius:4px}
+.aside b{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.shot{border:1px solid var(--rule);background:var(--bg-2)}
+.shot img{width:100%;height:auto;display:block}
+.shot.missing{aspect-ratio:16/9;display:grid;place-items:center;color:var(--ink-3);font-family:"IBM Plex Sans",sans-serif;font-size:14px;text-align:center;padding:16px}
+.shot.missing img{display:none}
+.shot.missing::after{content:attr(data-placeholder)}
+.questions{margin:20px 0;padding:0;list-style:none}
+.questions li{border-top:1px solid var(--rule);padding:14px 0 6px}
+.questions li b{font-family:"IBM Plex Sans",sans-serif;font-size:16px;display:block;margin-bottom:6px}
+.refs{font-size:15px;padding-left:28px}
+.refs li{margin:0 0 10px}
+@media (max-width:600px){body{font-size:17px} h2{margin-top:56px;flex-direction:column;gap:6px} h2 .layer{transform:none}}
+.themetoggle{position:fixed;top:14px;right:14px;z-index:20;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--rule);border-radius:999px;background:var(--bg-2);color:var(--ink-2);font-family:"IBM Plex Sans",sans-serif;font-size:13px;cursor:pointer;line-height:1}
+.themetoggle:hover{color:var(--ink);border-color:var(--ink-3)}
+.themetoggle svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.themetoggle .sun{display:none}
+:root[data-theme="dark"] .themetoggle .sun,:root[data-theme="dark"] .themetoggle .lbl-l{display:inline}
+:root[data-theme="dark"] .themetoggle .moon,:root[data-theme="dark"] .themetoggle .lbl-d{display:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .themetoggle .sun{display:inline}:root:not([data-theme="light"]) .themetoggle .moon{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-d{display:none}:root:not([data-theme="light"]) .themetoggle .lbl-l{display:inline}}
+.themetoggle .lbl-l{display:none}
+@media print{.themetoggle{display:none}}
+</style>
+</head>
+<body>
+<button class="themetoggle" id="themetoggle" type="button" aria-label="Switch between light and dark theme">
+<svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+<svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+<span class="lbl-d">Dark</span><span class="lbl-l">Light</span>
+</button>
+<div class="page">
+
+<div class="eyebrow">Technical report · Biryar, part 4 · Repricing</div>
+<h1>A Repricer That Knows Where It Stands</h1>
+<p class="lede">Every fifteen minutes Biryar decides the price of each product the business sells on Amazon. This report explains how that decision is made, why a learned pricing agent was taken out of charge after one day, and why the replacement asks what situation it is in before it asks what price to choose.</p>
+<div class="byline"><span>Loghman Samani</span><span>Ciya Labs</span><span>Germany, October 2026</span></div>
+
+<figure>
+  <div class="hero"><img src="fig/header.jpg" alt="" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption class="hero-credit">Generated with an image model</figcaption>
+</figure>
+
+<div class="coldopen">
+<span class="tag">Cold open · 6 September 2026</span>
+<p style="margin-top:10px">The first repricer in Biryar was a reinforcement-learning agent, a neural policy trained with Proximal Policy Optimisation [1] inside a simulated market. It went live on a Sunday morning with twenty-two listings to manage. This is what the logs record.</p>
+<ol class="timeline">
+<li><b>Before launch</b>The simulator the agent trained in assumed thirty visitors an hour per product at a five percent conversion rate, thirty-six sales a day. The real listings were selling roughly ninety times less.</li>
+<li><b>The first ten hours</b>In a market that busy, the profit-maximising move is to raise the price until demand visibly breaks. The agent did exactly that. Fifteen of the twenty-two prices went up and not one came down.</li>
+<li><b>The compounding</b>The agent applied each change as a percentage of the current price, and the record of the current price was never refreshed. One listing went from €18.00 to €20.83 in ten hours of five percent steps.</li>
+<li><b>The echo</b>Amazon takes ten minutes or more to publish a new price, and the agent ran every fifteen. Twelve prices were submitted three times each, because each pass still saw the old price and decided the same change again.</li>
+<li><b>7 September, 00:15</b>A new policy took over. It has made every pricing decision since, 58,098 of them by 4 October.</li>
+</ol>
+<p>Nothing was wrong with the training. The agent learned the market it was shown with great fidelity. It was shown the wrong market, and it was asked to cover situations in which the information it relied on simply did not exist. The rest of this report is about the policy built from that lesson, which robotics researchers would recognise as a gap between simulation and reality [2], and which pricing researchers would recognise as the danger of optimising against a demand model that was never estimated from data [3].</p>
+</div>
+
+<div class="figs">
+<div><div class="v">58,098</div><div class="k">pricing decisions recorded, 7 September to 4 October</div></div>
+<div><div class="v">91%</div><div class="k">of decisions were to leave the price where it was</div></div>
+<div><div class="v">5%</div><div class="k">the largest step any single decision may take</div></div>
+<div><div class="v">35% → 43%</div><div class="k">share of checks in which the business held the Featured Offer, first week against the rest</div></div>
+</div>
+
+<ul class="chips" aria-label="Contents">
+<li><a href="#idea">The idea</a></li>
+<li><a href="#facts">1 · Facts</a></li>
+<li><a href="#cases">2 · Cases</a></li>
+<li><a href="#envelope">3 · Envelope</a></li>
+<li><a href="#floors">4 · Floors</a></li>
+<li><a href="#day">5 · The day</a></li>
+<li><a href="#write">6 · Writing</a></li>
+<li><a href="#journal">7 · Journal</a></li>
+<li><a href="#learning">8 · Learning</a></li>
+<li><a href="#results">Results</a></li>
+<li><a href="#open">Open questions</a></li>
+</ul>
+
+<h2 id="idea">The idea in one equation</h2>
+<p>On Amazon many sellers often offer the same product on the same page. Amazon places one of those offers behind the main purchase button, an arrangement it calls the Featured Offer and that sellers call the Buy Box. Most shoppers never look further, so the offer in that position takes almost all the sales and the others take very few. It is usually, but not always, the cheapest offer. Delivery speed, the seller's record and the fulfilment channel matter too, and algorithmic sellers win it more often than others [4].</p>
+<p>That makes the economics of a price unusually clear. The expected profit of setting a price is the chance of holding the Featured Offer at that price, times the demand the listing has, times the margin the price leaves.</p>
+
+<div class="formula" role="figure" aria-label="Expected profit of a price">
+<div>expected profit(p) = P(hold the Featured Offer | p, rivals)</div>
+<div>                     × demand for the listing</div>
+<div>                     × margin(p)</div>
+<div class="c">Demand is measured elsewhere in Biryar from sales history. Margin is arithmetic on fees and cost. Only the first term has to be learned from this account's own behaviour.</div>
+</div>
+
+<p>A good repricer therefore does three things. It never sets a price whose margin is negative. It moves the price in the direction that wins or keeps the Featured Offer when that is worth doing. And it does not move at all when it lacks the information to know which direction that is. The first version did none of the three reliably. The current one is built in eight layers, each answering one question, and a single fifteen-minute pass goes through all of them in order.</p>
+
+<h2 id="facts"><span class="layer">Layer 1</span>Facts, and their wrong twins</h2>
+<p>A policy can only be as good as the facts it is handed. The most instructive bugs in this agent were all of one kind. A number was read from a source that looked right and described something slightly different. Table 1 lists the facts the policy sees and, beside each, the plausible source that turned out to be wrong.</p>
+
+<div class="tablewrap"><table>
+<thead><tr><th>Fact</th><th>Read from</th><th>The wrong twin</th><th>What the twin caused</th></tr></thead>
+<tbody>
+<tr><td>Our current price</td><td>The offer Amazon actually publishes to buyers</td><td>The price field of our own last submission</td><td>"Twelve of twelve applied" while every buyer still saw the old prices</td></tr>
+<tr><td>Competing offers</td><td>Every offer on the listing except our own</td><td>All offers, ours included</td><td>The agent reads its own price as the market and undercuts itself</td></tr>
+<tr><td>Sales rate</td><td>Recorded sales, with the length of history attached</td><td>A rate without its age</td><td>Two days of silence treated as a measured zero</td></tr>
+<tr><td>Stock</td><td>Whichever interface can see the fulfilment channel</td><td>One report for both channels</td><td>Every warehouse-held listing read as empty</td></tr>
+<tr><td>Floor and ceiling</td><td>The seller's own bounds, re-read every pass</td><td>A percentage of a base price the agent is itself moving</td><td>A clamp that drifts with the thing it is meant to hold</td></tr>
+</tbody>
+<caption>Table 1. Each fact has a source that looks right and is not. When a fact cannot be read honestly the listing is skipped for that pass rather than given a plausible default.</caption>
+</table></div>
+
+<p>The last sentence of the caption carries a design rule. When the agent cannot read a listing's published price or bounds, it does not fill the gap with yesterday's value or a sensible guess. It skips the listing until the next pass, because a guessed number handed to a pricing rule becomes a decision. The managed catalogue itself is kept equal to what the account actually lists. A scheduled job mirrors every active listing that carries a seller-set minimum and maximum, re-reads those bounds every six hours, and drops listings that have disappeared, so a new listing is priced within a quarter of an hour of its first units arriving rather than after someone remembers to register it.</p>
+
+<h2 id="cases"><span class="layer">Layer 2</span>Naming the situation</h2>
+<p>The core insight of the redesign is that a listing can be in one of a few situations that do not share a signal, and that a single learned function was being asked to cover all of them. If competitors exist and someone else holds the Featured Offer, the price that matters is theirs. If we hold it, the price that matters is the next offer above ours, and the thing to protect is the position. If nobody else sells the product, there is no competitor price at all, and a rule built around competitor prices is choosing blind. And sometimes there is not enough information to act, in which case the right move is no move. The policy therefore decides the case first, explicitly, as Figure 1 shows.</p>
+
+<figure>
+<svg viewBox="0 0 700 392" role="img" aria-label="Decision tree. Any competing offer? If no, is there a week of sales history and stock? If no, unknown, hold. If yes, sole seller, steer by sell-through. If there are competitors, do we hold the Featured Offer? If yes, holding, probe up to just under the next offer. If no, are we already cheaper? If yes, outranked, hold. If no, watched fourteen days with no sale, or would winning need a price below the floor? If yes, hold. If no, chasing, undercut the Featured Offer by one cent." class="diagram">
+<rect class="qbox" x="250" y="10" width="200" height="38" rx="4"/><text class="q" x="350" y="34" text-anchor="middle">Any competing offer?</text>
+<path class="edge" d="M300,48 V70 H120 V92"/><text class="yn" x="196" y="64">NO</text>
+<path class="edge" d="M400,48 V70 H520 V92"/><text class="yn" x="470" y="64">YES</text>
+<rect class="qbox" x="20" y="92" width="200" height="46" rx="4"/><text class="q" x="120" y="112" text-anchor="middle">A week of sales history</text><text class="q" x="120" y="128" text-anchor="middle">and stock on hand?</text>
+<rect class="qbox" x="420" y="92" width="200" height="38" rx="4"/><text class="q" x="520" y="116" text-anchor="middle">Do we hold the Featured Offer?</text>
+<path class="edge" d="M70,138 V180"/><text class="yn" x="46" y="164">NO</text>
+<path class="edge" d="M170,138 V180"/><text class="yn" x="178" y="164">YES</text>
+<rect class="leaf l-unk" x="10" y="180" width="110" height="50" rx="4"/><text class="title" x="65" y="201" text-anchor="middle">UNKNOWN</text><text class="small" x="65" y="218" text-anchor="middle">hold</text>
+<rect class="leaf l-sole" x="128" y="180" width="110" height="50" rx="4"/><text class="title" x="183" y="201" text-anchor="middle">SOLE SELLER</text><text class="small" x="183" y="218" text-anchor="middle">steer by sell-through</text>
+<path class="edge" d="M600,130 V180"/><text class="yn" x="608" y="164">YES</text>
+<path class="edge" d="M450,130 V150 H400 V170"/><text class="yn" x="412" y="146">NO</text>
+<rect class="leaf l-hold" x="560" y="180" width="130" height="50" rx="4"/><text class="title" x="625" y="201" text-anchor="middle">HOLDING</text><text class="small" x="625" y="218" text-anchor="middle">probe up, stay under</text>
+<rect class="qbox" x="300" y="170" width="200" height="38" rx="4"/><text class="q" x="400" y="194" text-anchor="middle">Are we already cheaper?</text>
+<path class="edge" d="M330,208 V260"/><text class="yn" x="306" y="240">YES</text>
+<path class="edge" d="M470,208 V240 H470 V250"/><text class="yn" x="478" y="234">NO</text>
+<rect class="leaf l-out" x="270" y="260" width="120" height="50" rx="4"/><text class="title" x="330" y="281" text-anchor="middle">OUTRANKED</text><text class="small" x="330" y="298" text-anchor="middle">price is not the lever</text>
+<rect class="qbox" x="400" y="250" width="290" height="46" rx="4"/><text class="q" x="545" y="270" text-anchor="middle">Fourteen quiet days, or would winning</text><text class="q" x="545" y="286" text-anchor="middle">need a price below the floor?</text>
+<path class="edge" d="M470,296 V330"/><text class="yn" x="446" y="318">YES</text>
+<path class="edge" d="M620,296 V330"/><text class="yn" x="628" y="318">NO</text>
+<rect class="leaf l-chase" x="405" y="330" width="130" height="50" rx="4"/><text class="title" x="470" y="351" text-anchor="middle">CHASING</text><text class="small" x="470" y="368" text-anchor="middle">but hold</text>
+<rect class="leaf l-chase" x="555" y="330" width="135" height="50" rx="4"/><text class="title" x="622" y="351" text-anchor="middle">CHASING</text><text class="small" x="622" y="368" text-anchor="middle">undercut by one cent</text>
+</svg>
+<figcaption><b>Figure 1.</b> The case is decided before any price is chosen. Each leaf defines the band a price may come from. Three of the six leaves keep the price where it is.</figcaption>
+</figure>
+
+<p><span class="case chase">Chasing</span> Someone else holds the Featured Offer and we are priced above it. The target is one cent below their price. A cent is enough to take the position and costs nothing extra, whereas a percentage would give away margin in proportion to the price for no additional chance of winning. Two conditions stop the chase. If winning would require a price below our floor, the offer is not winnable at a profit and the price holds. And if the listing has been watched for fourteen days without a single sale, winning the position on a product nobody buys would win nothing, so the price holds there too. Fourteen days, not one, because a newly listed product has no sales either, and cutting to win the position is exactly how a new listing gets its first.</p>
+<p><span class="case out">Outranked</span> We are already cheaper than the Featured Offer and still do not hold it. Being cheaper has failed to win it, so cutting further buys nothing. Amazon is choosing on something other than price. Raising towards the holder's price would capture margin, but only on the inference that price is irrelevant here, which has not been observed. By default the policy holds, and the option to raise exists but is off.</p>
+<p><span class="case hold">Holding</span> We hold the Featured Offer. The policy probes upward, but never past one cent below the next offer above ours, because crossing it is how the position is lost. With no offer above at all, the ceiling and the step limit are the only bounds.</p>
+<p><span class="case sole">Sole seller</span> Nobody else offers the product. There is no competitor price, so the policy steers by sell-through against a stock plan, the rate that would clear the units on hand in twelve weeks. Selling well above that rate leaves money on the table and the price rises. Selling well below it means stock will age, and the price falls. Within half the target either way the price holds, a deliberately wide dead band, because a sales rate measured on a slow catalogue is noisy and a controller that chases noise oscillates [5]. This is the only case in which a price rises on strength alone, and it requires at least a week of sales history.</p>
+<p><span class="case unk">Unknown</span> Bounds are missing, stock is zero, competitors exist but none is priced, or there is too little history. The price holds and the reason is recorded.</p>
+
+<h2 id="envelope"><span class="layer">Layer 3</span>The envelope</h2>
+<p>Each case produces not a price but a band, the envelope, and a point inside it where the deterministic rule would sit. Every band is intersected with two limits that no case can widen. The price may not move more than five percent in one decision, and it may not leave the interval between the floor and the seller's ceiling. Figure 2 draws two envelopes on the same price axis.</p>
+
+<figure>
+<svg viewBox="0 0 700 270" role="img" aria-label="Two illustrative envelopes on a price axis from 20 to 30 euros with a floor at 21 and a ceiling at 29. In the chasing row, our price is 24.00, a rival holds the Featured Offer at 23.10, and the step limit allows 22.80 to 25.20, so the price moves to 23.09. In the holding row, our price is 24.00 and we hold the Featured Offer, the next offer up is at 24.60, so the band runs from 24.00 to 24.59." class="chart">
+<line class="bound" x1="120" y1="28" x2="120" y2="220"/><line class="bound" x1="600" y1="28" x2="600" y2="220"/>
+<text class="label" x="120" y="20" text-anchor="middle">floor €21</text><text class="label" x="600" y="20" text-anchor="middle">ceiling €29</text>
+<text class="label" x="30" y="84">Chasing</text>
+<rect class="stepzone" x="228" y="62" width="144" height="34"/>
+<line class="axis" x1="60" y1="96" x2="660" y2="96"/>
+<circle class="rival-win" cx="246" cy="79" r="7"/><text class="ann" x="246" y="56" text-anchor="middle">Featured Offer €23.10</text>
+<circle class="rival" cx="390" cy="79" r="7"/><text class="ann" x="404" y="83">rival €25.50</text>
+<circle class="us" cx="300" cy="79" r="7"/>
+<path class="arrow" d="M292,79 H258"/><path d="M258,74 L250,79 L258,84 z" fill="var(--accent)"/>
+<text class="ann" x="300" y="116" text-anchor="middle">ours €24.00, moves to €23.09</text>
+<text class="label" x="30" y="184">Holding</text>
+<rect class="stepzone" x="228" y="162" width="144" height="34"/>
+<rect class="band" x="300" y="162" width="35.4" height="34"/>
+<line class="axis" x1="60" y1="196" x2="660" y2="196"/>
+<circle class="us" cx="300" cy="179" r="7"/>
+<circle class="rival" cx="336" cy="179" r="7"/><text class="ann" x="346" y="156">next offer up €24.60</text>
+<circle class="rival" cx="444" cy="179" r="7"/><text class="ann" x="456" y="183">rival €26.40</text>
+<text class="ann" x="300" y="216" text-anchor="middle">ours €24.00, band up to €24.59</text>
+<line class="axis" x1="60" y1="236" x2="660" y2="236"/>
+<text class="tick" x="60" y="252" text-anchor="middle">€20</text><text class="tick" x="180" y="252" text-anchor="middle">€22</text><text class="tick" x="300" y="252" text-anchor="middle">€24</text><text class="tick" x="420" y="252" text-anchor="middle">€26</text><text class="tick" x="540" y="252" text-anchor="middle">€28</text><text class="tick" x="660" y="252" text-anchor="middle">€30</text>
+</svg>
+<div class="legend"><span style="--sw:var(--accent)">Our offer</span><span style="--sw:var(--ink-2)">Rival holding the Featured Offer</span><span style="--sw:var(--bg-3)">Five percent step limit</span><span style="--sw:var(--accent-soft)">Holding band</span></div>
+<figcaption><b>Figure 2.</b> Two envelopes with illustrative prices. Chasing moves to one cent below the Featured Offer because that target lies inside the step limit. Holding may rise only as far as one cent below the next offer, however much room the ceiling would allow.</figcaption>
+</figure>
+
+<p>The envelope is where learning is allowed back in. A learned component can choose where inside the band to sit, but whatever it returns is clamped into the band before use, so a model that has never seen a listing, or has gone wrong, costs accuracy and not money. The safe reinforcement learning literature calls this arrangement a shield, a fixed layer that sits between a learning agent and the world and blocks actions that would violate a specification [6, 7]. Here the specification is economic rather than physical, never below cost, never past the next rival when holding, never more than five percent at a time, and the shield is the part of the system that cannot be retrained into something else.</p>
+<p>The five percent limit has a story of its own. The original agent applied changes as percentages of a price it believed was current. A clamp on the step size bounds the damage of any single bad decision and stops compounding, but as Layer 5 shows, it does not by itself bound a day.</p>
+
+<div class="aside"><b>A note on rival repricers</b>
+Undercutting by a cent and then probing upward towards the next offer is a common pattern among algorithmic sellers, and two sellers following it against each other can produce saw-tooth price paths, a long slide followed by a jump back up. Economists know such paths as Edgeworth cycles and have shown they arise naturally in price-setting duopolies [8]. Recent work shows that learning pricing agents can also settle into prices above the competitive level without any communication [9]. The envelope's floor stops the slide at a profitable price, and the policy's records of rival prices over time will show whether such cycles occur on this account's listings. So far they have not been studied systematically.
+</div>
+
+<h2 id="floors"><span class="layer">Layer 4</span>Floors that cannot be argued with</h2>
+<p>The floor is the one number in the system that no case, signal or model may cross. It is the higher of two values. The first is the seller's own minimum, set on each listing in Seller Central, which Amazon itself refuses to publish below, including from its own automated pricing tools. The second is the break-even price that Biryar computes.</p>
+
+<div class="formula" role="figure" aria-label="Break-even price">
+<div>landed cost  = invoice cost × 1.19</div>
+<div>fees(p)      = referral rate × p + fixed fulfilment fee</div>
+<div>break-even   = (landed cost + fixed fee) ÷ (1 − referral rate)</div>
+<div class="c">The 1.19 is the VAT a business under the German small-business rule pays on its stock and cannot reclaim. Leaving it out inflates every margin by about a fifth, which is the size of error that turns a loss into an apparent profit.</div>
+</div>
+
+<p>The fee line is fitted from two live estimates of Amazon's fees at two different prices for the same product, rather than from a remembered percentage, because referral rates have lower bands for cheap items in some categories and fulfilment fees depend on each product's measured size. Two points determine a line exactly. When Amazon's fee service fails to answer, which it does unpredictably, a fee measured on an earlier run is preferred over a generic fallback, on the principle that a floor which has once been measured should not quietly become a guess. When a floor is written onto a listing, it sits three percent above break-even, so that a rounding difference or a fee revision cannot silently turn a break-even sale into a loss.</p>
+<p>Cost is the one fact Amazon does not know. Invoices are read and keyed by barcode, the only identifier that appears on the invoice, the box and the listing alike. When the same product has been bought twice at different prices, the higher cost is used, because once both batches share a bin in Amazon's warehouse they are indistinguishable and a floor computed from the cheaper batch would sell the dearer one at a loss. Where no invoice is on file, the cost is derived from the seller's own floor minus estimated fees. That is an upper bound on what the goods cost, which errs in the safe direction, and the system records the derivation beside the number. Of the 26 listings currently managed, 22 carry such a derived cost, and for nine of them the computed break-even sits above the seller's own minimum, so the break-even is the floor that binds.</p>
+<p>The floor is enforced in two places, deliberately. Amazon enforces the seller's minimum on its side, and Biryar refuses to submit any price below its recorded floor before the request is sent. A guard on one side only stops working the moment the other side changes.</p>
+
+<h2 id="day"><span class="layer">Layer 5</span>The day, not the step</h2>
+<p>Biryar's safety rules require the owner's approval for any repricer move larger than fifteen percent. That rule was written for an agent whose steps were unbounded. Once the envelope capped every step at five percent, a single decision could never reach fifteen, and the rule became unreachable. A lower threshold became a coin toss instead, because a clamped step lands exactly on its limit and rounding to the cent decided which side of the comparison it fell on. On the first live pass, nine nearly identical decisions were split between automatic submission and approval for no reason a reader could give.</p>
+<p>What can actually run away is the day. Five percent a pass, ninety-six passes a day, is a price anywhere at all. So the approval gate measures how far each listing has moved from its first published price of the current day, however many steps it took. Once that drift reaches ten percent, the next move waits in the approval queue. Once it reaches fifteen percent, only the owner may approve it. The single-step thresholds remain beside the daily one, eight percent for an approval and fifteen for the owner. The five percent clamp makes them unreachable in normal operation, but they cost nothing and still bound a learned chooser that returns something wild.</p>
+<p>Approvals behave like the rest of Biryar's approval queue, described in a later report. A pending price change carries its evidence, can be approved or rejected in the web interface, and expires if the market moves on before anyone decides. Since 7 September the gate has raised 233 price approvals. Thirty-four were approved, 68 rejected, one is pending and 130 expired unanswered, which is harmless by design, since an unapproved move simply does not happen.</p>
+
+<h2 id="write"><span class="layer">Layer 6</span>Writing a price without breaking it</h2>
+<p>Submitting a price to Amazon sounds like the simplest step. It turned out to hold the most dangerous bug in the project. The pricing bot shipped with a writer that replaced the whole offer attribute on a listing with a new value containing only the price. The seller's minimum and maximum live inside that same attribute, so the first successful write would have deleted both, on every listing, and left a percentage clamp computed from a moving base price as the only protection. The current writer reads the listing's existing offer, changes only the price, and sends everything else back exactly as it was. Whatever the seller set is preserved because it is never rebuilt from assumptions.</p>
+<p>Three further guards sit in the writer. A price is verified only against the published offer, never against the submission, since reading back one's own submission always agrees with it. A listing whose last submission has not yet appeared, and is recent enough to still be in transit, is skipped on the next pass, which is what stopped the triple submissions of the cold open. And the target marketplace comes from configuration rather than from an environment value that, read naively, would have sent every change to the American marketplace instead of the German one. Some product types, two DVD listings among them, are rejected by Amazon as the envelope of a price update even though Amazon publishes definitions for them, and the writer reports those as refused rather than as submitted. Nineteen decisions so far have ended as refusals of one kind or another, each logged with its reason.</p>
+<p>The live repricer runs with its dry-run setting switched off, on the owner's explicit instruction. Everything above is what makes that acceptable.</p>
+
+<h2 id="journal"><span class="layer">Layer 7</span>Writing everything down</h2>
+<p>When the envelope policy first went live, it recorded its reasoning nowhere. The previous agent's loop had logged every decision, and the replacement loop did not inherit that, so for a short time the learning machinery described in Layer 8 had no input at all and the price-history chart in the web interface slowly emptied. A journal now records every decision, one row in the repricing table and one in the platform's prediction log, with the case, the band, the reason in plain words, the competitor prices, whether we held the Featured Offer, the sales rate and its age, and the cost the decision was made against.</p>
+<p>Decisions to hold are recorded too. A policy that declines to move is making a claim, that the current price is right, and the holds are the control group against which any move means something. A training set made only of changes cannot answer whether doing nothing would have been better.</p>
+
+<figure>
+<svg viewBox="0 0 700 230" role="img" aria-label="Doughnut of 58,098 decisions. Held 90.8 percent. Submitted 4.7 percent. Queued for approval 3.6 percent. Queued for the owner 0.9 percent. Refused 0.03 percent." class="chart">
+<g transform="translate(150,115) rotate(-90)">
+<circle r="70" fill="none" stroke-width="30" class="ring-held" stroke-dasharray="399.34 40.49" stroke-dashoffset="0"/>
+<circle r="70" fill="none" stroke-width="30" class="ring-sub" stroke-dasharray="20.64 419.19" stroke-dashoffset="-399.34"/>
+<circle r="70" fill="none" stroke-width="30" class="ring-q" stroke-dasharray="15.62 424.21" stroke-dashoffset="-419.97"/>
+<circle r="70" fill="none" stroke-width="30" class="ring-qo" stroke-dasharray="4.09 435.73" stroke-dashoffset="-435.59"/>
+</g>
+<text class="value" x="150" y="112" text-anchor="middle" style="font-size:20px">58,098</text>
+<text class="tick" x="150" y="130" text-anchor="middle">decisions</text>
+<rect x="300" y="38" width="12" height="12" rx="2" fill="var(--c-unk)"/><text class="label" x="320" y="49">Held, price left where it was</text><text class="value" x="660" y="49" text-anchor="end">52,750 · 90.8%</text>
+<rect x="300" y="72" width="12" height="12" rx="2" fill="var(--accent)"/><text class="label" x="320" y="83">Submitted to Amazon</text><text class="value" x="660" y="83" text-anchor="end">2,726 · 4.7%</text>
+<rect x="300" y="106" width="12" height="12" rx="2" fill="var(--c-out)"/><text class="label" x="320" y="117">Queued for approval</text><text class="value" x="660" y="117" text-anchor="end">2,063 · 3.6%</text>
+<rect x="300" y="140" width="12" height="12" rx="2" fill="var(--c-hold)"/><text class="label" x="320" y="151">Queued for the owner</text><text class="value" x="660" y="151" text-anchor="end">540 · 0.9%</text>
+<rect x="300" y="174" width="12" height="12" rx="2" fill="var(--ink)"/><text class="label" x="320" y="185">Refused by the writer</text><text class="value" x="660" y="185" text-anchor="end">19 · 0.03%</text>
+</svg>
+<figcaption><b>Figure 3.</b> What became of every decision since 7 September. Queued decisions repeat each pass until someone decides, so they outnumber the approval requests they belong to. Proposed moves averaged 4.8 percent in size, and 64 percent of them were increases.</figcaption>
+</figure>
+
+<p>By case, 39 percent of decisions found the account <span class="case hold">holding</span>, 36 percent <span class="case chase">chasing</span>, 20 percent <span class="case out">outranked</span> and 5 percent <span class="case unk">unknown</span>. The <span class="case sole">sole seller</span> case appeared four times. Every outranked decision held, as designed, and most chasing decisions held too, either because the step had already reached the target or because the floor or the quiet rule stopped the chase.</p>
+
+<h2 id="learning"><span class="layer">Layer 8</span>Learning from the next scan</h2>
+<p>The obvious way to judge a price decision is by the sales that followed it, and the system still derives that label. Each decision is labelled once a week has passed with the units sold and the margin earned, judged against the cost the decision was made with rather than a cost learned later. But on this account the label is almost always zero. Fewer than one decision in two thousand was followed by a sale within the window. A model fitted to that learns to predict zero, and a policy trained on it learns nothing about price.</p>
+<p>The same records carry a second outcome that is neither rare nor slow. Every decision records whether we held the Featured Offer, and the next scan of the same listing, fifteen minutes later, records whether we hold it then. Pairing the two grades each decision by its consequence. If this price is published now, will we hold the Featured Offer at the next observation? The answer is positive in about 42 percent of cases, it resolves in minutes, and by the equation at the start of this report it is precisely the term that has to be learned from the account's own behaviour.</p>
+<p>A gradient-boosted classifier [10] is trained on these pairs to predict that probability from our price relative to the cheapest rival and to the current holder, the gap in euros, the number of rivals and how many undercut us, whether we already held the position, our price relative to our floor, stock, and the hour of day. Two choices follow the platform's rules for any probability that will be multiplied by money. Validation is temporal, four folds that always train on the past and score on the future, since a random split would let the model see tomorrow's market while being graded on today's. And calibration is reported beside discrimination, because a model that ranks correctly while claiming ninety percent for a sixty percent event would price with false confidence.</p>
+
+<figure>
+<svg viewBox="0 0 700 196" role="img" aria-label="Precision-recall area for predicting who holds the Featured Offer at the next scan. Base rate 0.42. Price features alone 0.92. Previous holder alone 0.94. Full model 0.99." class="chart">
+<line class="grid" x1="310" y1="18" x2="310" y2="150"/><line class="grid" x1="390" y1="18" x2="390" y2="150"/><line class="grid" x1="470" y1="18" x2="470" y2="150"/><line class="grid" x1="550" y1="18" x2="550" y2="150"/><line class="grid" x1="630" y1="18" x2="630" y2="150"/>
+<line class="axis" x1="230" y1="150" x2="630" y2="150"/>
+<text class="label" x="220" y="40" text-anchor="end">Price features only</text><rect class="bar-a" x="230" y="24" width="368" height="24" rx="2"/><text class="value-in" x="590" y="41" text-anchor="end">0.920</text>
+<text class="label" x="220" y="84" text-anchor="end">Previous holder only</text><rect class="bar-b" x="230" y="68" width="377.6" height="24" rx="2"/><text class="value-in" x="599" y="85" text-anchor="end">0.944</text>
+<text class="label" x="220" y="128" text-anchor="end">Full model</text><rect class="bar-c" x="230" y="112" width="396.4" height="24" rx="2"/><text class="value-in" x="618" y="129" text-anchor="end">0.991</text>
+<line class="mean" x1="397.6" y1="14" x2="397.6" y2="150"/>
+<text class="tick" x="230" y="168" text-anchor="middle">0</text><text class="tick" x="310" y="168" text-anchor="middle">0.2</text><text class="tick" x="390" y="168" text-anchor="middle">0.4</text><text class="tick" x="470" y="168" text-anchor="middle">0.6</text><text class="tick" x="550" y="168" text-anchor="middle">0.8</text><text class="tick" x="630" y="168" text-anchor="middle">1</text>
+<text class="ann" x="403" y="186">dashed line, base rate 0.42, what guessing scores</text>
+</svg>
+<figcaption><b>Figure 4.</b> Area under the precision-recall curve for predicting the Featured Offer at the next scan, cross-validated over four time-ordered folds on 35,975 labelled decisions. The full model scores 0.991 with a spread of 0.007 across folds, a Brier score of 0.024 and a calibration error of 0.017. Precision-recall area is reported because it is more honest than the more common ROC area when the classes are unequal [11].</figcaption>
+</figure>
+
+<p>The two baselines in Figure 4 say what the model has actually learned. Whether we held the position fifteen minutes ago is by itself an excellent predictor, because the Featured Offer is sticky. Price features alone do almost as well. The model combines both and improves on each. Including the previous holder was a deliberate choice. The policy knows it at decision time, and hiding a legitimate predictor to make the price effect look larger would be fitting the story rather than the market.</p>
+<p>The model's honest limit is stated in its own documentation. The training data come from a deterministic rule whose price is almost a function of the rival's price, so price and rival price are close to collinear, and the model is only valid on the combinations that rule actually visited. It predicts well and cannot answer what would happen at a price two cents lower outside that support, which in causal-inference terms is a failure of positivity [12]. More months of the same data will not fix that. Deliberate variation will, a small randomised jitter inside the band the envelope already computes, which is the classic remedy for learning demand while pricing [3, 13].</p>
+<p>The model ships in shadow. It runs beside the rule, its predictions are logged, and it changes no price. Promotion to a role in pricing is, like every model in Biryar, the owner's decision after the shadow has shown it would have done better, and the report on model operations describes how that comparison works.</p>
+
+<div class="aside"><b>What happened to the original agent</b>
+The learned agent was not discarded. Its logged decisions are used where they are unambiguously valid, to recalibrate the simulator's demand curve from observed sales. Feeding logged decisions straight into the agent's training as though they were fresh experience would be the standard error of offline reinforcement learning, training a policy on data produced by a different policy [14], and it fails silently because it still produces a model. Fitting the demand curve first and retraining inside the corrected simulator keeps the learning on-policy. On the first 902 labelled decisions the fitted demand level came out a small fraction of what the simulator had assumed, which is the cold open restated as a number.
+</div>
+
+<h2 id="results">What the numbers show</h2>
+<p>The figure that matters most for the business is how often its offers hold the Featured Offer, since that is where the sales are. Figure 5 shows the daily share of checks in which the account held it.</p>
+
+<figure>
+<svg viewBox="0 0 700 260" role="img" aria-label="Daily share of repricing checks in which the account held the Featured Offer, from 7 September to 4 October 2026. About 35 percent in the first week, about 43 percent afterwards." class="chart">
+<line class="grid" x1="60" y1="30" x2="670" y2="30"/><line class="grid" x1="60" y1="93.3" x2="670" y2="93.3"/><line class="grid" x1="60" y1="156.7" x2="670" y2="156.7"/>
+<line class="axis" x1="60" y1="220" x2="670" y2="220"/>
+<text class="tick" x="52" y="34" text-anchor="end">55%</text><text class="tick" x="52" y="97" text-anchor="end">45%</text><text class="tick" x="52" y="161" text-anchor="end">35%</text><text class="tick" x="52" y="224" text-anchor="end">25%</text>
+<line class="mean" x1="60" y1="159.6" x2="195.6" y2="159.6"/>
+<line class="mean" x1="218.1" y1="108.2" x2="670" y2="108.2"/>
+<polyline class="line" points="60.0,181.4 82.6,150.3 105.2,157.9 127.8,190.9 150.4,171.2 173.0,118.0 195.6,138.9 218.1,144.0 240.7,150.3 263.3,95.2 285.9,57.9 308.5,87.0 331.1,97.1 353.7,85.7 376.3,91.4 398.9,115.5 421.5,111.1 444.1,89.5 466.7,83.8 489.3,122.5 511.9,101.6 534.4,123.1 557.0,121.8 579.6,114.9 602.2,110.4 624.8,121.2 647.4,115.5 670.0,108.5"/>
+<text class="ann" x="64" y="208">first week, mean 35%</text>
+<text class="ann" x="666" y="98" text-anchor="end">since, mean 43%</text>
+<text class="tick" x="60" y="238" text-anchor="middle">7 Sep</text><text class="tick" x="218.1" y="238" text-anchor="middle">14 Sep</text><text class="tick" x="376.3" y="238" text-anchor="middle">21 Sep</text><text class="tick" x="534.4" y="238" text-anchor="middle">28 Sep</text><text class="tick" x="670" y="238" text-anchor="middle">4 Oct</text>
+</svg>
+<figcaption><b>Figure 5.</b> Share of each day's checks in which the account held the Featured Offer. The rise after the first week coincides with the policy's first full week of operation, but it is not a controlled comparison. The catalogue grew from 22 to 28 listings over the period, and rivals came and went.</figcaption>
+</figure>
+
+<p>The honest reading is modest. The share rose from about a third to over forty percent and has stayed there. The policy that produced that change never once crossed a floor, never moved a price more than five percent in a step, and asked for permission whenever a day's drift exceeded its threshold. Whether the rise was caused by the policy or by changes in the catalogue and the competition cannot be separated from these data alone, which is one more argument for the deliberate price variation described in Layer 8. What the data do show clearly is the absence of the failure that started this report. There has been no runaway price since 7 September.</p>
+
+<figure>
+  <div class="shot" data-placeholder="Screenshot to add. fig/repricing.png"><img src="fig/repricing.png" alt="The Repricing page of Biryar" onerror="this.parentNode.classList.add('missing')"></div>
+  <figcaption><b>Figure 6.</b> The Repricing page on 4 October. Across the top, whether the scan is running, how many listings hold the Featured Offer and how many sit at their floor or ceiling. Below, a move waiting for approval, a five percent probe while holding the Featured Offer, with its reason in plain words. At the bottom, every managed listing with its price, floor, ceiling, position inside its band, who holds the Featured Offer and which case it is in. Product names and SKUs are blurred.</figcaption>
+</figure>
+
+<h2 id="open">Open questions</h2>
+<ul class="questions">
+<li><b>Does being cheaper ever buy the Featured Offer when we are outranked?</b>One in five decisions finds the account cheaper than the holder and still not holding. The policy holds by default because the alternative rests on an unobserved inference. A small, recorded experiment raising towards the holder on a few listings would settle it.</li>
+<li><b>How much is the Featured Offer worth per listing?</b>The equation at the top multiplies the probability of holding it by demand, and demand per listing is measured only weakly while sales are sparse. Until it is measured well, the Buy Box model can rank prices but not value them.</li>
+<li><b>Would sales rank answer the quiet rule sooner?</b>The policy waits fourteen days of silence before it stops chasing an unsold listing. Amazon's sales rank knows a product's history before this account listed it, and on one day five DVD listings were being chased down fourteen percent while Amazon's own records showed no sales in a year. Adding rank to the facts of Layer 1 costs one catalogue call per listing.</li>
+<li><b>Are rival repricers cycling with ours?</b>The journal holds every rival price at fifteen-minute resolution. A study of those paths would show whether saw-tooth cycles occur and whether the floor is ever the reason a cycle ends.</li>
+<li><b>When should measured fees replace fallback fees?</b>The managed listings currently carry fallback fee estimates rather than per-listing measurements, and most carry costs derived from the seller's floor rather than invoices. Both err towards higher floors, which is safe, and both hide margin that a measured figure would release.</li>
+</ul>
+
+<h2 id="refs">References</h2>
+<ol class="refs">
+<li>Schulman, J., Wolski, F., Dhariwal, P., Radford, A., and Klimov, O. (2017). Proximal policy optimization algorithms. <i>arXiv preprint</i> arXiv:1707.06347.</li>
+<li>Jakobi, N., Husbands, P., and Harvey, I. (1995). Noise and the reality gap. The use of simulation in evolutionary robotics. In <i>Advances in Artificial Life, ECAL 1995</i>, Lecture Notes in Computer Science 929, 704–720. Springer.</li>
+<li>den Boer, A. V. (2015). Dynamic pricing and learning. Historical origins, current research, and new directions. <i>Surveys in Operations Research and Management Science</i>, 20(1), 1–18.</li>
+<li>Chen, L., Mislove, A., and Wilson, C. (2016). An empirical analysis of algorithmic pricing on Amazon Marketplace. <i>Proceedings of the 25th International Conference on World Wide Web</i>, 1339–1349.</li>
+<li>Åström, K. J., and Murray, R. M. (2008). <i>Feedback Systems. An Introduction for Scientists and Engineers</i>. Princeton University Press.</li>
+<li>Alshiekh, M., Bloem, R., Ehlers, R., Könighofer, B., Niekum, S., and Topcu, U. (2018). Safe reinforcement learning via shielding. <i>Proceedings of the AAAI Conference on Artificial Intelligence</i>, 32(1), 2669–2678.</li>
+<li>García, J., and Fernández, F. (2015). A comprehensive survey on safe reinforcement learning. <i>Journal of Machine Learning Research</i>, 16, 1437–1480.</li>
+<li>Maskin, E., and Tirole, J. (1988). A theory of dynamic oligopoly, II. Price competition, kinked demand curves, and Edgeworth cycles. <i>Econometrica</i>, 56(3), 571–599.</li>
+<li>Calvano, E., Calzolari, G., Denicolò, V., and Pastorello, S. (2020). Artificial intelligence, algorithmic pricing, and collusion. <i>American Economic Review</i>, 110(10), 3267–3297.</li>
+<li>Friedman, J. H. (2001). Greedy function approximation. A gradient boosting machine. <i>Annals of Statistics</i>, 29(5), 1189–1232.</li>
+<li>Saito, T., and Rehmsmeier, M. (2015). The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. <i>PLoS ONE</i>, 10(3), e0118432.</li>
+<li>Hernán, M. A., and Robins, J. M. (2020). <i>Causal Inference. What If</i>. Chapman and Hall/CRC.</li>
+<li>Misra, K., Schwartz, E. M., and Abernethy, J. (2019). Dynamic online pricing with incomplete information using multiarmed bandit experiments. <i>Marketing Science</i>, 38(2), 226–252.</li>
+<li>Levine, S., Kumar, A., Tucker, G., and Fu, J. (2020). Offline reinforcement learning. Tutorial, review, and perspectives on open problems. <i>arXiv preprint</i> arXiv:2005.01643.</li>
+</ol>
+<p class="byline" style="margin-top:36px">Written from the live system's databases, configuration and design notes. Counts were read from the production server on 4 October 2026. Product and listing names are withheld. Biryar is a Ciya Labs project.</p>
+</div>
+<script>
+(function(){
+  var root=document.documentElement,key="biryar-report-theme",btn=document.getElementById("themetoggle");
+  var saved=null;
+  try{saved=localStorage.getItem(key)}catch(e){}
+  if(saved==="light"||saved==="dark"){root.setAttribute("data-theme",saved)}
+  function current(){
+    var set=root.getAttribute("data-theme");
+    if(set)return set;
+    return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  }
+  btn.addEventListener("click",function(){
+    var next=current()==="dark"?"light":"dark";
+    root.setAttribute("data-theme",next);
+    try{localStorage.setItem(key,next)}catch(e){}
+  });
+})();
+</script>
+<!-- inline citations: begin -->
+<style>
+a.cite{color:var(--accent);text-decoration:none;border-bottom:1px dotted currentColor;font-variant-numeric:tabular-nums}
+a.cite:hover,a.cite:focus-visible{border-bottom-style:solid}
+a.cite:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.cite-tip{position:absolute;z-index:40;max-width:min(460px,calc(100vw - 32px));padding:10px 14px;background:var(--bg-2);color:var(--ink);border:1px solid var(--rule);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:13.5px;line-height:1.45;pointer-events:none;opacity:0;transition:opacity .12s}
+.cite-tip.on{opacity:1}
+.cite-tip .n{color:var(--ink-2);font-weight:600;margin-right:6px}
+ol.refs li:target{background:var(--accent-soft);outline:6px solid var(--accent-soft)}
+@media print{.cite-tip{display:none}a.cite{color:inherit;border:0}}
+</style>
+<script>
+/* Inline citations. Each [n], [n, m] or [n–m] in the text links to reference n
+   in the list at the end and shows that reference on hover or keyboard focus.
+   Figures, the list itself and existing links are left alone, and without
+   JavaScript the text reads exactly as written. */
+(function () {
+  var list = document.querySelector("ol.refs");
+  if (!list) return;
+  var items = Array.prototype.slice.call(list.children);
+  items.forEach(function (li, i) { if (!li.id) li.id = "ref-" + (i + 1); });
+  var pattern = /\[(\d+(?:\s*[,–-]\s*\d+)*)\]/g;
+  function skipped(el) {
+    return !el || el.closest("svg, ol.refs, a, code, pre, script, style");
+  }
+  var nodes = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+  while (walker.nextNode()) {
+    var n = walker.currentNode;
+    pattern.lastIndex = 0;
+    if (pattern.test(n.nodeValue) && !skipped(n.parentElement)) nodes.push(n);
+  }
+  function link(num) {
+    var a = document.createElement("a");
+    a.className = "cite";
+    a.href = "#ref-" + num;
+    a.textContent = num;
+    a.setAttribute("data-ref", num);
+    return a;
+  }
+  nodes.forEach(function (node) {
+    var text = node.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
+    pattern.lastIndex = 0;
+    while ((m = pattern.exec(text))) {
+      var numbers = m[1].match(/\d+/g);
+      if (!numbers.every(function (x) { return +x >= 1 && +x <= items.length; })) continue;
+      frag.appendChild(document.createTextNode(text.slice(last, m.index) + "["));
+      var parts = m[1].split(/(\d+)/);
+      parts.forEach(function (p) {
+        if (/^\d+$/.test(p)) frag.appendChild(link(p));
+        else if (p) frag.appendChild(document.createTextNode(p));
+      });
+      frag.appendChild(document.createTextNode("]"));
+      last = m.index + m[0].length;
+    }
+    if (!last) return;
+    frag.appendChild(document.createTextNode(text.slice(last)));
+    node.parentNode.replaceChild(frag, node);
+  });
+
+  var tip = document.createElement("div");
+  tip.className = "cite-tip";
+  tip.setAttribute("role", "tooltip");
+  tip.id = "cite-tip";
+  document.body.appendChild(tip);
+  function show(a) {
+    var li = document.getElementById("ref-" + a.getAttribute("data-ref"));
+    if (!li) return;
+    tip.innerHTML = '<span class="n">[' + a.getAttribute("data-ref") + ']</span>' + li.innerHTML;
+    tip.classList.add("on");
+    a.setAttribute("aria-describedby", "cite-tip");
+    var r = a.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+    var top = r.top - h - 10;
+    if (top < 8) top = r.bottom + 10;
+    tip.style.left = (left + window.scrollX) + "px";
+    tip.style.top = (top + window.scrollY) + "px";
+  }
+  function hide(a) {
+    tip.classList.remove("on");
+    if (a) a.removeAttribute("aria-describedby");
+  }
+  document.addEventListener("mouseover", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) show(a);
+  });
+  document.addEventListener("mouseout", function (e) {
+    var a = e.target.closest && e.target.closest("a.cite");
+    if (a) hide(a);
+  });
+  document.addEventListener("focusin", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) show(e.target);
+  });
+  document.addEventListener("focusout", function (e) {
+    if (e.target.matches && e.target.matches("a.cite")) hide(e.target);
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", function () { hide(); }, { passive: true });
+})();
+</script>
+<!-- inline citations: end -->
+</body>
+</html>
