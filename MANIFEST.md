@@ -125,10 +125,17 @@ runs it; `--schedule` queues what is due and is safe to run twice.
 Finances feed to rows the ledger reads. Verified end to end through the real
 worker with Amazon stubbed.
 
+**The front end.** Vite, React, TypeScript, in `web/`. Its types are
+generated from the API's own OpenAPI document rather than written by hand,
+and CI regenerates that document and fails if it differs from what is
+committed — so a route that changes shape breaks the type check instead of
+breaking a page in front of someone.
+
 ## Next
 
-**React** — Vite, TypeScript, against the finished API, so it is written
-once.
+Release 0.1 needs packaging rather than more features: a container, a
+first-run setup screen so credentials stop coming from the environment, and
+the SP-API guide written properly. See *Known structural work* below.
 
 ## Still carried over from the private codebase
 

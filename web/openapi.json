@@ -1,0 +1,551 @@
+{
+  "components": {
+    "schemas": {
+      "AuthorisationStart": {
+        "properties": {
+          "marketplace": {
+            "$ref": "#/components/schemas/Marketplace"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "marketplace"
+        ],
+        "title": "AuthorisationStart",
+        "type": "object"
+      },
+      "ConnectionStatus": {
+        "properties": {
+          "connected": {
+            "title": "Connected",
+            "type": "boolean"
+          },
+          "last_error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error"
+          },
+          "marketplace": {
+            "$ref": "#/components/schemas/Marketplace"
+          },
+          "selling_partner_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selling Partner Id"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "marketplace",
+          "connected"
+        ],
+        "title": "ConnectionStatus",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "Health": {
+        "properties": {
+          "database": {
+            "title": "Database",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "version",
+          "database"
+        ],
+        "title": "Health",
+        "type": "object"
+      },
+      "Marketplace": {
+        "description": "The Amazon marketplaces Biryar understands.\n\nA short list on purpose. Each one implies a currency, a VAT regime and a\nset of fee paths, and claiming support for a marketplace whose fee\nstructure has never been read against real settlement data would be a\nclaim the product cannot keep.",
+        "enum": [
+          "A1PA6795UKMFR9",
+          "A1F83G8C2ARO7P",
+          "A13V1IB3VIYZZH",
+          "APJ6JRA9NG5V4",
+          "A1RKKUPIHCS9HS",
+          "A1805IZSGTT6HS",
+          "ATVPDKIKX0DER"
+        ],
+        "title": "Marketplace",
+        "type": "string"
+      },
+      "Role": {
+        "description": "What a user may do inside their tenant.\n\nDeliberately two. The platform has exactly one dangerous category of\naction \u2014 anything that reaches Amazon, a buyer, a supplier or money \u2014 and\na role system with five tiers invites the question of which tier may do\nhalf of it. An owner may approve; an assistant may prepare.",
+        "enum": [
+          "owner",
+          "assistant"
+        ],
+        "title": "Role",
+        "type": "string"
+      },
+      "SignInRequest": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "SignInRequest",
+        "type": "object"
+      },
+      "SignInResponse": {
+        "properties": {
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserResponse"
+          }
+        },
+        "required": [
+          "token",
+          "expires_at",
+          "user"
+        ],
+        "title": "SignInResponse",
+        "type": "object"
+      },
+      "UserResponse": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "display_name",
+          "role"
+        ],
+        "title": "UserResponse",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "Session token": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "summary": "Amazon operations, one decision at a time.",
+    "title": "Biryar",
+    "version": "0.1.0.dev0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/amazon/authorize": {
+      "post": {
+        "description": "Where to send this tenant's seller to approve the application.",
+        "operationId": "authorize_v1_amazon_authorize_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "marketplace",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Marketplace",
+              "default": "A1PA6795UKMFR9"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorisationStart"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Authorize",
+        "tags": [
+          "amazon"
+        ]
+      }
+    },
+    "/v1/amazon/callback": {
+      "get": {
+        "description": "Where Amazon returns the seller, carrying a code worth five minutes.\n\nUnauthenticated by necessity; the state is what proves whose account this\nis. See the module docstring.",
+        "operationId": "callback_v1_amazon_callback_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "required": true,
+            "schema": {
+              "title": "State",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "spapi_oauth_code",
+            "required": true,
+            "schema": {
+              "title": "Spapi Oauth Code",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "selling_partner_id",
+            "required": true,
+            "schema": {
+              "title": "Selling Partner Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "marketplace",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Marketplace",
+              "default": "A1PA6795UKMFR9"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Callback",
+        "tags": [
+          "amazon"
+        ]
+      }
+    },
+    "/v1/amazon/status": {
+      "get": {
+        "description": "Whether this tenant can currently reach Amazon.\n\nA seller whose authorisation was revoked needs to be told on their own\nscreen. Finding out because the numbers quietly stopped moving is the\nfailure this exists to prevent.",
+        "operationId": "connection_status_v1_amazon_status_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "marketplace",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Marketplace",
+              "default": "A1PA6795UKMFR9"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Connection Status",
+        "tags": [
+          "amazon"
+        ]
+      }
+    },
+    "/v1/auth/me": {
+      "get": {
+        "description": "Who the presented token belongs to.",
+        "operationId": "me_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Me",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/sign-in": {
+      "post": {
+        "description": "Exchange credentials for a session token.\n\nOne failure response for every cause \u2014 unknown address, wrong password,\ndeactivated account. Distinguishing them turns this endpoint into a way\nto ask which email addresses are registered.\n\nThe token is returned here and never again. Only its digest is stored.",
+        "operationId": "sign_in_v1_auth_sign_in_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-biryar-tenant",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Biryar-Tenant"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignInRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sign In",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/auth/sign-out": {
+      "post": {
+        "description": "End this session. Signing out twice is not an error.",
+        "operationId": "sign_out_v1_auth_sign_out_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Sign Out",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "description": "Whether this instance can serve.\n\nThe database is actually queried rather than assumed. A process that is\nup but cannot reach PostgreSQL serves nothing useful, and a health check\nthat returns ok regardless is how that goes unnoticed through a deploy.",
+        "operationId": "health_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "health"
+        ]
+      }
+    }
+  }
+}

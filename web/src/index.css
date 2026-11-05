@@ -1,0 +1,106 @@
+/* Deliberately small. One stylesheet, plain CSS, no framework.
+   The page has four elements; a design system would be more code than
+   the thing it styles. */
+
+:root {
+  --ink: #16181d;
+  --ink-soft: #666c7a;
+  --line: #e3e5ea;
+  --accent: #c8102e;
+  --bad: #b3261e;
+  --bg: #ffffff;
+  --bg-soft: #f7f8fa;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #e8eaef;
+    --ink-soft: #9aa1ae;
+    --line: #2a2d35;
+    --bg: #14161a;
+    --bg-soft: #1b1e24;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: var(--bg-soft);
+}
+
+h1, h2 { margin: 0 0 0.25rem; font-weight: 600; letter-spacing: -0.01em; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.05rem; }
+
+.centred {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.page { max-width: 46rem; margin: 0 auto; padding: 1rem; }
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0 1rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 1rem;
+}
+
+.card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1.25rem;
+  width: min(26rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.page .card { width: auto; }
+
+label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: var(--ink-soft); }
+
+input {
+  font: inherit;
+  color: var(--ink);
+  background: var(--bg);
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+button {
+  font: inherit;
+  font-weight: 500;
+  padding: 0.55rem 0.9rem;
+  border: 0;
+  border-radius: 7px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+button:disabled { opacity: 0.55; cursor: default; }
+button.link {
+  background: none;
+  color: var(--ink-soft);
+  padding: 0.25rem;
+  text-decoration: underline;
+}
+
+.muted { color: var(--ink-soft); margin: 0; }
+.small { font-size: 0.85rem; }
+.error { color: var(--bad); margin: 0; font-size: 0.9rem; }
+
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 1rem; margin: 0; }
+.facts dt { color: var(--ink-soft); font-size: 0.85rem; }
+.facts dd { margin: 0; }
