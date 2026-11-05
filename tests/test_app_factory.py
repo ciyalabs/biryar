@@ -17,11 +17,11 @@ from fastapi.testclient import TestClient
 from biryar.api import create_app
 from biryar.api.deps import get_settings
 
-from .conftest import test_settings
+from .conftest import settings_for_tests
 
 
 def test_the_settings_a_route_sees_are_the_ones_passed_in() -> None:
-    config = test_settings(amazon_application_id="amzn1.sellerapps.app.distinctive")
+    config = settings_for_tests(amazon_application_id="amzn1.sellerapps.app.distinctive")
     app = create_app(config)
 
     with TestClient(app):
@@ -33,8 +33,8 @@ def test_the_settings_a_route_sees_are_the_ones_passed_in() -> None:
 
 def test_two_apps_do_not_share_configuration() -> None:
     """Module-level caching would quietly make the second one win."""
-    first = create_app(test_settings(amazon_application_id="first"))
-    second = create_app(test_settings(amazon_application_id="second"))
+    first = create_app(settings_for_tests(amazon_application_id="first"))
+    second = create_app(settings_for_tests(amazon_application_id="second"))
 
     with TestClient(first), TestClient(second):
         assert first.state.settings.amazon_application_id == "first"
@@ -48,7 +48,7 @@ def test_the_settings_dependency_reads_the_app_not_the_process() -> None:
         def __init__(self, app: object) -> None:
             self.app = app
 
-    config = test_settings(amazon_application_id="from-the-app")
+    config = settings_for_tests(amazon_application_id="from-the-app")
     app = create_app(config)
 
     with TestClient(app):
@@ -57,7 +57,7 @@ def test_the_settings_dependency_reads_the_app_not_the_process() -> None:
 
 def test_an_installation_without_an_amazon_application_knows_it() -> None:
     """Checked before a seller is sent anywhere, not discovered mid-flow."""
-    assert test_settings().amazon_is_configured is True
-    assert test_settings(amazon_application_id="").amazon_is_configured is False
-    assert test_settings(lwa_client_secret="").amazon_is_configured is False
-    assert test_settings(amazon_redirect_uri="").amazon_is_configured is False
+    assert settings_for_tests().amazon_is_configured is True
+    assert settings_for_tests(amazon_application_id="").amazon_is_configured is False
+    assert settings_for_tests(lwa_client_secret="").amazon_is_configured is False
+    assert settings_for_tests(amazon_redirect_uri="").amazon_is_configured is False

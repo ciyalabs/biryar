@@ -115,3 +115,24 @@ isolation guarantee the database enforces rather than the application.
 
 The trade is that a policy bug affects everyone at once. That is why the
 tests in `test_tenancy.py` are the ones that must never be allowed to rot.
+
+
+## Running these tests
+
+They need a real PostgreSQL, for the reason above: row-level security has no
+equivalent anywhere else, so a test against another engine would prove the
+opposite of what it claims.
+
+```bash
+python scripts/devdb.py start
+export BIRYAR_TEST_DATABASE_URL=$(python scripts/devdb.py url)
+pytest
+```
+
+`pgserver` ships PostgreSQL as a Python wheel, so this needs neither root nor
+Docker. The cluster lives in `.devdb/`, listens on 127.0.0.1 only, and is
+thrown away with `python scripts/devdb.py reset`.
+
+`status` prints the bundled server's version. It may differ in major version
+from the one CI runs, which is worth knowing before concluding that a
+behaviour difference is a bug in the code.

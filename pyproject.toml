@@ -28,6 +28,9 @@ dev = [
     # floating pin means CI can fail on a commit that changed nothing.
     "ruff==0.17.3",
     "mypy==1.18.2",
+    # Ships PostgreSQL as a wheel, so the tests that need a real server can
+    # be run without root or Docker. See scripts/devdb.py.
+    "pgserver>=0.1.4",
 ]
 
 [build-system]

@@ -8,7 +8,17 @@ opposite of what it claims — that the isolation works, on an engine that
 cannot express it.
 
 Set ``BIRYAR_TEST_DATABASE_URL`` to run them. Without it they skip, and the
-pure-logic tests still run anywhere.
+pure-logic tests still run anywhere — but skipping is not the intended way
+to work, it is the fallback. ``scripts/devdb.py`` starts a PostgreSQL with
+no root and no Docker:
+
+    python scripts/devdb.py start
+    export BIRYAR_TEST_DATABASE_URL=$(python scripts/devdb.py url)
+    pytest
+
+A suite where most tests skip looks green while proving nothing about the
+property the product most depends on, and a round trip through CI to learn
+whether a policy works is slow enough that it stops being done.
 """
 
 from __future__ import annotations
@@ -193,7 +203,7 @@ TEST_AMAZON = {
 }
 
 
-def test_settings(**overrides: object) -> BiryarSettings:
+def settings_for_tests(**overrides: object) -> BiryarSettings:
     """Settings for a test app: a real sealing key, a fake Amazon application."""
     from biryar.config import Settings as BiryarSettings
     from biryar.crypto import Keyring
@@ -219,5 +229,5 @@ def client(app_engine: Engine) -> Iterator[TestClient]:
 
     from biryar.api import create_app
 
-    with TestClient(create_app(test_settings(), engine=app_engine)) as test_client:
+    with TestClient(create_app(settings_for_tests(), engine=app_engine)) as test_client:
         yield test_client
