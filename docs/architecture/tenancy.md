@@ -32,8 +32,8 @@ Every tenant-scoped table carries a `tenant_id` and a policy:
 
 ```sql
 CREATE POLICY tenant_isolation ON users
-    USING       (tenant_id = current_setting('app.tenant_id', true)::uuid)
-    WITH CHECK  (tenant_id = current_setting('app.tenant_id', true)::uuid);
+    USING       (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::uuid)
+    WITH CHECK  (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::uuid);
 ```
 
 `tenant_session()` sets `app.tenant_id` for the transaction. Everything else
@@ -72,6 +72,15 @@ the only place in the codebase assembling SQL by concatenation.
 `current_setting('app.tenant_id', true)` returns NULL when nothing has set
 it, and NULL never equals a uuid. A connection with no tenant in scope
 therefore sees no rows at all.
+
+The `NULLIF(..., '')` is load-bearing. A transaction-local setting is
+restored at commit to whatever it was beforehand, and for a custom GUC the
+session never set, that previous value is the **empty string**, not NULL. On
+a pooled connection that has already served one tenant transaction, the next
+query with no tenant therefore reads `''`, and `''::uuid` raises rather than
+comparing. Isolation holds either way — nothing leaks — but a query that
+should quietly return nothing would instead fail with a cast error that says
+nothing about tenancy, which is a bad afternoon for whoever hits it.
 
 This is why `admin_session()` cannot read tenant data even though it is
 "admin". Provisioning a tenant, listing tenants, and running migrations have

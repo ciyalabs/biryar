@@ -192,19 +192,31 @@ def _enable_tenant_isolation() -> None:
     that silently does nothing.
 
     ``current_setting(..., true)`` returns NULL rather than raising when the
-    setting is absent, and NULL never equals a uuid, so a connection with no
-    tenant in scope sees no rows. Default-deny is the right failure mode:
-    the alternative is a query that works in testing and returns the wrong
-    seller's data in production.
+    setting has never been touched, and NULL never equals a uuid, so a
+    connection with no tenant in scope sees no rows. Default-deny is the
+    right failure mode: the alternative is a query that works in testing and
+    returns the wrong seller's data in production.
+
+    ``NULLIF(..., '')`` is not decoration. A transaction-local setting is
+    restored at commit to what it was before the transaction, and for a
+    custom GUC that the session never set that previous value is the **empty
+    string**, not NULL. So on a pooled connection that has served one tenant
+    transaction, the next query with no tenant reads ``''`` rather than NULL,
+    and ``''::uuid`` raises instead of comparing. The isolation holds either
+    way, but a query that should quietly return nothing would instead fail
+    with a cast error that says nothing about tenancy.
     """
+    isolation = (
+        f"NULLIF(current_setting('{TENANT_GUC}', true), '')::uuid"
+    )
     for table in TENANT_TABLES:
         op.execute(f"ALTER TABLE {table} ENABLE ROW LEVEL SECURITY")
         op.execute(f"ALTER TABLE {table} FORCE ROW LEVEL SECURITY")
         op.execute(
             f"""
             CREATE POLICY tenant_isolation ON {table}
-                USING (tenant_id = current_setting('{TENANT_GUC}', true)::uuid)
-                WITH CHECK (tenant_id = current_setting('{TENANT_GUC}', true)::uuid)
+                USING (tenant_id = {isolation})
+                WITH CHECK (tenant_id = {isolation})
             """
         )
 
