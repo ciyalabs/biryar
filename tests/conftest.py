@@ -96,11 +96,21 @@ def schema(admin_engine: Engine) -> Iterator[None]:
 
     # Belt and braces for the tables this first upgrade created. Default
     # privileges cover everything after it.
+    #
+    # The EXECUTE grant is what a real deployment must also do: the session
+    # resolver is SECURITY DEFINER and revoked from PUBLIC by its migration,
+    # so the application cannot authenticate anyone without it.
     with admin_engine.begin() as conn:
         conn.execute(
             text(
                 "GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES "
                 f"IN SCHEMA public TO {APP_ROLE}"
+            )
+        )
+        conn.execute(
+            text(
+                "GRANT EXECUTE ON FUNCTION public.biryar_resolve_session(text) "
+                f"TO {APP_ROLE}"
             )
         )
     yield
