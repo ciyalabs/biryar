@@ -15,6 +15,7 @@ from sqlalchemy.exc import ProgrammingError
 
 from biryar.db.base import tenant_scoped_tables
 from biryar.db.session import TENANT_GUC, SessionFactory, TenantContextError, tenant_session
+from biryar.migrations.versions import v0001_tenancy_and_credentials as first
 
 from .conftest import make_user
 
