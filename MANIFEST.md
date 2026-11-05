@@ -45,8 +45,9 @@ details, no tax references.
 Cut because they are specific to one business:
 
 - **Taxes** (ELSTER, ERiC, FinTS bank feed) — German-only and regulated.
-- **NICI**, **Manufacturers**, **Accounts vault** — one supplier, one
-  outreach funnel, and one person's third-party logins.
+- **The single-supplier assortment page**, **Manufacturers**, **Accounts
+  vault** — one supplier's catalogue, one outreach funnel, and one person's
+  third-party logins.
 
 Cut because they are a different product:
 
