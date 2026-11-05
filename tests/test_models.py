@@ -51,3 +51,4 @@ def test_every_relationship_has_a_resolvable_join() -> None:
             assert rel.primaryjoin is not None, (
                 f"{mapper.class_.__name__}.{rel.key} has no join condition"
             )
+

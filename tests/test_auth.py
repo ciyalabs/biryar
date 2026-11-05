@@ -131,9 +131,20 @@ def test_an_expired_session_is_refused(
     a, _ = two_tenants
     with tenant_session(factory, a) as s:
         issued = issue_session(s, _owner(s, a), lifetime=timedelta(seconds=1))
+        # Both ends move, because expires_at > issued_at is a CHECK. Backdating
+        # only the expiry asks the database for a row that cannot exist, which
+        # is how this test first failed — correctly.
+        past = datetime.now(UTC) - timedelta(hours=2)
         s.execute(
-            text("UPDATE user_sessions SET expires_at = :past WHERE id = :id"),
-            {"past": datetime.now(UTC) - timedelta(hours=1), "id": issued.session_id},
+            text(
+                "UPDATE user_sessions SET issued_at = :issued, expires_at = :expires "
+                "WHERE id = :id"
+            ),
+            {
+                "issued": past,
+                "expires": past + timedelta(minutes=1),
+                "id": issued.session_id,
+            },
         )
 
     plain = factory()

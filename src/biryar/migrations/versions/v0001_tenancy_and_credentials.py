@@ -61,7 +61,7 @@ def upgrade() -> None:
         ),
         sa.CheckConstraint(
             "slug ~ '^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$'",
-            name="ck_tenants_slug_is_url_safe",
+            name="slug_is_url_safe",
         ),
         sa.PrimaryKeyConstraint("id", name="pk_tenants"),
         sa.UniqueConstraint("slug", name="uq_tenants_slug"),
@@ -91,7 +91,7 @@ def upgrade() -> None:
             server_default=sa.text("now()"), nullable=False,
         ),
         sa.CheckConstraint(
-            "position('@' in email) > 1", name="ck_users_email_has_a_local_part",
+            "position('@' in email) > 1", name="email_has_a_local_part",
         ),
         sa.ForeignKeyConstraint(
             ["tenant_id"], ["tenants.id"],
@@ -119,7 +119,7 @@ def upgrade() -> None:
         sa.Column("revoked_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("user_agent", sa.String(256), nullable=True),
         sa.Column("ip", sa.String(45), nullable=True),
-        sa.CheckConstraint("expires_at > issued_at", name="ck_user_sessions_expires_after_issue"),
+        sa.CheckConstraint("expires_at > issued_at", name="expires_after_issue"),
         sa.ForeignKeyConstraint(
             ["tenant_id"], ["tenants.id"],
             name="fk_user_sessions_tenant_id_tenants", ondelete="CASCADE",

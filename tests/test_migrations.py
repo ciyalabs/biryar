@@ -11,7 +11,7 @@ from __future__ import annotations
 import pytest
 from alembic.autogenerate import compare_metadata
 from alembic.migration import MigrationContext
-from sqlalchemy import Engine
+from sqlalchemy import Engine, text
 
 import biryar.db.models  # noqa: F401
 from biryar.db.base import Base
@@ -62,3 +62,46 @@ def test_every_revision_can_be_undone(admin_engine: Engine, schema: None) -> Non
 
     command.downgrade(config, "base")
     command.upgrade(config, "head")
+
+
+def test_check_constraints_are_named_as_the_models_name_them(
+    admin_engine: Engine, schema: None,
+) -> None:
+    """Alembic does not compare CHECK constraints, so nothing else would.
+
+    The migrations passed names that already carried the convention's
+    prefix, and the convention added it again: the live constraint was
+    called ck_user_sessions_ck_user_sessions_expires_after_issue. It
+    enforced the right rule, so nothing failed — but no code deriving the
+    name from the models could find it, which is what a later ALTER or a
+    downgrade does.
+
+    The drift test above cannot see this because compare_metadata ignores
+    CHECK constraints entirely. This reads the catalogue instead.
+    """
+    expected = {
+        constraint.name
+        for table in Base.metadata.tables.values()
+        for constraint in table.constraints
+        if isinstance(getattr(constraint, "name", None), str)
+        and str(constraint.name).startswith("ck_")
+    }
+
+    with admin_engine.connect() as conn:
+        live = {
+            row[0]
+            for row in conn.execute(
+                text(
+                    "SELECT conname FROM pg_constraint c "
+                    "JOIN pg_namespace n ON n.oid = c.connamespace "
+                    "WHERE c.contype = 'c' AND n.nspname = 'public' "
+                    "AND conname LIKE 'ck\\_%'"
+                )
+            )
+        }
+
+    missing = expected - live
+    assert not missing, (
+        "the database has no constraint by these names, so the migrations "
+        f"and the models disagree: {sorted(missing)}"
+    )
