@@ -19,6 +19,7 @@ import uuid
 from collections.abc import Iterator
 
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.orm import Session
 
@@ -178,3 +179,19 @@ def make_user(session: Session, tenant_id: uuid.UUID, email: str) -> uuid.UUID:
     session.add(user)
     session.flush()
     return user.id
+
+
+@pytest.fixture
+def client(app_engine: Engine) -> Iterator[TestClient]:
+    """The API, wired to the throwaway database.
+
+    The engine is injected rather than read from the environment, so the app
+    under test is the real one and nothing about it is configured by what
+    happens to be exported in the shell.
+    """
+    from fastapi.testclient import TestClient
+
+    from biryar.api import create_app
+
+    with TestClient(create_app(engine=app_engine)) as test_client:
+        yield test_client
