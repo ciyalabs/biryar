@@ -12,3 +12,7 @@ venv/
 models/
 data/raw/
 .DS_Store
+
+# local environment
+.venv/
+*.egg-info/

@@ -21,10 +21,10 @@ over half-priced inventory is not half right, it is unusable, so
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
-from typing import Iterable, Sequence
 
 from .ledger import OrderLine, Overhead, Settlement
 

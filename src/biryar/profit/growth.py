@@ -45,14 +45,14 @@ for every decision the owner makes.
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 from statistics import median
-from typing import Iterable, Sequence
 
-from .ledger import OrderLine
 from .costs import ResolvedCost
+from .ledger import OrderLine
 
 ZERO = Decimal("0")
 DAYS_PER_MONTH = Decimal("30.4")
@@ -236,7 +236,7 @@ class Spread:
     n: int
 
     @classmethod
-    def of(cls, values: Sequence[Decimal]) -> "Spread":
+    def of(cls, values: Sequence[Decimal]) -> Spread:
         if not values:
             return cls(ZERO, ZERO, ZERO, 0)
         ordered = sorted(values)
@@ -329,7 +329,7 @@ def build_positions(
     *,
     bounds: dict[str, dict[str, object]],
     stock: dict[str, dict[str, object]],
-    costs: dict[str, "ResolvedCost"],
+    costs: dict[str, ResolvedCost],
     until: date,
     packaging_rate: Decimal = ZERO,
 ) -> list[SkuPosition]:
@@ -337,7 +337,7 @@ def build_positions(
 
     ``bounds`` and ``stock`` are keyed by SKU — the ``price_bounds`` and
     ``listing_health`` rows; ``costs`` is the landed cost per SKU, from
-    :class:`~src.profit.costs.CostBasis`. A SKU present in any of
+    :class:`~biryar.profit.costs.CostBasis`. A SKU present in any of
     them but never sold still gets a position, with zero units: a listing that
     has never sold is a fact worth seeing, not a row to omit.
     """
@@ -367,7 +367,7 @@ def build_positions(
             unit_cost=resolved.unit_cost if resolved else None,
             cost_detail=resolved.detail if resolved else "",
             cost_source=resolved.source if resolved else "",
-            stock=int(held.get("fulfillable") or 0),
+            stock=_int(held.get("fulfillable")),
             current_price=_dec(bound.get("current_price")),
             min_price=_dec(bound.get("min_price")),
             max_price=_dec(bound.get("max_price")),
@@ -388,6 +388,20 @@ def model(positions: Sequence[SkuPosition], *, monthly_overhead: Decimal) -> Gro
         proven_skus=len(proven),
         unproven_skus=sum(1 for p in positions if p.units_sold == 0),
     )
+
+
+def _int(value: object) -> int:
+    """A count out of an untyped blob, defaulting to zero rather than raising."""
+    if value is None or isinstance(value, bool):
+        return 0
+    if isinstance(value, int):
+        return value
+    if isinstance(value, (str, float, Decimal)):
+        try:
+            return int(Decimal(str(value)))
+        except (ArithmeticError, ValueError):
+            return 0
+    return 0
 
 
 def _dec(value: object) -> Decimal | None:

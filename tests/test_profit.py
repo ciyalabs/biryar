@@ -14,8 +14,7 @@ from decimal import Decimal
 
 import pytest
 
-from src.profit.store import init_costs_db
-from src.profit import (
+from biryar.profit import (
     CostBasis,
     CostEntry,
     build_settlement,
@@ -24,6 +23,7 @@ from src.profit import (
     overhead_by_kind,
     period,
 )
+from biryar.profit.store import init_costs_db
 
 
 def _money(amount: str) -> dict[str, object]:
@@ -78,9 +78,11 @@ def released(row: tuple[str, str, str], *, on: str = "2026-10-02",
     txn_type, _, raw = row
     payload = json.loads(raw)
     payload["postedDate"] = f"{on}T10:00:00Z"
-    payload["relatedIdentifiers"] = list(payload["relatedIdentifiers"]) + [
+    payload["relatedIdentifiers"] = [
+        *payload["relatedIdentifiers"],
         {"relatedIdentifierName": "DEFERRED_TRANSACTION_ID",
-         "relatedIdentifierValue": deferred_id}]
+         "relatedIdentifierValue": deferred_id},
+    ]
     return (txn_type, on, json.dumps(payload))
 
 
@@ -390,7 +392,7 @@ def test_profit_is_revenue_less_amazon_less_postage_less_what_it_cost(basis):
     line = build_settlement(rows, cost_of=basis).lines[0]
 
     assert line.cogs == Decimal("-8.00")
-    #  17.94 − 3.01 − 5.03 − 8.00
+    #  17.94 - 3.01 - 5.03 - 8.00
     assert line.contribution == Decimal("1.90")
 
 
@@ -458,7 +460,7 @@ def test_a_gross_priced_line_lands_with_its_share_of_the_delivery():
 
     The invoice already carries VAT, so none is added on top.
     """
-    from src.profit.invoices import landed_costs, InvoiceLine
+    from biryar.profit.invoices import InvoiceLine, landed_costs
 
     line = InvoiceLine(vendor="acme", doc_number="INV-1", doc_date=date(2026, 9, 30),
                        name="Widget Blue", article_no="2904994",
@@ -472,7 +474,7 @@ def test_a_gross_priced_line_lands_with_its_share_of_the_delivery():
 
 def test_a_net_priced_line_carries_the_vat_that_cannot_be_reclaimed():
     """An invoice that arrives untaxed still costs the VAT on the way in."""
-    from src.profit.invoices import landed_costs, InvoiceLine
+    from biryar.profit.invoices import InvoiceLine, landed_costs
 
     line = InvoiceLine(vendor="acme", doc_number="INV-2", doc_date=date(2026, 8, 25),
                        name="Widget Red", ean="6290361916889", qty=10,
@@ -483,7 +485,7 @@ def test_a_net_priced_line_carries_the_vat_that_cannot_be_reclaimed():
 
 def test_a_seller_who_reclaims_vat_sets_the_rate_to_zero():
     """Not every seller pays the VAT in the end, so it must be a parameter."""
-    from src.profit.invoices import landed_costs, InvoiceLine
+    from biryar.profit.invoices import InvoiceLine, landed_costs
 
     line = InvoiceLine(vendor="acme", doc_number="INV-3", doc_date=date(2026, 8, 25),
                        name="Widget Red", qty=10, unit_price=Decimal("11.89"))
@@ -493,7 +495,7 @@ def test_a_seller_who_reclaims_vat_sets_the_rate_to_zero():
 
 def test_delivery_is_split_across_units_not_across_lines():
     """Two lines, nine units, 9.00 delivery — one a unit however they group."""
-    from src.profit.invoices import landed_costs, InvoiceLine
+    from biryar.profit.invoices import InvoiceLine, landed_costs
 
     lines = [InvoiceLine(vendor="acme", doc_number="x", doc_date=date(2026, 9, 1),
                          name="a", article_no="1", qty=6, unit_price=Decimal("10.00")),
@@ -518,7 +520,7 @@ def _cost_file(tmp_path, body: str):
 
 def test_a_cost_file_groups_its_rows_into_invoices(tmp_path):
     """Two rows sharing a document number are one invoice, not two."""
-    from src.profit.invoices import read_cost_csv
+    from biryar.profit.invoices import read_cost_csv
 
     path = _cost_file(tmp_path,
                       "acme,INV-1,2026-09-30,Blue,5,8.40,,W-1,3.95,false,0.19\n"
@@ -539,7 +541,7 @@ def test_the_delivery_on_a_cost_file_is_charged_once_per_invoice(tmp_path):
     8 units, 4.00 delivery, so 0.50 a unit. The first line lands at
     (8.00 + 0.50) x 1.19 = 10.12 rather than at twice the delivery.
     """
-    from src.profit.invoices import costs_from_file
+    from biryar.profit.invoices import costs_from_file
 
     path = _cost_file(tmp_path,
                       "acme,INV-1,2026-09-30,Blue,5,8.00,,W-1,4.00,false,0.19\n"
@@ -553,7 +555,8 @@ def test_the_delivery_on_a_cost_file_is_charged_once_per_invoice(tmp_path):
 def test_a_cost_file_missing_a_required_column_says_which(tmp_path):
     """Failing loudly beats landing every cost at zero."""
     import pytest as _pytest
-    from src.profit.invoices import CostFileError, read_cost_csv
+
+    from biryar.profit.invoices import CostFileError, read_cost_csv
 
     path = tmp_path / "bad.csv"
     path.write_text("vendor,doc_number,name,qty\nacme,INV-1,Blue,5\n", encoding="utf-8")
@@ -567,7 +570,7 @@ def test_a_cost_file_missing_a_required_column_says_which(tmp_path):
 
 def test_one_unreadable_row_does_not_cost_you_the_others(tmp_path):
     """A bad line is skipped and logged, not fatal."""
-    from src.profit.invoices import read_cost_csv
+    from biryar.profit.invoices import read_cost_csv
 
     path = _cost_file(tmp_path,
                       "acme,INV-1,2026-09-30,Blue,5,8.40,,W-1,0,true,0.19\n"
@@ -578,7 +581,7 @@ def test_one_unreadable_row_does_not_cost_you_the_others(tmp_path):
 
 def test_european_and_english_decimals_both_parse_in_a_cost_file(tmp_path):
     """1.234,56 and 1,234.56 are the same number written two ways."""
-    from src.profit.invoices import read_cost_csv
+    from biryar.profit.invoices import read_cost_csv
 
     path = _cost_file(tmp_path,
                       "acme,INV-1,30.09.2026,Blue,1,\"1.234,56\",,W-1,0,true,0.19\n")
@@ -587,7 +590,7 @@ def test_european_and_english_decimals_both_parse_in_a_cost_file(tmp_path):
 
 
 def test_german_and_english_decimals_both_parse():
-    from src.profit.invoices import _money
+    from biryar.profit.invoices import _money
 
     assert _money("5,95") == Decimal("5.95")
     assert _money("11.89") == Decimal("11.89")
@@ -600,8 +603,8 @@ def test_packaging_is_charged_on_a_self_shipped_unit_and_not_on_an_fba_one():
     Charged per FBM unit shipped. An FBA line is left alone because Amazon's
     fulfilment fee already paid for the box.
     """
-    from src.profit.growth import build_positions
-    from src.profit.costs import ResolvedCost
+    from biryar.profit.costs import ResolvedCost
+    from biryar.profit.growth import build_positions
 
     rows = [shipment("1", [{"sku": "MFN-A", "revenue": "20.00",
                             "fee_base": "-3.00", "fee_tax": "-0.57"}]),
@@ -616,14 +619,14 @@ def test_packaging_is_charged_on_a_self_shipped_unit_and_not_on_an_fba_one():
 
     assert positions["MFN-A"].packaging_per_unit == Decimal("1.50")
     assert positions["AFN-B"].packaging_per_unit == Decimal("0")
-    #  20.00 − 3.57 − 4.00 − 1.50 − 5.00
+    #  20.00 - 3.57 - 4.00 - 1.50 - 5.00
     assert positions["MFN-A"].per_unit == Decimal("5.93")
     assert positions["AFN-B"].per_unit == Decimal("11.43")
 
 
 def test_packaging_scales_with_the_units_that_shipped():
-    from src.profit.growth import build_positions
-    from src.profit.costs import ResolvedCost
+    from biryar.profit.costs import ResolvedCost
+    from biryar.profit.growth import build_positions
 
     rows = [shipment("1", [{"sku": "A", "units": 3, "revenue": "60.00",
                             "fee_base": "-9.00", "fee_tax": "-1.71"}]),

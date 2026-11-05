@@ -66,10 +66,11 @@ from __future__ import annotations
 import json
 import logging
 from collections import defaultdict
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, Iterable, Iterator, Sequence
+from typing import Any
 from zoneinfo import ZoneInfo
 
 logger = logging.getLogger(__name__)
@@ -263,7 +264,7 @@ def build_settlement(
 
     ``cost_of`` is any callable ``(sku, on_date) -> Decimal | None`` returning
     the **landed cost of one unit** as a positive number;
-    :class:`~src.profit.costs.CostBasis` is one. ``None`` from it, or
+    :class:`~biryar.profit.costs.CostBasis` is one. ``None`` from it, or
     no callable at all, leaves ``OrderLine.cogs`` unset rather than zero.
     """
     settlement = Settlement()
@@ -426,7 +427,8 @@ def _leaves(nodes: list[dict[str, Any]] | None, prefix: str = "") -> Iterator[tu
 
 
 def _product_context(item: dict[str, Any]) -> dict[str, Any] | None:
-    for context in item.get("contexts") or []:
+    contexts: list[dict[str, Any]] = item.get("contexts") or []
+    for context in contexts:
         if context.get("contextType") == "ProductContext" and context.get("sku"):
             return context
     return None

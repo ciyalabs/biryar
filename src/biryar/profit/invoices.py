@@ -60,11 +60,11 @@ from __future__ import annotations
 import csv
 import logging
 from collections import OrderedDict
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Iterable, Iterator
 
 logger = logging.getLogger(__name__)
 
@@ -188,7 +188,9 @@ def read_cost_csv(path: Path | str) -> list[Invoice]:
         return list(_group(_rows(reader, path)))
 
 
-def _rows(reader: Iterable[dict[str, str]], path: Path) -> Iterator[tuple[InvoiceLine, Decimal, bool, Decimal]]:
+def _rows(
+    reader: Iterable[dict[str, str]], path: Path
+) -> Iterator[tuple[InvoiceLine, Decimal, bool, Decimal]]:
     for number, raw in enumerate(reader, start=2):      # row 1 is the header
         row = {(k or "").strip().lower(): (v or "").strip() for k, v in raw.items()}
         if not any(row.values()):
@@ -215,25 +217,36 @@ def _rows(reader: Iterable[dict[str, str]], path: Path) -> Iterator[tuple[Invoic
         )
 
 
+@dataclass
+class _Bundle:
+    """One document's lines while they are still being collected."""
+
+    doc_date: date
+    lines: list[InvoiceLine]
+    shipping: Decimal
+    prices_include_vat: bool
+    vat_rate: Decimal
+
+
 def _group(rows: Iterable[tuple[InvoiceLine, Decimal, bool, Decimal]]) -> Iterator[Invoice]:
     """Collect lines into invoices. The first row of a document sets its terms."""
-    bundles: OrderedDict[tuple[str, str], dict] = OrderedDict()
+    bundles: OrderedDict[tuple[str, str], _Bundle] = OrderedDict()
     for line, shipping, includes_vat, vat_rate in rows:
         key = (line.vendor, line.doc_number)
         bundle = bundles.get(key)
         if bundle is None:
-            bundles[key] = {
-                "doc_date": line.doc_date, "lines": [line], "shipping": shipping,
-                "prices_include_vat": includes_vat, "vat_rate": vat_rate,
-            }
+            bundles[key] = _Bundle(
+                doc_date=line.doc_date, lines=[line], shipping=shipping,
+                prices_include_vat=includes_vat, vat_rate=vat_rate,
+            )
         else:
-            bundle["lines"].append(line)
+            bundle.lines.append(line)
 
     for (vendor, doc_number), bundle in bundles.items():
         yield Invoice(
-            vendor=vendor, doc_number=doc_number, doc_date=bundle["doc_date"],
-            lines=tuple(bundle["lines"]), shipping=bundle["shipping"],
-            prices_include_vat=bundle["prices_include_vat"], vat_rate=bundle["vat_rate"])
+            vendor=vendor, doc_number=doc_number, doc_date=bundle.doc_date,
+            lines=tuple(bundle.lines), shipping=bundle.shipping,
+            prices_include_vat=bundle.prices_include_vat, vat_rate=bundle.vat_rate)
 
 
 def costs_from_file(path: Path | str) -> list[LandedCost]:

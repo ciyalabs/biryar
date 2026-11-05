@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # The tenant boundary is PostgreSQL behaviour, so it is tested against
+    # PostgreSQL. There is no in-memory substitute that can express row-level
+    # security, and a suite that skipped these tests would report green while
+    # proving nothing about the one property that matters most.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: biryar
+          POSTGRES_PASSWORD: biryar
+          POSTGRES_DB: biryar
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U biryar -d biryar"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      BIRYAR_TEST_DATABASE_URL: postgresql+psycopg://biryar:biryar@localhost:5432/biryar
+      BIRYAR_SECRET_KEY: test-key-not-used-for-anything-real
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Lint
+        run: ruff check src tests
+
+      - name: Types
+        run: mypy src/biryar
+
+      - name: Test
+        run: pytest -q

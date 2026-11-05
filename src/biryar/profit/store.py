@@ -1,6 +1,6 @@
 """The one table the profit package needs of its own.
 
-:class:`~src.profit.costs.CostBasis` reads dated landed costs out of
+:class:`~biryar.profit.costs.CostBasis` reads dated landed costs out of
 ``sku_costs``. Nothing else in this package touches a database: the ledger
 takes rows you hand it, and the report and growth models are pure functions
 over what the ledger produced.

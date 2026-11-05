@@ -14,7 +14,7 @@ Whether that figure is gross or net depends on your own VAT position. A
 seller who reclaims input VAT should store the net price. A seller who cannot
 reclaim it pays the VAT and never gets it back, so for them the gross is the
 cost. The same applies to a reverse-charge invoice, which arrives untaxed and
-acquires the VAT on the way in. :mod:`src.profit.invoices` states this per
+acquires the VAT on the way in. :mod:`biryar.profit.invoices` states this per
 invoice rather than inferring it from the vendor.
 
 ## Why cost is dated
@@ -35,16 +35,16 @@ from __future__ import annotations
 
 import logging
 import sqlite3
+from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from decimal import Decimal
-from typing import Iterable
 
 logger = logging.getLogger(__name__)
 
 
 def _utcnow() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 @dataclass(frozen=True)

@@ -1,0 +1,25 @@
+# Postgres for local development and for a single-tenant self-hosted install.
+#
+# The same database serves both deployment modes. A self-hosted install is a
+# multi-tenant deployment that happens to hold one tenant, which is why there
+# is no second, simpler storage path to maintain.
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: biryar
+      POSTGRES_PASSWORD: biryar
+      POSTGRES_DB: biryar
+    ports:
+      - "5432:5432"
+    volumes:
+      - biryar-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U biryar -d biryar"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  biryar-db:

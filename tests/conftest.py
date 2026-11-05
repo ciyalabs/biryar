@@ -1,0 +1,148 @@
+"""Fixtures.
+
+Most of this suite needs a real PostgreSQL. That is not laziness about
+mocking: the thing under test *is* PostgreSQL behaviour. Row-level security,
+``current_setting``, ``FORCE ROW LEVEL SECURITY`` and the enum types have no
+equivalent in SQLite, so a test that ran against SQLite would prove the
+opposite of what it claims — that the isolation works, on an engine that
+cannot express it.
+
+Set ``BIRYAR_TEST_DATABASE_URL`` to run them. Without it they skip, and the
+pure-logic tests still run anywhere.
+"""
+
+from __future__ import annotations
+
+import os
+import pathlib
+import uuid
+from collections.abc import Iterator
+
+import pytest
+from sqlalchemy import Engine, create_engine, text
+from sqlalchemy.orm import Session
+
+import biryar.db.models  # noqa: F401
+from biryar.config import settings
+from biryar.db.session import SessionFactory, session_factory
+
+TEST_URL_ENV = "BIRYAR_TEST_DATABASE_URL"
+
+#: The unprivileged role the application connects as. It must not own the
+#: tables and must not hold BYPASSRLS, or the policies are decoration.
+APP_ROLE = "biryar_app_test"
+APP_PASSWORD = "biryar_app_test"
+
+
+def _admin_url() -> str | None:
+    return os.environ.get(TEST_URL_ENV)
+
+
+@pytest.fixture(scope="session")
+def admin_engine() -> Iterator[Engine]:
+    """A connection as the owner, used to build the schema and the app role."""
+    url = _admin_url()
+    if not url:
+        pytest.skip(f"{TEST_URL_ENV} is not set")
+    engine = create_engine(url, future=True)
+    try:
+        yield engine
+    finally:
+        engine.dispose()
+
+
+@pytest.fixture(scope="session")
+def schema(admin_engine: Engine) -> Iterator[None]:
+    """Build the schema by running the real migrations.
+
+    Deliberately ``alembic upgrade head`` rather than
+    ``Base.metadata.create_all``. create_all builds what the models say,
+    which means the migrations — the thing that will actually run against
+    production — are never executed by the suite, and a migration can drift
+    from its models for months without anyone noticing. Running them here
+    makes every test in this file a test of the migration too.
+    """
+    from alembic import command
+    from alembic.config import Config
+
+    with admin_engine.begin() as conn:
+        conn.execute(text("DROP SCHEMA IF EXISTS public CASCADE"))
+        conn.execute(text("CREATE SCHEMA public"))
+        conn.execute(text(f"DROP ROLE IF EXISTS {APP_ROLE}"))
+        conn.execute(
+            text(f"CREATE ROLE {APP_ROLE} LOGIN PASSWORD '{APP_PASSWORD}' NOBYPASSRLS")
+        )
+
+    root = pathlib.Path(__file__).resolve().parents[1]
+    config = Config(str(root / "alembic.ini"))
+    config.set_main_option("script_location", str(root / "src" / "biryar" / "migrations"))
+    os.environ["BIRYAR_DATABASE_URL"] = _admin_url() or ""
+    settings.cache_clear()
+    command.upgrade(config, "head")
+
+    with admin_engine.begin() as conn:
+        conn.execute(text(f"GRANT USAGE ON SCHEMA public TO {APP_ROLE}"))
+        conn.execute(
+            text(
+                "GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES "
+                f"IN SCHEMA public TO {APP_ROLE}"
+            )
+        )
+    yield
+
+
+@pytest.fixture(scope="session")
+def app_engine(schema: None) -> Iterator[Engine]:
+    """An engine connected as the unprivileged application role."""
+    from sqlalchemy.engine import make_url
+
+    from biryar.config import Settings
+    from biryar.db.session import engine_for
+
+    url = make_url(_admin_url()).set(username=APP_ROLE, password=APP_PASSWORD)
+    engine = engine_for(Settings(database_url=str(url)))
+    try:
+        yield engine
+    finally:
+        engine.dispose()
+
+
+@pytest.fixture
+def factory(app_engine: Engine) -> SessionFactory:
+    return session_factory(app_engine)
+
+
+@pytest.fixture
+def two_tenants(admin_engine: Engine) -> Iterator[tuple[uuid.UUID, uuid.UUID]]:
+    """Two tenants, created as the owner because ``tenants`` has no policy."""
+    a, b = uuid.uuid4(), uuid.uuid4()
+    with admin_engine.begin() as conn:
+        for tid, slug in ((a, f"a-{a.hex[:8]}"), (b, f"b-{b.hex[:8]}")):
+            conn.execute(
+                text(
+                    "INSERT INTO tenants (id, slug, display_name, status) "
+                    "VALUES (:id, :slug, :name, 'ACTIVE')"
+                ),
+                {"id": tid, "slug": slug, "name": slug},
+            )
+    yield a, b
+    with admin_engine.begin() as conn:
+        conn.execute(
+            text("DELETE FROM tenants WHERE id = ANY(:ids)"), {"ids": [a, b]},
+        )
+
+
+def make_user(session: Session, tenant_id: uuid.UUID, email: str) -> uuid.UUID:
+    """Insert a user through the application role, under whatever tenant is set."""
+    from biryar.db.models import Role, User
+
+    user = User(
+        tenant_id=tenant_id,
+        email=email,
+        display_name=email.split("@")[0],
+        role=Role.OWNER,
+        is_active=True,
+    )
+    session.add(user)
+    session.flush()
+    return user.id
