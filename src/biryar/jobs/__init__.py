@@ -10,6 +10,7 @@ from .runner import (
     UnknownKind,
     worker_name,
 )
+from .schedule import Scheduled, due_tenants, schedule_settlement_fetches
 
 __all__ = [
     "SETTLEMENT_FETCH",
@@ -18,8 +19,11 @@ __all__ = [
     "Registry",
     "Retry",
     "Runner",
+    "Scheduled",
     "UnknownKind",
+    "due_tenants",
     "register_all",
+    "schedule_settlement_fetches",
     "settlement_fetch",
     "worker_name",
 ]

@@ -115,13 +115,20 @@ state; LWA token exchange that tells a revoked authorisation apart from a bad
 day; and refresh tokens sealed at rest under a keyring, so a key can be
 rotated incrementally rather than in one transaction that holds every row.
 
-## Next, in order
+**Jobs.** A queue in PostgreSQL, so work and the reason for it commit
+together. Claiming is fair across tenants — one seller's backfill cannot
+occupy every worker — and a job carries its own retry policy, so a throttle
+is tried again and a revoked authorisation is not. `python -m biryar.worker`
+runs it; `--schedule` queues what is due and is safe to run twice.
 
-1. **Jobs** — per-tenant scheduling with isolation, retries and backpressure.
-   This is what finally pulls real settlement data through the ledger.
-   APScheduler in-process does not survive multi-tenancy.
-2. **React** — Vite, TypeScript, against the finished API, so it is written
-   once.
+**The settlement fetch.** Consent to sealed credential to queued job to the
+Finances feed to rows the ledger reads. Verified end to end through the real
+worker with Amazon stubbed.
+
+## Next
+
+**React** — Vite, TypeScript, against the finished API, so it is written
+once.
 
 ## Still carried over from the private codebase
 
