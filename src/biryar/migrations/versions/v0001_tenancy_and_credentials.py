@@ -124,6 +124,10 @@ def upgrade() -> None:
             ["tenant_id"], ["tenants.id"],
             name="fk_user_sessions_tenant_id_tenants", ondelete="CASCADE",
         ),
+        sa.ForeignKeyConstraint(
+            ["user_id"], ["users.id"],
+            name="fk_user_sessions_user_id_users", ondelete="CASCADE",
+        ),
         sa.PrimaryKeyConstraint("id", name="pk_user_sessions"),
         sa.UniqueConstraint("token_hash", name="uq_user_sessions_token_hash"),
     )

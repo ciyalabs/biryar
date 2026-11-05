@@ -21,6 +21,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     Enum,
+    ForeignKey,
     Index,
     String,
     UniqueConstraint,
@@ -138,7 +139,10 @@ class UserSession(Base, TenantScoped):
     )
     tenant_id: Mapped[uuid.UUID] = tenant_fk()
     user_id: Mapped[uuid.UUID] = mapped_column(
-        PgUUID(as_uuid=True), nullable=False, index=True,
+        PgUUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
 
     #: SHA-256 of the bearer token. Not Argon2: this value is already a
