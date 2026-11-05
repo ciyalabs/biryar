@@ -52,7 +52,7 @@ jobs:
         run: uv run ruff check src tests
 
       - name: Types
-        run: uv run mypy src/biryar
+        run: uv run mypy
 
       - name: Test
         run: uv run pytest -q

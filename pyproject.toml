@@ -66,7 +66,11 @@ known-first-party = ["biryar"]
 python_version = "3.12"
 strict = true
 warn_unreachable = true
-# Resolve biryar to the source tree, so a check is the same whether or not
-# the package happens to be installed in the environment running it.
+# Name the package rather than a directory to walk, and say where its base
+# is. Invoked as a path, mypy derives module names from the filesystem and
+# got them wrong whenever the package was also installed, so the same code
+# checked eighteen files here and fifteen in CI — the three it could not
+# resolve were simply skipped, silently. Run `mypy` with no arguments.
+packages = ["biryar"]
 mypy_path = "src"
 explicit_package_bases = true
