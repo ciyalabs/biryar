@@ -69,7 +69,12 @@ class Tenant(Base, TimestampMixin):
     slug: Mapped[str] = mapped_column(String(63), nullable=False, unique=True)
     display_name: Mapped[ShortText] = mapped_column(nullable=False)
     status: Mapped[TenantStatus] = mapped_column(
-        Enum(TenantStatus, name="tenant_status", native_enum=True),
+        Enum(
+            TenantStatus,
+            name="tenant_status",
+            native_enum=True,
+            values_callable=lambda enum: [member.value for member in enum],
+        ),
         nullable=False,
         default=TenantStatus.ACTIVE,
     )
@@ -106,7 +111,12 @@ class User(Base, TenantScoped, TimestampMixin):
     password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     role: Mapped[Role] = mapped_column(
-        Enum(Role, name="user_role", native_enum=True), nullable=False,
+        Enum(
+            Role,
+            name="user_role",
+            native_enum=True,
+            values_callable=lambda enum: [member.value for member in enum],
+        ), nullable=False,
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     last_seen_at: Mapped[datetime | None] = mapped_column(nullable=True)

@@ -69,6 +69,11 @@ class AmazonCredential(Base, TenantScoped, TimestampMixin):
     )
     tenant_id: Mapped[uuid.UUID] = tenant_fk()
 
+    #: Stored by name (DE, UK) rather than by value. Marketplace is the one
+    #: enum here whose name and value are different *things* — the value is
+    #: Amazon's marketplace id — rather than two spellings of one state, so
+    #: there is nothing to reconcile and the short name is the readable
+    #: choice in a column.
     marketplace: Mapped[Marketplace] = mapped_column(
         Enum(Marketplace, name="marketplace", native_enum=True), nullable=False,
     )
@@ -87,7 +92,12 @@ class AmazonCredential(Base, TenantScoped, TimestampMixin):
     key_id: Mapped[str] = mapped_column(String(64), nullable=False)
 
     status: Mapped[CredentialStatus] = mapped_column(
-        Enum(CredentialStatus, name="credential_status", native_enum=True),
+        Enum(
+            CredentialStatus,
+            name="credential_status",
+            native_enum=True,
+            values_callable=lambda enum: [member.value for member in enum],
+        ),
         nullable=False,
         default=CredentialStatus.ACTIVE,
     )

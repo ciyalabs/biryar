@@ -98,6 +98,18 @@ def schema(admin_engine: Engine) -> Iterator[None]:
                 f"GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO {APP_ROLE}"
             )
         )
+        # The same for functions, and for the same reason. A migration that
+        # CREATE OR REPLACEs a SECURITY DEFINER function re-runs its REVOKE
+        # FROM PUBLIC, so the round-trip test — which downgrades to base and
+        # upgrades again — stripped the grants made after the first upgrade
+        # and every later claim failed on permission rather than on anything
+        # it was testing.
+        conn.execute(
+            text(
+                "ALTER DEFAULT PRIVILEGES IN SCHEMA public "
+                f"GRANT EXECUTE ON FUNCTIONS TO {APP_ROLE}"
+            )
+        )
 
     root = pathlib.Path(__file__).resolve().parents[1]
     config = Config(str(root / "alembic.ini"))
@@ -165,7 +177,7 @@ def two_tenants(admin_engine: Engine) -> Iterator[tuple[uuid.UUID, uuid.UUID]]:
             conn.execute(
                 text(
                     "INSERT INTO tenants (id, slug, display_name, status) "
-                    "VALUES (:id, :slug, :name, 'ACTIVE')"
+                    "VALUES (:id, :slug, :name, 'active')"
                 ),
                 {"id": tid, "slug": slug, "name": slug},
             )

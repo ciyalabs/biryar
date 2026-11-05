@@ -88,7 +88,12 @@ class Job(Base, TenantScoped):
     )
 
     status: Mapped[JobStatus] = mapped_column(
-        Enum(JobStatus, name="job_status", native_enum=True),
+        Enum(
+            JobStatus,
+            name="job_status",
+            native_enum=True,
+            values_callable=lambda enum: [member.value for member in enum],
+        ),
         nullable=False,
         default=JobStatus.PENDING,
     )
@@ -136,7 +141,7 @@ class Job(Base, TenantScoped):
             "uq_jobs_tenant_id_idempotency_key",
             "tenant_id", "idempotency_key",
             unique=True,
-            postgresql_where=text("status IN ('PENDING', 'RUNNING')"),
+            postgresql_where=text("status IN ('pending', 'running')"),
         ),
         CheckConstraint("attempts >= 0", name="attempts_not_negative"),
         CheckConstraint("max_attempts >= 1", name="at_least_one_attempt"),

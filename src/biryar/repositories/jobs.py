@@ -88,7 +88,7 @@ def enqueue(
         # still outstanding. A finished one frees the key again.
         statement = statement.on_conflict_do_nothing(
             index_elements=[Job.tenant_id, Job.idempotency_key],
-            index_where=text("status IN ('PENDING', 'RUNNING')"),
+            index_where=text("status IN ('pending', 'running')"),
         )
 
     result = session.execute(statement.returning(Job.id))

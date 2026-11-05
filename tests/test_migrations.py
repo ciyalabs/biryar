@@ -42,7 +42,9 @@ def test_the_migrations_reproduce_the_models(admin_engine: Engine, schema: None)
     assert drift == [], f"models and migrations disagree:\n{drift}"
 
 
-def test_every_revision_can_be_undone(admin_engine: Engine, schema: None) -> None:
+def test_every_revision_can_be_undone(
+    admin_engine: Engine, app_engine: Engine, schema: None,
+) -> None:
     """A migration that cannot be reversed is a migration you cannot deploy twice.
 
     Downgrades are the thing nobody exercises until the night they are
@@ -62,6 +64,13 @@ def test_every_revision_can_be_undone(admin_engine: Engine, schema: None) -> Non
 
     command.downgrade(config, "base")
     command.upgrade(config, "head")
+
+    # Rebuilding the schema changes types that pooled connections have
+    # already compiled prepared statements against, and PostgreSQL refuses
+    # those with "cached plan must not change result type". Nothing in
+    # production downgrades under a live pool, so this is the test's mess to
+    # clean up rather than a reason to weaken the application.
+    app_engine.dispose()
 
 
 def test_check_constraints_are_named_as_the_models_name_them(
