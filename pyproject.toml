@@ -35,6 +35,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/biryar"]
+# PEP 561. Without it a consumer — including mypy running against the
+# installed package rather than the source tree — treats biryar as untyped,
+# which is how the same code checked clean locally and failed in CI.
+artifacts = ["src/biryar/py.typed"]
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
@@ -62,3 +66,7 @@ known-first-party = ["biryar"]
 python_version = "3.12"
 strict = true
 warn_unreachable = true
+# Resolve biryar to the source tree, so a check is the same whether or not
+# the package happens to be installed in the environment running it.
+mypy_path = "src"
+explicit_package_bases = true
