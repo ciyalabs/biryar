@@ -151,6 +151,17 @@ def test_every_tenant_scoped_model_has_a_live_policy(admin_engine: Engine) -> No
         }
 
     expected = set(tenant_scoped_tables())
+
+    # An empty expectation satisfies every assertion below it. That is not
+    # hypothetical: the models were briefly excluded from the repository by a
+    # stray gitignore rule, and a check written only as a subset test would
+    # have reported success against a database with no policies at all.
+    assert expected, "no tenant-scoped models are registered; check the imports"
+    assert expected == set(first.TENANT_TABLES), (
+        "the migration's frozen table list and the models disagree: "
+        f"models={sorted(expected)} migration={sorted(first.TENANT_TABLES)}"
+    )
+
     assert expected <= protected, f"no policy on: {sorted(expected - protected)}"
     assert expected <= forced, f"RLS not forced on: {sorted(expected - forced)}"
 

@@ -1,18 +1,30 @@
+# Secrets
 .env
 .env.local
-*.db
-*.sqlite3
-__pycache__/
-*.py[cod]
+
+# Local environment
 .venv/
 venv/
+*.egg-info/
+
+# Caches
+__pycache__/
+*.py[cod]
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-models/
-data/raw/
-.DS_Store
 
-# local environment
-.venv/
-*.egg-info/
+# Build output
+dist/
+build/
+
+# Trained model artifacts and scraped payloads, at the repository root only.
+#
+# These were written as bare `models/` and `data/raw/`, which git matches at
+# every depth. That silently excluded src/biryar/db/models — the tenancy and
+# credential models — from the repository entirely. The leading slash anchors
+# them to the root, where those artifacts actually live.
+/models/
+/data/raw/
+
+.DS_Store
