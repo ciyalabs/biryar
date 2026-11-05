@@ -15,6 +15,8 @@ from functools import lru_cache
 from pydantic import Field, PostgresDsn, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from .crypto import Keyring
+
 
 class Deployment(StrEnum):
     """How this instance is run. Affects defaults and nothing structural."""
@@ -39,9 +41,14 @@ class Settings(BaseSettings):
         "enforced with row-level security, which SQLite cannot express.",
     )
 
-    #: Seals every tenant's Amazon credentials at rest. Losing it means every
-    #: tenant must reauthorise; leaking it means every tenant is compromised.
-    #: It is deliberately not defaulted.
+    #: Seals every tenant's Amazon credentials at rest, as one or more
+    #: ``<id>:<fernet key>`` pairs, newest first. Losing every key means every
+    #: tenant must reauthorise; leaking one means every credential it sealed
+    #: is compromised.
+    #:
+    #: Deliberately not defaulted. A development default would be a key that
+    #: ships in the repository and therefore protects nothing, and the day it
+    #: reached production nothing would complain.
     secret_key: SecretStr = Field(default=SecretStr(""))
 
     #: Postgres role the application connects as. It must NOT be the table
@@ -66,6 +73,10 @@ class Settings(BaseSettings):
     @property
     def is_hosted(self) -> bool:
         return self.deployment is Deployment.HOSTED
+
+    def keyring(self) -> Keyring:
+        """The sealing keys. Raises if none are configured."""
+        return Keyring.from_setting(self.secret_key.get_secret_value())
 
 
 @lru_cache(maxsize=1)

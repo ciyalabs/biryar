@@ -23,23 +23,37 @@ from .auth import (
     tenant_by_slug,
 )
 from .costs import forget_cost, load_cost_basis, record_costs
+from .credentials import (
+    active_credential,
+    mark_needs_reauth,
+    mark_refreshed,
+    read_refresh_token,
+    reseal_if_stale,
+    store_credential,
+)
 from .transactions import record_transactions, settlement_rows
 
 __all__ = [
     "IssuedSession",
     "ResolvedSession",
+    "active_credential",
     "authenticate",
     "create_user",
     "forget_cost",
     "issue_session",
     "load_cost_basis",
+    "mark_needs_reauth",
+    "mark_refreshed",
     "normalise_email",
+    "read_refresh_token",
     "record_costs",
     "record_transactions",
+    "reseal_if_stale",
     "resolve_session",
     "revoke_all_sessions",
     "revoke_session",
     "settlement_rows",
     "sole_tenant",
+    "store_credential",
     "tenant_by_slug",
 ]
