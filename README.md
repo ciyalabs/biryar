@@ -1,5 +1,7 @@
 # Biryar
 
+[![CI](https://github.com/ciyalabs/biryar/actions/workflows/ci.yml/badge.svg)](https://github.com/ciyalabs/biryar/actions/workflows/ci.yml)
+
 **Amazon operations, one decision at a time.**
 
 Biryar is a self-hosted operations cockpit for Amazon sellers. It reads your
