@@ -1,17 +1,21 @@
 """What a unit actually cost, per SKU, over time.
 
 Amazon can never supply this. It is the one number in the whole profit
-calculation that only the owner holds, and until it exists every margin on
-every page is revenue minus Amazon's cut, which is not profit.
+calculation that only you hold, and until it exists every margin on every
+page is revenue minus Amazon's cut, which is not profit.
 
 ## Landed, gross, per unit
 
 The number stored is what one sellable unit cost **by the time it was ready to
 ship**: the supplier's price, plus shipping in, plus whatever the border and
-the bank took. Gross, not net — under §19 Kleinunternehmer there is no input
-VAT to reclaim, so VAT paid is cost like any other
-(``memory: kleinunternehmer-tax-model``). A Qogita invoice is 0% reverse
-charge, so its landed cost is the net price times 1.19.
+the bank took.
+
+Whether that figure is gross or net depends on your own VAT position. A
+seller who reclaims input VAT should store the net price. A seller who cannot
+reclaim it pays the VAT and never gets it back, so for them the gross is the
+cost. The same applies to a reverse-charge invoice, which arrives untaxed and
+acquires the VAT on the way in. :mod:`src.profit.invoices` states this per
+invoice rather than inferring it from the vendor.
 
 ## Why cost is dated
 
@@ -23,7 +27,7 @@ on or before that day wins.
 
 This is deliberately *not* FIFO across individual purchase lots. Lot tracking
 needs per-unit provenance that nothing in this platform records, and the
-owner's reorder cycle is about eight weeks, so dated cost and FIFO agree
+a typical reorder cycle is measured in weeks, so dated cost and FIFO agree
 except in the days around a price change.
 """
 
@@ -177,3 +181,25 @@ def invoiced_costs(
         if cost is not None and float(cost) > 0:
             out[str(sku)] = float(cost)
     return out
+
+
+@dataclass(frozen=True)
+class ResolvedCost:
+    """A unit cost with the name of whatever vouched for it.
+
+    The ``source`` matters as much as the number. A margin built on an
+    invoice is a measurement; one built on a supplier's list price is an
+    estimate wearing the same shape, and the two should never be presented
+    as equally trustworthy.
+    """
+
+    sku: str
+    unit_cost: Decimal | None
+    #: "invoice" | "manual" | "estimate" | ""
+    source: str
+    detail: str = ""
+
+    @property
+    def is_measured(self) -> bool:
+        """Whether a document or a human stands behind this, not a list price."""
+        return self.source in ("invoice", "manual")

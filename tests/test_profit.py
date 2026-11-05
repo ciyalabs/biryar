@@ -14,8 +14,8 @@ from decimal import Decimal
 
 import pytest
 
-from cockpit.src.db.schema import init_db
-from cockpit.src.profit import (
+from src.profit.store import init_costs_db
+from src.profit import (
     CostBasis,
     CostEntry,
     build_settlement,
@@ -173,7 +173,7 @@ def subscription(amount_base: str, amount_tax: str) -> tuple[str, str, str]:
 # -- one sale, two postings --------------------------------------------------------
 
 def test_the_release_twin_is_not_a_second_sale():
-    """The Frosch bug of 2026-10-12: a deferred sale is posted again when
+    """The release-twin bug: a deferred sale is posted again when
     Amazon releases the money, and summing both sold 35 units out of 24."""
     sale = shipment("111", [{"sku": "MU-1", "revenue": "17.94", "units": 2,
                              "fee_base": "-2.53", "fee_tax": "-0.48"}])
@@ -345,11 +345,11 @@ def test_an_unknown_fee_path_is_surfaced_rather_than_silently_ignored():
 
 @pytest.fixture()
 def basis(tmp_path):
-    return CostBasis(init_db(tmp_path / "t.db"))
+    return CostBasis(init_costs_db(tmp_path / "t.db"))
 
 
 def test_a_cost_applies_from_its_date_onward_and_not_before(basis):
-    basis.record([CostEntry("MU-1", date(2026, 9, 10), Decimal("8.40"), source="Qogita 123")],
+    basis.record([CostEntry("MU-1", date(2026, 9, 10), Decimal("8.40"), source="invoice")],
                  by="owner")
 
     assert basis.cost_for("MU-1", date(2026, 9, 9)) is None
@@ -453,51 +453,141 @@ def test_sku_rows_rank_by_contribution_and_park_the_unpriced_at_the_bottom(basis
 
 # -- invoice line extraction -------------------------------------------------------
 
-def test_a_mueller_line_lands_with_its_share_of_the_delivery():
-    """5 x €5.95 + €3.95 delivery = €33.70, so a jar costs €6.74, not €5.95.
+def test_a_gross_priced_line_lands_with_its_share_of_the_delivery():
+    """5 x 5.95 + 3.95 delivery = 33.70, so a unit costs 6.74, not 5.95.
 
-    Müller prints gross, so no VAT is added on top.
+    The invoice already carries VAT, so none is added on top.
     """
-    from cockpit.src.profit.invoices import landed_costs, InvoiceLine
+    from src.profit.invoices import landed_costs, InvoiceLine
 
-    line = InvoiceLine(vendor="mueller", doc_number="26-W-1", doc_date=date(2026, 9, 30),
-                       name="Frosch Baby Waschpulver", article_no="2904994",
+    line = InvoiceLine(vendor="acme", doc_number="INV-1", doc_date=date(2026, 9, 30),
+                       name="Widget Blue", article_no="2904994",
                        qty=5, unit_price=Decimal("5.95"))
 
-    landed = landed_costs([line], shipping=Decimal("3.95"), vendor="mueller")
+    landed = landed_costs([line], shipping=Decimal("3.95"), prices_include_vat=True)
 
     assert landed[0].unit_cost == Decimal("6.74")
-    assert landed[0].key == "mueller:2904994"
+    assert landed[0].key == "acme:2904994"
 
 
-def test_a_qogita_line_carries_the_vat_that_section_19_cannot_reclaim():
-    """A 0% reverse-charge invoice is net, and the 19% is never coming back."""
-    from cockpit.src.profit.invoices import landed_costs, InvoiceLine
+def test_a_net_priced_line_carries_the_vat_that_cannot_be_reclaimed():
+    """An invoice that arrives untaxed still costs the VAT on the way in."""
+    from src.profit.invoices import landed_costs, InvoiceLine
 
-    line = InvoiceLine(vendor="qogita", doc_number="5OD", doc_date=date(2026, 8, 25),
-                       name="Arabiyat", ean="6290361916889", qty=10,
+    line = InvoiceLine(vendor="acme", doc_number="INV-2", doc_date=date(2026, 8, 25),
+                       name="Widget Red", ean="6290361916889", qty=10,
                        unit_price=Decimal("11.89"))
 
-    assert landed_costs([line], vendor="qogita")[0].unit_cost == Decimal("14.15")
+    assert landed_costs([line])[0].unit_cost == Decimal("14.15")
+
+
+def test_a_seller_who_reclaims_vat_sets_the_rate_to_zero():
+    """Not every seller pays the VAT in the end, so it must be a parameter."""
+    from src.profit.invoices import landed_costs, InvoiceLine
+
+    line = InvoiceLine(vendor="acme", doc_number="INV-3", doc_date=date(2026, 8, 25),
+                       name="Widget Red", qty=10, unit_price=Decimal("11.89"))
+
+    assert landed_costs([line], vat_rate=Decimal("0"))[0].unit_cost == Decimal("11.89")
 
 
 def test_delivery_is_split_across_units_not_across_lines():
-    """Two lines, nine units, €9 delivery — a euro a unit however they group."""
-    from cockpit.src.profit.invoices import landed_costs, InvoiceLine
+    """Two lines, nine units, 9.00 delivery — one a unit however they group."""
+    from src.profit.invoices import landed_costs, InvoiceLine
 
-    lines = [InvoiceLine(vendor="mueller", doc_number="x", doc_date=date(2026, 9, 1),
+    lines = [InvoiceLine(vendor="acme", doc_number="x", doc_date=date(2026, 9, 1),
                          name="a", article_no="1", qty=6, unit_price=Decimal("10.00")),
-             InvoiceLine(vendor="mueller", doc_number="x", doc_date=date(2026, 9, 1),
+             InvoiceLine(vendor="acme", doc_number="x", doc_date=date(2026, 9, 1),
                          name="b", article_no="2", qty=3, unit_price=Decimal("20.00"))]
 
     landed = {c.name: c.unit_cost for c in
-              landed_costs(lines, shipping=Decimal("9.00"), vendor="mueller")}
+              landed_costs(lines, shipping=Decimal("9.00"), prices_include_vat=True)}
 
     assert landed == {"a": Decimal("11.00"), "b": Decimal("21.00")}
 
 
+# -- the cost file -----------------------------------------------------------------
+
+def _cost_file(tmp_path, body: str):
+    path = tmp_path / "costs.csv"
+    path.write_text(
+        "vendor,doc_number,doc_date,name,qty,unit_price,ean,article_no,"
+        "shipping,prices_include_vat,vat_rate\n" + body, encoding="utf-8")
+    return path
+
+
+def test_a_cost_file_groups_its_rows_into_invoices(tmp_path):
+    """Two rows sharing a document number are one invoice, not two."""
+    from src.profit.invoices import read_cost_csv
+
+    path = _cost_file(tmp_path,
+                      "acme,INV-1,2026-09-30,Blue,5,8.40,,W-1,3.95,false,0.19\n"
+                      "acme,INV-1,2026-09-30,Red,3,9.10,,W-2,3.95,false,0.19\n"
+                      "acme,INV-2,2026-10-01,Green,2,4.00,,W-3,0,true,0.19\n")
+
+    invoices = read_cost_csv(path)
+
+    assert [inv.doc_number for inv in invoices] == ["INV-1", "INV-2"]
+    assert len(invoices[0].lines) == 2
+    assert invoices[0].shipping == Decimal("3.95")
+    assert invoices[1].prices_include_vat is True
+
+
+def test_the_delivery_on_a_cost_file_is_charged_once_per_invoice(tmp_path):
+    """Repeating the shipping on every row must not charge it twice.
+
+    8 units, 4.00 delivery, so 0.50 a unit. The first line lands at
+    (8.00 + 0.50) x 1.19 = 10.12 rather than at twice the delivery.
+    """
+    from src.profit.invoices import costs_from_file
+
+    path = _cost_file(tmp_path,
+                      "acme,INV-1,2026-09-30,Blue,5,8.00,,W-1,4.00,false,0.19\n"
+                      "acme,INV-1,2026-09-30,Red,3,8.00,,W-2,4.00,false,0.19\n")
+
+    landed = {c.name: c.unit_cost for c in costs_from_file(path)}
+
+    assert landed == {"Blue": Decimal("10.12"), "Red": Decimal("10.12")}
+
+
+def test_a_cost_file_missing_a_required_column_says_which(tmp_path):
+    """Failing loudly beats landing every cost at zero."""
+    import pytest as _pytest
+    from src.profit.invoices import CostFileError, read_cost_csv
+
+    path = tmp_path / "bad.csv"
+    path.write_text("vendor,doc_number,name,qty\nacme,INV-1,Blue,5\n", encoding="utf-8")
+
+    with _pytest.raises(CostFileError) as caught:
+        read_cost_csv(path)
+
+    assert "doc_date" in str(caught.value)
+    assert "unit_price" in str(caught.value)
+
+
+def test_one_unreadable_row_does_not_cost_you_the_others(tmp_path):
+    """A bad line is skipped and logged, not fatal."""
+    from src.profit.invoices import read_cost_csv
+
+    path = _cost_file(tmp_path,
+                      "acme,INV-1,2026-09-30,Blue,5,8.40,,W-1,0,true,0.19\n"
+                      "acme,INV-1,not-a-date,Red,3,9.10,,W-2,0,true,0.19\n")
+
+    assert len(read_cost_csv(path)[0].lines) == 1
+
+
+def test_european_and_english_decimals_both_parse_in_a_cost_file(tmp_path):
+    """1.234,56 and 1,234.56 are the same number written two ways."""
+    from src.profit.invoices import read_cost_csv
+
+    path = _cost_file(tmp_path,
+                      "acme,INV-1,30.09.2026,Blue,1,\"1.234,56\",,W-1,0,true,0.19\n")
+
+    assert read_cost_csv(path)[0].lines[0].unit_price == Decimal("1234.56")
+
+
 def test_german_and_english_decimals_both_parse():
-    from cockpit.src.profit.invoices import _money
+    from src.profit.invoices import _money
 
     assert _money("5,95") == Decimal("5.95")
     assert _money("11.89") == Decimal("11.89")
@@ -510,8 +600,8 @@ def test_packaging_is_charged_on_a_self_shipped_unit_and_not_on_an_fba_one():
     Charged per FBM unit shipped. An FBA line is left alone because Amazon's
     fulfilment fee already paid for the box.
     """
-    from cockpit.src.profit.growth import build_positions
-    from cockpit.src.profit.sources import ResolvedCost
+    from src.profit.growth import build_positions
+    from src.profit.costs import ResolvedCost
 
     rows = [shipment("1", [{"sku": "MFN-A", "revenue": "20.00",
                             "fee_base": "-3.00", "fee_tax": "-0.57"}]),
@@ -532,8 +622,8 @@ def test_packaging_is_charged_on_a_self_shipped_unit_and_not_on_an_fba_one():
 
 
 def test_packaging_scales_with_the_units_that_shipped():
-    from cockpit.src.profit.growth import build_positions
-    from cockpit.src.profit.sources import ResolvedCost
+    from src.profit.growth import build_positions
+    from src.profit.costs import ResolvedCost
 
     rows = [shipment("1", [{"sku": "A", "units": 3, "revenue": "60.00",
                             "fee_base": "-9.00", "fee_tax": "-1.71"}]),

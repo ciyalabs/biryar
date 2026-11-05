@@ -2,12 +2,10 @@
 
 ## Why the feed and not the Orders API
 
-``cockpit/src/sales_ingest.py`` already asks Amazon what shipped, and says in
-its own docstring why it leaves fees NULL: *"fees arrive with the Finances /
-settlement report"*. That report now lands in ``tax_amazon_txns`` every day
-(``taxes/sources/amazon.py``), and it itemises fees **per SKU**, not just per
-settlement. So the missing half of every KPI is already on disk — it was only
-ever stored as JSON nobody unpacked.
+The Orders API says what shipped, but it leaves fees empty, because fees
+arrive with the Finances feed instead. That feed itemises them **per SKU**
+rather than as a settlement total, which is the difference between knowing
+what a month cost and knowing what a product cost.
 
 ## The three shapes in the feed
 
@@ -52,10 +50,9 @@ payout twin of a sale already counted, and it adds nothing. A sale still
 sitting in ``DEFERRED`` has no twin yet and is counted once, where it
 belongs — on the day it sold, not the day the money arrives.
 
-``taxes/sources/amazon.py`` has applied this rule since 2026-10-02, where it
-was checked against Amazon's own Q3 summary to the cent. This module is the
-same feed read for a different purpose and should have had it from the
-start.
+The rule was verified against Amazon's own quarterly summary to the cent
+before it was trusted here. If your totals disagree with Amazon's by roughly
+the value of a week of sales, this is the first thing to check.
 
 ## Signs
 
@@ -105,8 +102,8 @@ COMMISSION_LEAVES: frozenset[str] = frozenset({
     "AmazonFees/Commission/Base", "AmazonFees/Commission/Tax",
 })
 
-#: Item leaves Amazon keeps out of a sale, VAT included. Under §19 the VAT on
-#: a fee is not deductible, so ``Base`` and ``Tax`` are both real cost.
+#: Item leaves Amazon keeps out of a sale, VAT included. ``Base`` and ``Tax``
+#: are summed, because a seller who cannot deduct fee VAT pays both.
 SELLING_FEE_LEAVES: frozenset[str] = frozenset({
     "AmazonFees/Commission/Base", "AmazonFees/Commission/Tax",
     "AmazonFees/FBAPerUnitFulfillmentFee/Base", "AmazonFees/FBAPerUnitFulfillmentFee/Tax",
@@ -266,7 +263,7 @@ def build_settlement(
 
     ``cost_of`` is any callable ``(sku, on_date) -> Decimal | None`` returning
     the **landed cost of one unit** as a positive number;
-    :class:`~cockpit.src.profit.costs.CostBasis` is one. ``None`` from it, or
+    :class:`~src.profit.costs.CostBasis` is one. ``None`` from it, or
     no callable at all, leaves ``OrderLine.cogs`` unset rather than zero.
     """
     settlement = Settlement()

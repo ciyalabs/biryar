@@ -52,7 +52,7 @@ from statistics import median
 from typing import Iterable, Sequence
 
 from .ledger import OrderLine
-from .sources import ResolvedCost
+from .costs import ResolvedCost
 
 ZERO = Decimal("0")
 DAYS_PER_MONTH = Decimal("30.4")
@@ -89,7 +89,7 @@ class SkuPosition:
     unit_cost: Decimal | None
     #: Where that cost came from in words, for the detail panel.
     cost_detail: str
-    #: Which one did — "owner", "invoice", "price_bounds", "catalogue", or "".
+    #: Which one did — "invoice", "manual", "estimate", or "".
     #: A margin built on a catalogue list price is a weaker claim than one
     #: built on the owner's own figure, and the page has to be able to say so.
     cost_source: str
@@ -336,8 +336,8 @@ def build_positions(
     """Join sold lines, price bounds and inventory into one row per SKU.
 
     ``bounds`` and ``stock`` are keyed by SKU — the ``price_bounds`` and
-    ``listing_health`` rows; ``costs`` comes from
-    :func:`~cockpit.src.profit.sources.resolve_costs`. A SKU present in any of
+    ``listing_health`` rows; ``costs`` is the landed cost per SKU, from
+    :class:`~src.profit.costs.CostBasis`. A SKU present in any of
     them but never sold still gets a position, with zero units: a listing that
     has never sold is a fact worth seeing, not a row to omit.
     """
