@@ -78,33 +78,50 @@ The reasoning is in [docs/architecture/tenancy.md](docs/architecture/tenancy.md)
 
 ## Done
 
-- **The tenant boundary.** `tenant_id` plus a forced RLS policy on every
-  tenant-scoped table, an application role that owns nothing and cannot
-  bypass, and `SET LOCAL` enforced by an engine listener. Proven by
-  `tests/test_tenancy.py` against a real PostgreSQL in CI.
-- **Schema foundations.** Money as `NUMERIC` rather than the `REAL` the old
-  schema used, every timestamp `TIMESTAMPTZ`, a constraint naming convention
-  so downgrades are not one-way.
-- **Tenancy, users, sessions, per-tenant sealed Amazon credentials.**
-- **Migrations that the tests actually run**, plus a test asserting the
-  migrations and the models still describe the same database.
-- **The profit domain**, moved under `biryar.profit`, 34 tests, mypy strict.
+Each of these is covered by tests that run against a real PostgreSQL in CI.
+
+**The tenant boundary.** `tenant_id` plus a forced row-level-security policy
+on every tenant-scoped table, an application role that owns nothing and
+cannot bypass, and the tenant setting made transaction-local and enforced by
+an engine listener. A query that forgets to filter returns one tenant's rows;
+a query with no tenant returns none. See
+[docs/architecture/tenancy.md](docs/architecture/tenancy.md).
+
+**Schema foundations.** Money as `NUMERIC` rather than the `REAL` the old
+schema used, every timestamp `TIMESTAMPTZ`, a constraint naming convention,
+and migrations the test suite actually runs rather than approximating with
+`create_all`.
+
+**Finance.** `amazon_transactions` holds the Finances feed verbatim, keyed on
+Amazon's own transaction id so re-fetching an overlapping window is free.
+`sku_costs` holds dated landed costs. Nothing derived is stored, so a fix to
+how a fee is classified corrects history instead of needing a backfill.
+
+**The profit domain.** `biryar.profit` imports nothing that knows what a
+database is, which is why its 34 tests run anywhere in a fraction of a
+second. `biryar.repositories` is the only module that imports both sides.
+
+**Identity.** Argon2id passwords, SHA-256 session tokens, and one
+`SECURITY DEFINER` function — the single sanctioned way to read a session
+before a tenant is known, since the table that answers "whose token is this"
+is itself tenant-scoped.
+
+**The API.** `/v1`, versioned before the first route because the shape
+becomes a contract the moment React consumes it. Health, sign-in, sign-out,
+me, and the Amazon connection routes.
+
+**Amazon authorisation.** The consent round trip with signed, short-lived
+state; LWA token exchange that tells a revoked authorisation apart from a bad
+day; and refresh tokens sealed at rest under a keyring, so a key can be
+rotated incrementally rather than in one transaction that holds every row.
 
 ## Next, in order
 
-1. **The finance tables** — settlement lines, SKU costs, overheads — tenant
-   scoped, with the profit ledger reading from them instead of from a cursor
-   the caller supplies.
-2. **Identity and the API skeleton** — Argon2 password hashing, session
-   issuing, and a versioned `/v1` surface. The API becomes a public contract
-   the moment React consumes it, so versioning comes before the first route,
-   not after.
-3. **SP-API client and OAuth** — the authorisation flow that writes
-   `amazon_credentials`, and token refresh that marks a tenant
-   `needs_reauth` rather than failing jobs obscurely.
-4. **Jobs** — per-tenant scheduling with isolation, retries and backpressure.
+1. **Jobs** — per-tenant scheduling with isolation, retries and backpressure.
+   This is what finally pulls real settlement data through the ledger.
    APScheduler in-process does not survive multi-tenancy.
-5. **React** — once the API above is stable, so it is written once.
+2. **React** — Vite, TypeScript, against the finished API, so it is written
+   once.
 
 ## Still carried over from the private codebase
 
