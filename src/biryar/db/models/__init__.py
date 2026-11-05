@@ -7,13 +7,16 @@ row-level-security policy. Add a model here the moment you create it.
 """
 
 from .credentials import AmazonCredential, CredentialStatus, Marketplace
+from .finance import AmazonTransaction, SkuCost
 from .tenancy import Role, Tenant, TenantStatus, User, UserSession
 
 __all__ = [
     "AmazonCredential",
+    "AmazonTransaction",
     "CredentialStatus",
     "Marketplace",
     "Role",
+    "SkuCost",
     "Tenant",
     "TenantStatus",
     "User",

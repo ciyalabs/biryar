@@ -34,17 +34,12 @@ except in the days around a price change.
 from __future__ import annotations
 
 import logging
-import sqlite3
 from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import UTC, date, datetime
+from datetime import date
 from decimal import Decimal
 
 logger = logging.getLogger(__name__)
-
-
-def _utcnow() -> str:
-    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 @dataclass(frozen=True)
@@ -69,17 +64,51 @@ class CostEntry:
 
 
 class CostBasis:
-    """Dated landed costs, with the lookup the ledger calls per line.
+    """Dated landed costs, and the lookup the ledger calls once per line.
 
-    Reads are cached for the life of the instance: one settlement pass asks
-    for the same dozen SKUs hundreds of times, and the table changes only when
-    the owner enters a cost. Build a new instance after writing, which
-    :meth:`record` does for you.
+    Deliberately pure. It is built from entries someone else loaded and
+    knows nothing about where they were stored, because the rule it
+    implements — *the newest cost in force on or before the day it sold* —
+    is domain logic, not persistence. Keeping the two apart means that rule
+    can be tested on any machine in milliseconds, which matters: it decides
+    every margin in the product, and it is the kind of off-by-one that a
+    database test would hide behind a container.
+
+    :func:`biryar.repositories.costs.load_cost_basis` builds one from the
+    database.
     """
 
-    def __init__(self, conn: sqlite3.Connection) -> None:
-        self._conn = conn
-        self._cache: dict[str, list[tuple[date, Decimal]]] = {}
+    def __init__(self, entries: Iterable[CostEntry] = ()) -> None:
+        self._by_sku: dict[str, list[tuple[date, Decimal]]] = {}
+        self._entries: list[CostEntry] = []
+        for entry in entries:
+            self.add(entry)
+
+    def add(self, entry: CostEntry) -> None:
+        """Take one entry, keeping each SKU's history in date order.
+
+        A second entry for a day already held replaces it. There is only
+        ever one cost in force on a given day, so re-entering one is a
+        correction rather than a second lot.
+        """
+        history = self._by_sku.setdefault(entry.sku, [])
+        for index, (effective, _) in enumerate(history):
+            if effective == entry.effective_from:
+                history[index] = (entry.effective_from, entry.unit_cost)
+                self._entries = [
+                    e for e in self._entries
+                    if not (e.sku == entry.sku and e.effective_from == entry.effective_from)
+                ]
+                self._entries.append(entry)
+                return
+        history.append((entry.effective_from, entry.unit_cost))
+        history.sort(key=lambda pair: pair[0])
+        self._entries.append(entry)
+
+    def extend(self, entries: Iterable[CostEntry]) -> None:
+        """Take several entries. Later ones correct earlier ones for a day."""
+        for entry in entries:
+            self.add(entry)
 
     # -- reading -------------------------------------------------------------------
 
@@ -90,97 +119,23 @@ class CostBasis:
         it sold before its first entry took effect. Both mean the same thing
         to a caller: do not pretend to know this margin.
         """
-        history = self._history(sku)
-        candidates = [cost for effective, cost in history if effective <= on]
+        candidates = [cost for effective, cost in self._by_sku.get(sku, ()) if effective <= on]
         return candidates[-1] if candidates else None
 
     def __call__(self, sku: str, on: date) -> Decimal | None:
         """So a :class:`CostBasis` can be passed straight as ``cost_of``."""
         return self.cost_for(sku, on)
 
-    def _history(self, sku: str) -> list[tuple[date, Decimal]]:
-        if sku not in self._cache:
-            self._cache[sku] = [
-                (date.fromisoformat(row[0]), Decimal(row[1]))
-                for row in self._conn.execute(
-                    "SELECT effective_from, unit_cost FROM sku_costs "
-                    "WHERE sku = ? ORDER BY effective_from", (sku,))
-            ]
-        return self._cache[sku]
-
     def entries(self, sku: str | None = None) -> list[CostEntry]:
-        """Every stored cost, newest first, optionally for one SKU."""
-        sql = ("SELECT sku, effective_from, unit_cost, source, note FROM sku_costs "
-               + ("WHERE sku = ? " if sku else "")
-               + "ORDER BY sku, effective_from DESC")
-        rows = self._conn.execute(sql, (sku,) if sku else ())
-        return [CostEntry(sku=r[0], effective_from=date.fromisoformat(r[1]),
-                          unit_cost=Decimal(r[2]), source=r[3] or "", note=r[4] or "")
-                for r in rows]
+        """Every entry, newest first, optionally for one SKU."""
+        rows = [e for e in self._entries if sku is None or e.sku == sku]
+        return sorted(rows, key=lambda e: (e.sku, e.effective_from), reverse=True)
 
     def priced_skus(self) -> set[str]:
-        return {r[0] for r in self._conn.execute("SELECT DISTINCT sku FROM sku_costs")}
+        return set(self._by_sku)
 
-    # -- writing -------------------------------------------------------------------
-
-    def record(self, entries: Iterable[CostEntry], *, by: str) -> int:
-        """Store costs, replacing any entry for the same SKU and date.
-
-        Re-entering a cost for a date already held is a correction, not a
-        second lot — there is only ever one cost in force on a given day.
-        """
-        rows = [(e.sku, e.effective_from.isoformat(), str(e.unit_cost),
-                 e.source, e.note, by, _utcnow()) for e in entries]
-        if not rows:
-            return 0
-        with self._conn:
-            self._conn.executemany(
-                "INSERT INTO sku_costs(sku, effective_from, unit_cost, source, note,"
-                " entered_by, entered_at) VALUES (?,?,?,?,?,?,?)"
-                " ON CONFLICT(sku, effective_from) DO UPDATE SET"
-                " unit_cost = excluded.unit_cost, source = excluded.source,"
-                " note = excluded.note, entered_by = excluded.entered_by,"
-                " entered_at = excluded.entered_at", rows)
-        self._cache.clear()
-        logger.info("cost basis: %d entries recorded by %s", len(rows), by)
-        return len(rows)
-
-    def forget(self, sku: str, effective_from: date) -> bool:
-        """Drop one entry. Returns whether a row went."""
-        with self._conn:
-            cursor = self._conn.execute(
-                "DELETE FROM sku_costs WHERE sku = ? AND effective_from = ?",
-                (sku, effective_from.isoformat()))
-        self._cache.clear()
-        return cursor.rowcount > 0
-
-
-def invoiced_costs(
-    conn: sqlite3.Connection, skus: Iterable[str], *, on: date | None = None,
-) -> dict[str, float]:
-    """Landed cost per SKU from the recorded invoices. Absent where unknown.
-
-    The one honest source of a cost basis: what the goods were actually
-    invoiced at. Deliberately **no fallback** — not to ``price_bounds``, not
-    to a share of the seller's floor. A SKU missing from this dict has no cost
-    basis, and every caller is better off knowing that than holding a number
-    derived from the price it is itself trying to set.
-
-    That circularity is not hypothetical. ``price_bounds.landed_cost`` was
-    filled as ``floor x (1 - referral_rate)`` for twenty of twenty-six SKUs,
-    so the break-even computed from it was a restatement of the floor, and the
-    bandit's reward was graded against it — €14.44 where the invoice said
-    €6.74. Shared by the repricer's catalogue sync and the bandit so there is
-    one answer to "what did this unit cost" and not two.
-    """
-    basis = CostBasis(conn)
-    day = on or date.today()
-    out: dict[str, float] = {}
-    for sku in skus:
-        cost = basis.cost_for(str(sku), day)
-        if cost is not None and float(cost) > 0:
-            out[str(sku)] = float(cost)
-    return out
+    def __len__(self) -> int:
+        return len(self._entries)
 
 
 @dataclass(frozen=True)

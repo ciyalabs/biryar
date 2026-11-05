@@ -23,7 +23,6 @@ from biryar.profit import (
     overhead_by_kind,
     period,
 )
-from biryar.profit.store import init_costs_db
 
 
 def _money(amount: str) -> dict[str, object]:
@@ -346,13 +345,19 @@ def test_an_unknown_fee_path_is_surfaced_rather_than_silently_ignored():
 # -- cost basis --------------------------------------------------------------------
 
 @pytest.fixture()
-def basis(tmp_path):
-    return CostBasis(init_costs_db(tmp_path / "t.db"))
+def basis():
+    """A cost basis with nothing in it.
+
+    No database. The dated-lookup rule is domain logic, so it is tested as
+    domain logic — which is why these run on any machine in milliseconds
+    rather than behind a container. Storage is covered separately in
+    tests/test_repositories.py.
+    """
+    return CostBasis()
 
 
 def test_a_cost_applies_from_its_date_onward_and_not_before(basis):
-    basis.record([CostEntry("MU-1", date(2026, 9, 10), Decimal("8.40"), source="invoice")],
-                 by="owner")
+    basis.extend([CostEntry("MU-1", date(2026, 9, 10), Decimal("8.40"), source="invoice")])
 
     assert basis.cost_for("MU-1", date(2026, 9, 9)) is None
     assert basis.cost_for("MU-1", date(2026, 9, 10)) == Decimal("8.40")
@@ -360,17 +365,16 @@ def test_a_cost_applies_from_its_date_onward_and_not_before(basis):
 
 
 def test_restocking_at_a_new_price_leaves_old_sales_costing_what_they_cost(basis):
-    basis.record([CostEntry("MU-1", date(2026, 9, 1), Decimal("8.40")),
-                  CostEntry("MU-1", date(2026, 11, 1), Decimal("9.95"))], by="owner")
+    basis.extend([CostEntry("MU-1", date(2026, 9, 1), Decimal("8.40")),
+                  CostEntry("MU-1", date(2026, 11, 1), Decimal("9.95"))])
 
     assert basis.cost_for("MU-1", date(2026, 10, 15)) == Decimal("8.40")
     assert basis.cost_for("MU-1", date(2026, 11, 2)) == Decimal("9.95")
 
 
 def test_re_entering_a_date_corrects_it_rather_than_adding_a_second_lot(basis):
-    basis.record([CostEntry("MU-1", date(2026, 9, 1), Decimal("8.40"))], by="owner")
-    basis.record([CostEntry("MU-1", date(2026, 9, 1), Decimal("8.75"), note="freight")],
-                 by="owner")
+    basis.extend([CostEntry("MU-1", date(2026, 9, 1), Decimal("8.40"))])
+    basis.extend([CostEntry("MU-1", date(2026, 9, 1), Decimal("8.75"), note="freight")])
 
     assert basis.cost_for("MU-1", date(2026, 9, 5)) == Decimal("8.75")
     assert len(basis.entries("MU-1")) == 1
@@ -384,7 +388,7 @@ def test_a_cost_must_be_positive():
 # -- the whole join ----------------------------------------------------------------
 
 def test_profit_is_revenue_less_amazon_less_postage_less_what_it_cost(basis):
-    basis.record([CostEntry("MU-1", date(2026, 9, 1), Decimal("8.00"))], by="owner")
+    basis.extend([CostEntry("MU-1", date(2026, 9, 1), Decimal("8.00"))])
     rows = [shipment("777", [{"sku": "MU-1", "revenue": "17.94",
                               "fee_base": "-2.53", "fee_tax": "-0.48"}]),
             label("777", "-4.12", "-0.11", "-0.80")]
@@ -397,7 +401,7 @@ def test_profit_is_revenue_less_amazon_less_postage_less_what_it_cost(basis):
 
 
 def test_two_units_cost_twice(basis):
-    basis.record([CostEntry("A", date(2026, 9, 1), Decimal("5.00"))], by="owner")
+    basis.extend([CostEntry("A", date(2026, 9, 1), Decimal("5.00"))])
     rows = [shipment("888", [{"sku": "A", "units": 2, "revenue": "27.96",
                               "fee_base": "-4.00", "fee_tax": "-0.76"}])]
 
@@ -405,7 +409,7 @@ def test_two_units_cost_twice(basis):
 
 
 def test_one_unpriced_sku_withholds_the_total_but_not_the_gross_contribution(basis):
-    basis.record([CostEntry("A", date(2026, 9, 1), Decimal("5.00"))], by="owner")
+    basis.extend([CostEntry("A", date(2026, 9, 1), Decimal("5.00"))])
     rows = [shipment("1", [{"sku": "A", "revenue": "20.00",
                             "fee_base": "-3.00", "fee_tax": "-0.57"}]),
             shipment("2", [{"sku": "B", "revenue": "30.00",
@@ -437,8 +441,8 @@ def test_the_channel_cut_makes_fba_and_self_shipping_comparable(basis):
 
 
 def test_sku_rows_rank_by_contribution_and_park_the_unpriced_at_the_bottom(basis):
-    basis.record([CostEntry("rich", date(2026, 9, 1), Decimal("2.00")),
-                  CostEntry("thin", date(2026, 9, 1), Decimal("18.00"))], by="owner")
+    basis.extend([CostEntry("rich", date(2026, 9, 1), Decimal("2.00")),
+                  CostEntry("thin", date(2026, 9, 1), Decimal("18.00"))])
     rows = [shipment("1", [{"sku": "thin", "revenue": "20.00",
                             "fee_base": "-3.00", "fee_tax": "-0.57"}]),
             shipment("2", [{"sku": "rich", "revenue": "20.00",

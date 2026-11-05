@@ -4,7 +4,8 @@ Three questions this answers that no single Amazon page can:
 
 * **What did the unit cost me?** Amazon never knows. It comes from
   :mod:`biryar.profit.costs`, built from your own cost file — see
-  :mod:`biryar.profit.invoices`.
+  :mod:`biryar.profit.invoices`. Nothing in this package reads a database;
+  :mod:`biryar.repositories` is what loads these values from one.
 * **What did Amazon keep?** Commission, fulfilment, the closing fee, postage
   and fee VAT, itemised per SKU inside the Finances feed rather than stated
   as a period total. :mod:`biryar.profit.ledger` reads them.
@@ -18,7 +19,7 @@ happened to sell that month makes a slow month look like a bad product.
 :class:`~biryar.profit.report.PeriodProfit` keeps them separate.
 """
 
-from .costs import CostBasis, CostEntry, ResolvedCost, invoiced_costs
+from .costs import CostBasis, CostEntry, ResolvedCost
 from .growth import (
     GrowthModel,
     Projection,

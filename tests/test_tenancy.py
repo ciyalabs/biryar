@@ -15,7 +15,7 @@ from sqlalchemy.exc import ProgrammingError
 
 from biryar.db.base import tenant_scoped_tables
 from biryar.db.session import TENANT_GUC, SessionFactory, TenantContextError, tenant_session
-from biryar.migrations.versions import v0001_tenancy_and_credentials as first
+from biryar.migrations import declared_tenant_tables
 
 from .conftest import make_user
 
@@ -179,9 +179,10 @@ def test_every_tenant_scoped_model_has_a_live_policy(admin_engine: Engine) -> No
     # stray gitignore rule, and a check written only as a subset test would
     # have reported success against a database with no policies at all.
     assert expected, "no tenant-scoped models are registered; check the imports"
-    assert expected == set(first.TENANT_TABLES), (
-        "the migration's frozen table list and the models disagree: "
-        f"models={sorted(expected)} migration={sorted(first.TENANT_TABLES)}"
+    declared = declared_tenant_tables()
+    assert expected == declared, (
+        "the migrations' frozen table lists and the models disagree: "
+        f"models={sorted(expected)} migrations={sorted(declared)}"
     )
 
     assert expected <= protected, f"no policy on: {sorted(expected - protected)}"

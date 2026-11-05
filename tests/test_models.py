@@ -16,7 +16,7 @@ from sqlalchemy.orm import configure_mappers
 
 import biryar.db.models  # noqa: F401
 from biryar.db.base import Base, tenant_scoped_tables
-from biryar.migrations.versions import v0001_tenancy_and_credentials as first
+from biryar.migrations import declared_tenant_tables
 
 
 def test_every_mapping_configures() -> None:
@@ -33,13 +33,14 @@ def test_every_tenant_scoped_table_actually_carries_a_tenant_column() -> None:
         assert table.c.tenant_id.foreign_keys, f"{name}.tenant_id has no foreign key"
 
 
-def test_the_models_and_the_migration_agree_on_which_tables_are_scoped() -> None:
+def test_the_models_and_the_migrations_agree_on_which_tables_are_scoped() -> None:
     """Catches a new tenant-scoped model whose policy was never written.
 
-    This needs no database, so it fails in a second rather than after a
-    container has started.
+    The models say which tables hold tenant data; the migrations say which
+    ones were given a policy. They must be the same set, and this needs no
+    database, so it fails in a second rather than after a container starts.
     """
-    assert set(tenant_scoped_tables()) == set(first.TENANT_TABLES)
+    assert set(tenant_scoped_tables()) == declared_tenant_tables()
 
 
 def test_every_relationship_has_a_resolvable_join() -> None:
