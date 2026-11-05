@@ -8,7 +8,6 @@ does not exist.
 
 from __future__ import annotations
 
-import json
 from datetime import date
 from decimal import Decimal
 
@@ -24,152 +23,15 @@ from biryar.profit import (
     period,
 )
 
-
-def _money(amount: str) -> dict[str, object]:
-    return {"currencyAmount": float(amount), "currencyCode": "EUR"}
-
-
-def _leaf(name: str, amount: str) -> dict[str, object]:
-    return {"breakdownType": name, "breakdownAmount": _money(amount), "breakdowns": []}
-
-
-def _fee(name: str, base: str, tax: str) -> dict[str, object]:
-    return {"breakdownType": "AmazonFees", "breakdownAmount": _money("0"), "breakdowns": [
-        {"breakdownType": name, "breakdownAmount": _money("0"),
-         "breakdowns": [_leaf("Base", base), _leaf("Tax", tax)]}]}
-
-
-def _product(name: str, amount: str) -> dict[str, object]:
-    return {"breakdownType": "ProductCharges", "breakdownAmount": _money(amount),
-            "breakdowns": [_leaf(name, amount)]}
-
-
-def shipment(order_id: str, lines: list[dict[str, object]]) -> tuple[str, str, str]:
-    """``(type, local_date, raw)`` for one order, one item per line."""
-    items = []
-    for line in lines:
-        items.append({
-            "description": line.get("title", ""),
-            "contexts": [{"contextType": "ProductContext", "sku": line["sku"],
-                          "asin": line.get("asin", ""), "quantityShipped": line.get("units", 1),
-                          "fulfillmentNetwork": line.get("network", "MFN")}],
-            "breakdowns": [_product("OurPricePrincipal", line["revenue"]),
-                           _fee(line.get("fee_name", "Commission"),
-                                line["fee_base"], line["fee_tax"])],
-        })
-    payload = {
-        "description": "Order Payment",
-        "postedDate": "2026-09-23T10:00:00Z",
-        "relatedIdentifiers": [{"relatedIdentifierName": "ORDER_ID",
-                                "relatedIdentifierValue": order_id}],
-        "items": items,
-    }
-    return ("Shipment", "2026-09-23", json.dumps(payload))
-
-
-def released(row: tuple[str, str, str], *, on: str = "2026-10-02",
-             deferred_id: str = "t-deferred") -> tuple[str, str, str]:
-    """The payout twin Amazon posts a week later for the same shipment.
-
-    Same items, same amounts, same ORDER_ID; the one difference is the
-    back-reference to the deferred transaction it settles.
-    """
-    txn_type, _, raw = row
-    payload = json.loads(raw)
-    payload["postedDate"] = f"{on}T10:00:00Z"
-    payload["relatedIdentifiers"] = [
-        *payload["relatedIdentifiers"],
-        {"relatedIdentifierName": "DEFERRED_TRANSACTION_ID",
-         "relatedIdentifierValue": deferred_id},
-    ]
-    return (txn_type, on, json.dumps(payload))
-
-
-def label(order_id: str, postage: str, fuel: str, vat: str) -> tuple[str, str, str]:
-    payload = {
-        "description": "LabmanLabelPurchase",
-        "postedDate": "2026-09-23T14:00:00Z",
-        "relatedIdentifiers": [{"relatedIdentifierName": "ORDER_ID",
-                                "relatedIdentifierValue": order_id}],
-        "items": [
-            {"description": "PostageBilling_Postage",
-             "breakdowns": [_leaf("ShippingServiceCharges", postage)]},
-            {"description": "PostageBilling_FuelSurcharge",
-             "breakdowns": [_leaf("Other", fuel)]},
-            {"description": "PostageBilling_VAT",
-             "breakdowns": [_leaf("Other", vat)]},
-        ],
-    }
-    return ("Adjustment", "2026-09-23", json.dumps(payload))
-
-
-def chargeback(order_id: str, adjustment: str, carrier_postage: str,
-               carrier_vat: str, customer_credit: str) -> tuple[str, str, str]:
-    """A carrier correcting a label it already billed (first seen 08.10.2026)."""
-    payload = {
-        "description": "LabmanLabelPurchase",
-        "postedDate": "2026-10-08T14:00:00Z",
-        "relatedIdentifiers": [{"relatedIdentifierName": "ORDER_ID",
-                                "relatedIdentifierValue": order_id}],
-        "items": [
-            {"description": "PostageBilling_PostageAdjustment",
-             "breakdowns": [_leaf("ShippingServiceChargebacks", adjustment)]},
-            {"description": "PostageBilling_VAT", "breakdowns": [
-                {"breakdownType": "ShippingServiceChargebacks",
-                 "breakdownAmount": _money("0"), "breakdowns": [
-                     {"breakdownType": "CarrierPackagingCharge",
-                      "breakdownAmount": _money("0"), "breakdowns": [
-                          _leaf("PostageBilling_Postage", carrier_postage),
-                          _leaf("PostageBilling_Other", carrier_vat)]}]}]},
-            {"description": "PostageBilling_VAT",
-             "breakdowns": [
-                 {"breakdownType": "ShippingServiceChargebacks",
-                  "breakdownAmount": _money("0"), "breakdowns": [
-                      _leaf("CustomerPackagingCharge", customer_credit)]}]},
-        ],
-    }
-    return ("Adjustment", "2026-10-08", json.dumps(payload))
-
-
-def storage_fee(base: str, tax: str) -> tuple[str, str, str]:
-    payload = {
-        "description": "FBA Inventory Storage Fee",
-        "postedDate": "2026-10-07T00:00:00Z",
-        "relatedIdentifiers": [],
-        "items": [{"description": "FBA Inventory Storage Fee", "contexts": None,
-                   "breakdowns": [
-                       {"breakdownType": "FBAFees", "breakdownAmount": _money("0"),
-                        "breakdowns": [
-                            {"breakdownType": "StorageBillingFee",
-                             "breakdownAmount": _money("0"), "breakdowns": [
-                                 {"breakdownType": "FBAStorageFee",
-                                  "breakdownAmount": _money("0"), "breakdowns": [
-                                      _leaf("Base", base), _leaf("Tax", tax)]}]}]}]}],
-    }
-    return ("ServiceFee", "2026-10-07", json.dumps(payload))
-
-
-def failed_disbursement(amount: str) -> tuple[str, str, str]:
-    payload = {
-        "description": "FailedDisbursement",
-        "postedDate": "2026-10-07T00:00:00Z",
-        "relatedIdentifiers": [],
-        "items": [{"description": "FailedDisbursement", "contexts": None,
-                   "breakdowns": [_leaf("FailedDisbursement", amount)]}],
-    }
-    return ("AdhocDisbursement", "2026-10-07", json.dumps(payload))
-
-
-def subscription(amount_base: str, amount_tax: str) -> tuple[str, str, str]:
-    payload = {
-        "description": "Subscription",
-        "postedDate": "2026-09-01T00:00:00Z",
-        "relatedIdentifiers": [],
-        "items": [{"description": None, "contexts": None,
-                   "breakdowns": [_fee("Subscription", amount_base, amount_tax)]}],
-    }
-    return ("ServiceFee", "2026-09-01", json.dumps(payload))
-
+from .payloads import (
+    chargeback,
+    failed_disbursement,
+    label,
+    released,
+    shipment,
+    storage_fee,
+    subscription,
+)
 
 # -- one sale, two postings --------------------------------------------------------
 

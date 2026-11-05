@@ -9,7 +9,7 @@ are invisible to another.
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, date, datetime
+from datetime import date
 from decimal import Decimal
 
 import pytest
@@ -25,6 +25,8 @@ from biryar.repositories import (
     settlement_rows,
 )
 
+from .payloads import shipment, transaction
+
 pytestmark = pytest.mark.postgres
 
 
@@ -35,37 +37,19 @@ def _txn(
     revenue: str = "20.00",
     on: date = date(2026, 9, 15),
 ) -> dict[str, object]:
-    """One Shipment transaction, in the shape the SP-API client hands over."""
-    return {
-        "transaction_id": transaction_id,
-        "transaction_type": "Shipment",
-        "status": "Released",
-        "posted_at": datetime(on.year, on.month, on.day, 10, 0, tzinfo=UTC),
-        "local_date": on,
-        "order_id": f"ORDER-{transaction_id}",
-        "payload": {
-            "sellingPartnerMetadata": {"marketplaceId": Marketplace.DE.value},
-            "relatedIdentifiers": [
-                {"relatedIdentifierName": "ORDER_ID",
-                 "relatedIdentifierValue": f"ORDER-{transaction_id}"},
-            ],
-            "items": [{
-                "contexts": [{
-                    "contextType": "ProductContext",
-                    "sku": sku,
-                    "quantityShipped": 1,
-                    "fulfillmentNetwork": "MFN",
-                }],
-                "breakdowns": [{
-                    "breakdownType": "Sales",
-                    "breakdownAmount": {"currencyAmount": float(revenue),
-                                        "currencyCode": "EUR"},
-                    "breakdowns": [],
-                }],
-                "totalAmount": {"currencyAmount": float(revenue), "currencyCode": "EUR"},
-            }],
-        },
-    }
+    """One shipment, built by the same code the ledger's own tests use.
+
+    An earlier version of this helper assembled the payload by hand and put
+    the revenue under a breakdown the ledger does not read, so the test
+    failed insisting revenue was zero while the ledger was correct.
+    """
+    return transaction(
+        transaction_id,
+        shipment(f"ORDER-{transaction_id}", [
+            {"sku": sku, "revenue": revenue, "fee_base": "-3.00", "fee_tax": "-0.57"},
+        ]),
+        on=on,
+    )
 
 
 # -- costs ---------------------------------------------------------------------------
