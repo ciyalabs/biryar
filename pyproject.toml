@@ -20,11 +20,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.3",
-    "pytest-asyncio>=0.25",
-    "httpx>=0.28",
-    "ruff>=0.9",
-    "mypy>=1.14",
+    "pytest==9.0.3",
+    "pytest-asyncio==1.3.0",
+    "httpx==0.28.1",
+    # Pinned exactly, not floated. A new ruff release adds rules, so a
+    # floating pin means CI can fail on a commit that changed nothing.
+    "ruff==0.17.3",
+    "mypy==1.18.2",
 ]
 
 [build-system]
@@ -45,9 +47,16 @@ markers = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.isort]
+# Stated rather than detected. Ruff infers first-party from the layout, and
+# the inference differs between a source checkout and an installed package,
+# so the same file sorted one way locally and another way in CI.
+known-first-party = ["biryar"]
 
 [tool.mypy]
 python_version = "3.12"
