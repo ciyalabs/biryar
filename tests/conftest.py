@@ -119,12 +119,12 @@ def schema(admin_engine: Engine) -> Iterator[None]:
                 f"IN SCHEMA public TO {APP_ROLE}"
             )
         )
-        conn.execute(
-            text(
-                "GRANT EXECUTE ON FUNCTION public.biryar_resolve_session(text) "
-                f"TO {APP_ROLE}"
-            )
-        )
+        for signature in (
+            "public.biryar_resolve_session(text)",
+            "public.biryar_claim_job(text, integer, text[])",
+            "public.biryar_reclaim_stuck_jobs(interval)",
+        ):
+            conn.execute(text(f"GRANT EXECUTE ON FUNCTION {signature} TO {APP_ROLE}"))
     yield
 
 

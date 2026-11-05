@@ -31,14 +31,29 @@ from .credentials import (
     reseal_if_stale,
     store_credential,
 )
+from .jobs import (
+    ClaimedJob,
+    backoff,
+    claim,
+    complete,
+    enqueue,
+    fail,
+    reclaim_stuck,
+)
 from .transactions import record_transactions, settlement_rows
 
 __all__ = [
+    "ClaimedJob",
     "IssuedSession",
     "ResolvedSession",
     "active_credential",
     "authenticate",
+    "backoff",
+    "claim",
+    "complete",
     "create_user",
+    "enqueue",
+    "fail",
     "forget_cost",
     "issue_session",
     "load_cost_basis",
@@ -46,6 +61,7 @@ __all__ = [
     "mark_refreshed",
     "normalise_email",
     "read_refresh_token",
+    "reclaim_stuck",
     "record_costs",
     "record_transactions",
     "reseal_if_stale",
