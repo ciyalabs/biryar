@@ -24,6 +24,7 @@ from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.orm import Session
 
 import biryar.db.models  # noqa: F401
+from biryar.config import Settings as BiryarSettings
 from biryar.config import settings
 from biryar.db.session import SessionFactory, session_factory
 
@@ -181,6 +182,31 @@ def make_user(session: Session, tenant_id: uuid.UUID, email: str) -> uuid.UUID:
     return user.id
 
 
+#: An Amazon application that exists only in tests. The ids are shaped like
+#: the real ones so that anything parsing them behaves the same.
+TEST_AMAZON = {
+    "amazon_application_id": "amzn1.sellerapps.app.test",
+    "lwa_client_id": "amzn1.application-oa2-client.test",
+    "lwa_client_secret": "test-client-secret",
+    "amazon_redirect_uri": "https://biryar.test/v1/amazon/callback",
+    "amazon_application_is_draft": True,
+}
+
+
+def test_settings(**overrides: object) -> BiryarSettings:
+    """Settings for a test app: a real sealing key, a fake Amazon application."""
+    from biryar.config import Settings as BiryarSettings
+    from biryar.crypto import Keyring
+
+    values: dict[str, object] = {
+        "database_url": "postgresql+psycopg://unused:unused@127.0.0.1:1/unused",
+        "secret_key": f"v1:{Keyring.generate_key()}",
+        **TEST_AMAZON,
+        **overrides,
+    }
+    return BiryarSettings(**values)  # type: ignore[arg-type]
+
+
 @pytest.fixture
 def client(app_engine: Engine) -> Iterator[TestClient]:
     """The API, wired to the throwaway database.
@@ -193,5 +219,5 @@ def client(app_engine: Engine) -> Iterator[TestClient]:
 
     from biryar.api import create_app
 
-    with TestClient(create_app(engine=app_engine)) as test_client:
+    with TestClient(create_app(test_settings(), engine=app_engine)) as test_client:
         yield test_client

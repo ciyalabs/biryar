@@ -56,6 +56,29 @@ class Settings(BaseSettings):
     #: See ``migrations`` and ``docs/architecture/tenancy.md``.
     db_role: str = "biryar_app"
 
+    # -- the Amazon application ------------------------------------------------
+    #
+    # One identity per deployment, not per tenant. Every seller authorises
+    # *this* application; what differs per tenant is the refresh token that
+    # authorisation produced.
+
+    #: From Seller Central's developer console. Public, and it appears in the
+    #: consent URL a seller is sent to.
+    amazon_application_id: str = ""
+
+    lwa_client_id: str = ""
+    lwa_client_secret: SecretStr = Field(default=SecretStr(""))
+
+    #: Where Amazon sends the seller back. Must exactly match one of the
+    #: redirect URIs registered on the application, or Amazon refuses the
+    #: exchange with a message that does not say which end is wrong.
+    amazon_redirect_uri: str = ""
+
+    #: True while the application is in Draft. Amazon requires version=beta
+    #: on the consent URL then, and rejects it once published, so this has to
+    #: flip at the same time the application does.
+    amazon_application_is_draft: bool = True
+
     echo_sql: bool = False
     pool_size: int = 5
     max_overflow: int = 10
@@ -73,6 +96,20 @@ class Settings(BaseSettings):
     @property
     def is_hosted(self) -> bool:
         return self.deployment is Deployment.HOSTED
+
+    @property
+    def amazon_is_configured(self) -> bool:
+        """Whether a seller could actually be sent through authorisation.
+
+        Checked before offering the flow rather than discovered halfway
+        through it, where the seller has already left for Seller Central.
+        """
+        return bool(
+            self.amazon_application_id
+            and self.lwa_client_id
+            and self.lwa_client_secret.get_secret_value()
+            and self.amazon_redirect_uri
+        )
 
     def keyring(self) -> Keyring:
         """The sealing keys. Raises if none are configured."""

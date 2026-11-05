@@ -37,6 +37,7 @@ from fastapi import Depends, Header, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
+from ..amazon import LwaApplication, LwaClient
 from ..config import Settings, settings
 from ..db.session import SessionFactory, admin_session, tenant_session
 from ..repositories.auth import ResolvedSession, resolve_session, sole_tenant, tenant_by_slug
@@ -127,7 +128,27 @@ def tenant_db(
         yield db
 
 
+Settings_ = Annotated[Settings, Depends(get_settings)]
+def get_lwa_client(
+    config: Annotated[Settings, Depends(get_settings)],
+) -> LwaClient:
+    """The client the OAuth callback exchanges through.
+
+    A dependency rather than something the route builds, so a test can
+    answer Amazon without a network and without patching an import. The
+    failure paths — a refusal, a timeout — are the part of that route worth
+    testing, and they are unreachable otherwise.
+    """
+    return LwaClient(
+        LwaApplication(
+            client_id=config.lwa_client_id,
+            client_secret=config.lwa_client_secret.get_secret_value(),
+        )
+    )
+
+
 CurrentSession = Annotated[ResolvedSession, Depends(current_session)]
 TenantDb = Annotated[Session, Depends(tenant_db)]
 TenantId = Annotated[uuid.UUID, Depends(resolve_tenant_id)]
+Lwa = Annotated[LwaClient, Depends(get_lwa_client)]
 Factory = Annotated[SessionFactory, Depends(get_session_factory)]
