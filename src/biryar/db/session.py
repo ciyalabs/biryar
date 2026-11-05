@@ -143,11 +143,15 @@ def admin_session(factory: SessionFactory) -> Iterator[Session]:
         session.close()
 
 
-#: ``set_config(..., false)`` in any spacing. The third argument is the LOCAL
-#: flag, and false makes the setting last for the whole session.
-_SESSION_SCOPED_SET_CONFIG = re.compile(
-    r"set_config\s*\([^)]*,\s*(?:false|'f'|0)\s*\)", re.IGNORECASE
-)
+#: A false third argument to ``set_config``, which makes the setting last for
+#: the whole session rather than the transaction.
+#:
+#: Matched as "a falsey final argument before a closing paren" rather than by
+#: walking the call's own parentheses. The first attempt used ``[^)]*`` to
+#: scan the arguments, which stops dead at the first ``)`` — and a driver
+#: renders a named parameter as ``%(guc)s``, so the pattern never reached the
+#: argument it was looking for and the guard silently passed everything.
+_FALSEY_LAST_ARGUMENT = re.compile(r",\s*(?:false|'f'|0)\s*\)", re.IGNORECASE)
 
 
 def _forbid_stray_tenant_setting(engine: Engine) -> None:
@@ -178,7 +182,7 @@ def _forbid_stray_tenant_setting(engine: Engine) -> None:
                 "outlive its transaction and leak across pooled connections. "
                 "Use tenant_session()."
             )
-        if _SESSION_SCOPED_SET_CONFIG.search(normalised):
+        if "set_config" in normalised and _FALSEY_LAST_ARGUMENT.search(normalised):
             raise TenantContextError(
                 f"set_config for {TENANT_GUC} must pass true as its third "
                 "argument so the setting is transaction-local. "

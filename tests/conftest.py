@@ -72,6 +72,20 @@ def schema(admin_engine: Engine) -> Iterator[None]:
         conn.execute(
             text(f"CREATE ROLE {APP_ROLE} LOGIN PASSWORD '{APP_PASSWORD}' NOBYPASSRLS")
         )
+        conn.execute(text(f"GRANT USAGE ON SCHEMA public TO {APP_ROLE}"))
+        # Default privileges rather than a one-off grant, and set *before* the
+        # migrations run. A plain GRANT ON ALL TABLES covers the tables that
+        # exist at the moment it runs; the downgrade/upgrade round-trip test
+        # drops every table and builds them again, and the rebuilt ones came
+        # back with no privileges at all. Default privileges attach to tables
+        # this role creates from now on, so a later migration's new table is
+        # usable without anyone remembering to grant it.
+        conn.execute(
+            text(
+                "ALTER DEFAULT PRIVILEGES IN SCHEMA public "
+                f"GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO {APP_ROLE}"
+            )
+        )
 
     root = pathlib.Path(__file__).resolve().parents[1]
     config = Config(str(root / "alembic.ini"))
@@ -80,8 +94,9 @@ def schema(admin_engine: Engine) -> Iterator[None]:
     settings.cache_clear()
     command.upgrade(config, "head")
 
+    # Belt and braces for the tables this first upgrade created. Default
+    # privileges cover everything after it.
     with admin_engine.begin() as conn:
-        conn.execute(text(f"GRANT USAGE ON SCHEMA public TO {APP_ROLE}"))
         conn.execute(
             text(
                 "GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES "
