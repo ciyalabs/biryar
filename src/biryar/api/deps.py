@@ -38,7 +38,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from ..amazon import LwaApplication, LwaClient
-from ..config import Settings, settings
+from ..config import Settings
 from ..db.session import SessionFactory, admin_session, tenant_session
 from ..repositories.auth import ResolvedSession, resolve_session, sole_tenant, tenant_by_slug
 
@@ -53,8 +53,17 @@ UNAUTHENTICATED = HTTPException(
 )
 
 
-def get_settings() -> Settings:
-    return settings()
+def get_settings(request: Request) -> Settings:
+    """The settings this app was built with.
+
+    Read from the app rather than from the process. create_app takes a
+    config, and a dependency that ignored it in favour of the module-level
+    cache made that argument decorative: an app built with one configuration
+    served requests under another, and the only place it showed was a test
+    whose injected Amazon application silently never arrived.
+    """
+    config: Settings = request.app.state.settings
+    return config
 
 
 def get_session_factory(request: Request) -> SessionFactory:

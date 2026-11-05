@@ -44,6 +44,7 @@ def create_app(
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         own = engine is None
         bound = engine or engine_for(config)
+        app.state.settings = config
         app.state.engine = bound
         app.state.session_factory = session_factory(bound)
         try:
