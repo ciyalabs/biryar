@@ -1,7 +1,7 @@
 # Release manifest
 
-What has migrated from the private codebase, what has not, and what blocks
-the rest. Updated as modules land.
+What has migrated from the private codebase, what has not, and what still
+has to be built. Updated as modules land.
 
 ## Migrated
 
@@ -27,18 +27,22 @@ platform-wide schema. 34 tests pass.
 
 The private repository is unchanged and keeps its PDF parsers.
 
-## Blocked before this repository can be made public
+## Published knowingly
 
-| Item | Problem |
+This repository went public on 2026-11-05. Two report figures carry live
+business data and were kept anyway, as a deliberate decision rather than an
+oversight:
+
+| Item | What is visible |
 |---|---|
-| `reports/sourcing/fig/deal-detail.png` | Shows a real, identifiable product: title, ASIN 3407761694, EAN, cost 3 EUR, sale price 15 EUR, 138% ROI. The retailer is blurred; the product is not. |
+| `reports/sourcing/fig/deal-detail.png` | A real, identifiable product: title, ASIN 3407761694, EAN, cost 3 EUR, sale price 15 EUR, 138% ROI. The retailer is blurred; the product is not. |
 | `reports/manufacturers/fig/order-list.png` | Supplier and article identities are blurred, but landed cost, Amazon price, margin, rank, offers and fee per row are legible, as are the aggregates (56,155 EUR to buy the assortment, 11,861 EUR margin, 123 EUR a day). |
-
-The second item is left in place deliberately, on the owner's instruction.
 
 Everything else sampled is either blurred or carries no business data. The
 report text is clean across all six: no supplier names, no addresses, no bank
-details, no tax references.
+details, no tax references. A pre-publication scan also caught one supplier
+named in this file's own cut list, in the sentence explaining why that page
+was removed.
 
 ## Not in release 0.1
 
