@@ -28,18 +28,29 @@ This key encrypts every Amazon credential Biryar stores. **Keep a copy
 somewhere that is not this machine.** Losing it means reconnecting every
 account; leaking it means every credential it sealed is compromised.
 
-Then create the schema and start:
+Then create the schema, make your account, and start:
 
 ```bash
 docker compose run --rm api alembic upgrade head
+docker compose run --rm api python -m biryar.init --email you@example.com
 docker compose up -d
 ```
 
-Biryar is at <http://localhost:8000>.
+The second command prints a generated password. **Write it down — it is
+shown once** and is not recoverable afterwards. Pass `--password` instead
+if you would rather choose one, though that puts it in your shell history.
+
+Biryar is at <http://localhost:8000>, and that account can sign in.
 
 Migrations are a separate step on purpose. If containers ran them at
 startup, two starting together would both try, and a schema change that
 fails halfway is not something to find out about from a restart loop.
+
+Creating the account is a command rather than a sign-up page because a
+sign-up page on a self-hosted install is a door onto the internet whose
+only job is to be used once, and whoever reaches it first becomes the
+owner. Running it from the shell means the person who gets the account is
+the person who can already read the database.
 
 ## Connecting Amazon
 

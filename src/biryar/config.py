@@ -85,6 +85,18 @@ class Settings(BaseSettings):
     #: build stage produced.
     static_dir: str = ""
 
+    #: How often the worker queues the work that is due, in seconds. The
+    #: scheduling pass is idempotent — a job carries a key naming the thing
+    #: and the day it is for — so a short interval costs a cheap query and
+    #: never a duplicate fetch. The default is fifteen minutes, which is
+    #: how long a newly connected seller waits to see their first figures
+    #: if nothing enqueues on their behalf.
+    #:
+    #: Zero disables it, for a deployment that drives
+    #: ``python -m biryar.worker --schedule`` from cron or a systemd timer
+    #: instead.
+    schedule_every_seconds: int = 900
+
     echo_sql: bool = False
     pool_size: int = 5
     max_overflow: int = 10

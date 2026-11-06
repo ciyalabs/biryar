@@ -112,17 +112,54 @@ def build_runner(
     return Runner(factory=factory, registry=registry)
 
 
-def serve(runner: Runner, *, stopping: Stopping | None = None) -> None:
-    """Claim and run work until asked to stop."""
+def serve(
+    runner: Runner,
+    *,
+    stopping: Stopping | None = None,
+    schedule_every: float = 0.0,
+) -> None:
+    """Claim and run work until asked to stop.
+
+    ``schedule_every`` makes this worker also queue the work that is due,
+    which is the difference between an installation that fetches and one
+    that sits forever on an empty queue. It was the latter: the only caller
+    of the scheduler was a command-line flag that nothing invoked, so a
+    seller could connect Amazon and wait indefinitely.
+
+    Running it here rather than in a separate container keeps a single-host
+    install to one process to supervise. It is safe with several workers
+    because the pass is idempotent — each job carries a key naming the
+    thing and the day it is for — so N workers scheduling concurrently
+    still produce one job. Zero leaves it to cron, for anyone who prefers
+    their scheduling visible from outside the application.
+    """
     stopping = stopping or Stopping()
     logger.info("worker: %s handling %s", runner.name, runner.registry.kinds())
+    if schedule_every > 0:
+        logger.info("worker: queueing due work every %.0fs", schedule_every)
 
     last_reclaim = 0.0
+    # Negative, so the first pass happens immediately rather than one whole
+    # interval after start — otherwise restarting the worker is a way to
+    # delay the next fetch.
+    last_schedule = -schedule_every
     while not stopping.requested:
         now = time.monotonic()
         if now - last_reclaim > RECLAIM_EVERY_SECONDS:
             runner.reclaim()
             last_reclaim = now
+
+        if schedule_every > 0 and now - last_schedule >= schedule_every:
+            last_schedule = now
+            try:
+                result = schedule_settlement_fetches(runner.factory)
+                if result.enqueued:
+                    logger.info("worker: queued %d fetch(es)", result.enqueued)
+            except Exception:
+                # A scheduling pass that fails must not take the worker
+                # down with it: the jobs already queued are still runnable,
+                # and the next pass is a quarter of an hour away.
+                logger.exception("worker: scheduling pass failed")
 
         if runner.run_once() is None:
             # Nothing claimable. Sleep in short steps so a signal is noticed
@@ -182,7 +219,7 @@ def main(argv: list[str] | None = None) -> int:
 
     stopping = Stopping()
     stopping.install()
-    serve(runner, stopping=stopping)
+    serve(runner, stopping=stopping, schedule_every=config.schedule_every_seconds)
     return 0
 
 

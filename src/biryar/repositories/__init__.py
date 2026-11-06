@@ -41,17 +41,20 @@ from .jobs import (
     fail,
     reclaim_stuck,
 )
+from .tenancy import SlugError, create_tenant, slugify, tenant_count
 from .transactions import record_transactions, settlement_rows
 
 __all__ = [
     "ClaimedJob",
     "IssuedSession",
     "ResolvedSession",
+    "SlugError",
     "active_credential",
     "authenticate",
     "backoff",
     "claim",
     "complete",
+    "create_tenant",
     "create_user",
     "enqueue",
     "fail",
@@ -71,7 +74,9 @@ __all__ = [
     "revoke_session",
     "role_of",
     "settlement_rows",
+    "slugify",
     "sole_tenant",
     "store_credential",
     "tenant_by_slug",
+    "tenant_count",
 ]

@@ -21,6 +21,7 @@ from biryar.api.deps import get_lwa_client
 from biryar.db.models.credentials import Marketplace
 from biryar.db.models.tenancy import Role
 from biryar.db.session import SessionFactory, tenant_session
+from biryar.jobs.handlers import SETTLEMENT_FETCH
 from biryar.repositories import create_user
 
 pytestmark = pytest.mark.postgres
@@ -493,3 +494,35 @@ def test_a_self_hosted_install_does_not_offer_the_oauth_button(
             },
             headers=auth,
         ).status_code == 200
+
+
+def test_connecting_queues_the_first_fetch(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    """Someone who just connected is watching the screen.
+
+    Before this, connecting enqueued nothing: the figures waited for the
+    worker's next scheduling pass, and the worker did not schedule at all,
+    so they waited forever. A connected account with an empty queue looks
+    exactly like a broken install.
+    """
+    a, _ = two_tenants
+    auth = _signed_in(client, admin_engine, factory, a)
+
+    with admin_engine.connect() as conn:
+        assert conn.execute(text("SELECT count(*) FROM jobs")).scalar_one() == 0
+
+    assert client.post(
+        "/v1/amazon/credentials",
+        json={
+            "marketplace": Marketplace.DE.value,
+            "selling_partner_id": "A1SELLERPARTNER",
+            "refresh_token": "Atzr|from-the-portal",
+        },
+        headers=auth,
+    ).status_code == 200
+
+    with admin_engine.connect() as conn:
+        kinds = list(conn.execute(text("SELECT kind FROM jobs")).scalars())
+    assert kinds == [SETTLEMENT_FETCH], kinds

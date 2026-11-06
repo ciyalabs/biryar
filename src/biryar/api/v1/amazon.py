@@ -43,16 +43,20 @@ way a token arrived.
 
 from __future__ import annotations
 
+import uuid
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from ...amazon.lwa import AuthorisationRevoked, LwaError
 from ...amazon.oauth import OAuthStateError, begin, verify_state
 from ...db.models.credentials import Marketplace
 from ...db.session import tenant_session
-from ...repositories import active_credential, store_credential
+from ...jobs.handlers import SETTLEMENT_FETCH
+from ...repositories import active_credential, enqueue, store_credential
 from ..deps import CurrentSession, Factory, Lwa, OwnerSession, Settings_, TenantDb
 
 router = APIRouter(prefix="/amazon", tags=["amazon"])
@@ -81,6 +85,29 @@ class ConnectionStatus(BaseModel):
             "self-hosted install, where a private application has no OAuth "
             "configuration and the consent URL answers MD9100 — the interface "
             "offers self-authorisation instead of a button that cannot work."
+        ),
+    )
+
+
+def _queue_first_fetch(db: Session, tenant_id: uuid.UUID, marketplace: Marketplace) -> None:
+    """Fetch this seller's finances now rather than at the next schedule.
+
+    Without this, connecting an account enqueued nothing and the first
+    figures waited for the worker's next scheduling pass — or, before the
+    worker scheduled at all, forever. Someone who has just connected is
+    watching the screen, and a quarter of an hour of nothing is
+    indistinguishable from a broken install.
+
+    Shares the scheduler's idempotency key, so this and the periodic pass
+    cannot both queue the same day's fetch.
+    """
+    enqueue(
+        db,
+        tenant_id,
+        SETTLEMENT_FETCH,
+        payload={"marketplace": marketplace.value},
+        idempotency_key=(
+            f"{SETTLEMENT_FETCH}:{marketplace.name}:{datetime.now(UTC).date()}"
         ),
     )
 
@@ -164,11 +191,13 @@ def callback(
             keyring=config.keyring(),
             scopes=authorisation.scopes,
         )
+        _queue_first_fetch(db, tenant_id, marketplace)
         return ConnectionStatus(
             marketplace=marketplace,
             connected=True,
             status=credential.status.value,
             selling_partner_id=credential.selling_partner_id,
+            oauth_available=config.amazon_is_configured,
         )
 
 
@@ -250,9 +279,11 @@ async def store_self_authorisation(
         keyring=config.keyring(),
         scopes="self-authorisation",
     )
+    _queue_first_fetch(db, session.tenant_id, body.marketplace)
     return ConnectionStatus(
         marketplace=body.marketplace,
         connected=True,
         status=credential.status.value,
         selling_partner_id=credential.selling_partner_id,
+        oauth_available=config.amazon_is_configured,
     )

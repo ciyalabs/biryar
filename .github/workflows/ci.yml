@@ -124,6 +124,14 @@ jobs:
             echo "--- the app builds ---"
             BIRYAR_DATABASE_URL=postgresql+psycopg://x:x@127.0.0.1:1/x \
               python -c "from biryar.api.app import create_app; create_app(); print(\"ok\")"
+
+            # The install guide tells a stranger to run these three inside
+            # this image. A module that is not packaged fails here rather
+            # than on their first evening.
+            echo "--- the documented commands exist ---"
+            alembic --help > /dev/null && echo "alembic ok"
+            python -m biryar.init --help > /dev/null && echo "biryar.init ok"
+            python -m biryar.worker --help > /dev/null && echo "biryar.worker ok"
           '
 
       - name: The image runs and serves
