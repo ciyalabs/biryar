@@ -86,3 +86,41 @@ jobs:
       - run: npm test
       # tsc runs as part of build, so this covers the type check too.
       - run: npm run build
+
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Built but not pushed. The point is to find out that it still builds
+      # — a Dockerfile nothing exercises is a Dockerfile that stopped
+      # working at some commit nobody can name.
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: biryar:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: The image runs and serves
+        run: |
+          docker run -d --name biryar-ci -p 8000:8000 \
+            -e BIRYAR_DATABASE_URL=postgresql+psycopg://x:x@127.0.0.1:1/x \
+            -e BIRYAR_SECRET_KEY=v1:$(openssl rand -base64 32 | tr '+/' '-_') \
+            biryar:ci
+          for _ in $(seq 20); do
+            if curl -fsS http://127.0.0.1:8000/v1/health >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+          # The database is deliberately unreachable, so health reports
+          # degraded rather than ok — which is the answer that proves it
+          # actually checked rather than assuming.
+          curl -fsS http://127.0.0.1:8000/v1/health | tee /dev/stderr | grep -q '"database":"unreachable"'
+          # And the front end was built into the image.
+          curl -fsS http://127.0.0.1:8000/ | grep -qi "biryar"
+          docker rm -f biryar-ci

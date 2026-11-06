@@ -25,6 +25,7 @@ from sqlalchemy import Engine
 from .. import __version__
 from ..config import Settings, settings
 from ..db.session import engine_for, session_factory
+from .static import mount as mount_static
 from .v1 import router as v1_router
 
 
@@ -68,4 +69,9 @@ def create_app(
         redoc_url=None,
     )
     app.include_router(v1_router)
+
+    # Mounted last. The catch-all route it adds would otherwise shadow the
+    # API, and a route table is matched in the order it was built.
+    mount_static(app, config.static_directory)
+
     return app

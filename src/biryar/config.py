@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from enum import StrEnum
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field, PostgresDsn, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -79,6 +80,11 @@ class Settings(BaseSettings):
     #: flip at the same time the application does.
     amazon_application_is_draft: bool = True
 
+    #: Where the built front end lives. Empty in development, where it is
+    #: served by its own dev server; set in a container to the directory the
+    #: build stage produced.
+    static_dir: str = ""
+
     echo_sql: bool = False
     pool_size: int = 5
     max_overflow: int = 10
@@ -110,6 +116,11 @@ class Settings(BaseSettings):
             and self.lwa_client_secret.get_secret_value()
             and self.amazon_redirect_uri
         )
+
+    @property
+    def static_directory(self) -> Path:
+        """The front end's build output, whether or not it exists."""
+        return Path(self.static_dir) if self.static_dir else Path("web/dist")
 
     def keyring(self) -> Keyring:
         """The sealing keys. Raises if none are configured."""

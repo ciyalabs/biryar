@@ -1,18 +1,21 @@
-# Postgres for local development and for a single-tenant self-hosted install.
+# A complete Biryar: a database, the API, and a worker.
 #
-# The same database serves both deployment modes. A self-hosted install is a
-# multi-tenant deployment that happens to hold one tenant, which is why there
-# is no second, simpler storage path to maintain.
+#     cp .env.example .env     # and fill in BIRYAR_SECRET_KEY
+#     docker compose run --rm api alembic upgrade head
+#     docker compose up
+#
+# Migrations are a deliberate step rather than something a container does on
+# startup. Two containers starting together would both run them, and a
+# schema change that fails halfway is not something to learn about from a
+# restart loop.
 
 services:
   db:
     image: postgres:17-alpine
     environment:
       POSTGRES_USER: biryar
-      POSTGRES_PASSWORD: biryar
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-biryar}
       POSTGRES_DB: biryar
-    ports:
-      - "5432:5432"
     volumes:
       - biryar-db:/var/lib/postgresql/data
     healthcheck:
@@ -20,6 +23,42 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    # Not published by default. Nothing outside this compose file needs to
+    # reach the database, and a Postgres on 5432 of a public interface is
+    # how people lose one.
+    expose:
+      - "5432"
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment: &app-env
+      BIRYAR_DATABASE_URL: postgresql+psycopg://biryar:${POSTGRES_PASSWORD:-biryar}@db:5432/biryar
+      # No default, deliberately. A development default is a key that ships
+      # in the repository and protects nothing, and the day it reached
+      # production nothing would complain. See .env.example for how to
+      # generate one.
+      BIRYAR_SECRET_KEY: "${BIRYAR_SECRET_KEY:?see .env.example}"
+      BIRYAR_DEPLOYMENT: ${BIRYAR_DEPLOYMENT:-self_hosted}
+      BIRYAR_AMAZON_APPLICATION_ID: ${BIRYAR_AMAZON_APPLICATION_ID:-}
+      BIRYAR_LWA_CLIENT_ID: ${BIRYAR_LWA_CLIENT_ID:-}
+      BIRYAR_LWA_CLIENT_SECRET: ${BIRYAR_LWA_CLIENT_SECRET:-}
+      BIRYAR_AMAZON_REDIRECT_URI: ${BIRYAR_AMAZON_REDIRECT_URI:-}
+      BIRYAR_AMAZON_APPLICATION_IS_DRAFT: ${BIRYAR_AMAZON_APPLICATION_IS_DRAFT:-true}
+    ports:
+      - "${BIRYAR_PORT:-8000}:8000"
+    restart: unless-stopped
+
+  worker:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment: *app-env
+    command: ["python", "-m", "biryar.worker"]
+    restart: unless-stopped
 
 volumes:
   biryar-db:
