@@ -128,7 +128,7 @@ Leave the application in **Draft**. There is no reason to publish a private
 application. [[1]](#sources)
 
 Copy the application id, the LWA client id and the LWA client secret into
-your `.env` (see [install.md](install.md)), and because the application is
+your `.env` (see [the install guide](install.md)), and because the application is
 in Draft, leave:
 
 ```
