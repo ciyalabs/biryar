@@ -9,6 +9,7 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 import { api, ApiError, type User } from "../api/client";
 import { marketplaceName } from "../marketplaces";
@@ -27,6 +28,26 @@ export function Home({ user }: { user: User }) {
     onSuccess: ({ url }) => {
       // Amazon's consent page, which is on Amazon rather than here.
       window.location.href = url;
+    },
+  });
+
+  // Self-authorisation: the only route that works for a private Draft
+  // application, whose consent URL answers MD9100 because it has no OAuth
+  // configuration at all. Offered beside the OAuth button rather than
+  // instead of it, because a hosted deployment needs the other one.
+  const [sellerId, setSellerId] = useState("");
+  const [token, setToken] = useState("");
+  const paste = useMutation({
+    mutationFn: () =>
+      api.storeCredential({
+        marketplace: connection.data?.marketplace,
+        selling_partner_id: sellerId.trim(),
+        refresh_token: token.trim(),
+      }),
+    onSuccess: () => {
+      // Never kept around once it has been sealed server-side.
+      setToken("");
+      void queries.invalidateQueries({ queryKey: ["connection"] });
     },
   });
 
@@ -82,6 +103,57 @@ export function Home({ user }: { user: User }) {
                   ? connect.error.message
                   : "Could not start the connection."}
               </p>
+            )}
+
+            {user.role === "owner" && (
+              <details>
+                <summary className="small">
+                  Self-hosting? Paste a refresh token instead
+                </summary>
+                <p className="small muted">
+                  A private application in Draft has no OAuth setup, so the
+                  button above will answer <code>MD9100</code>. Authorise the
+                  application against your own account in the Solution
+                  Provider Portal and paste what it gives you. It is sealed
+                  here and never shown again.
+                </p>
+                <p className="small">
+                  <label>
+                    Merchant token{" "}
+                    <input
+                      value={sellerId}
+                      onChange={(e) => setSellerId(e.target.value)}
+                      placeholder="A1..."
+                    />
+                  </label>
+                </p>
+                <p className="small">
+                  <label>
+                    Refresh token{" "}
+                    <input
+                      type="password"
+                      value={token}
+                      onChange={(e) => setToken(e.target.value)}
+                      placeholder="Atzr|..."
+                    />
+                  </label>
+                </p>
+                <button
+                  onClick={() => paste.mutate()}
+                  disabled={
+                    paste.isPending || !sellerId.trim() || !token.trim()
+                  }
+                >
+                  {paste.isPending ? "Saving…" : "Save credential"}
+                </button>
+                {paste.error && (
+                  <p className="error" role="alert">
+                    {paste.error instanceof ApiError
+                      ? paste.error.message
+                      : "Could not save the credential."}
+                  </p>
+                )}
+              </details>
             )}
           </>
         )}

@@ -37,44 +37,65 @@ application, and adding one requires you to re-authorise.
 
 ## The two routes, and which one you are on
 
-There are two ways an application gets permission from a seller, and they
-have very different limits.
+There are two ways an application gets permission from a seller. **Which one
+is available to you is decided by what kind of application you have, not by
+what you would prefer**, and the guide below was checked against a live
+German seller account in November 2026 rather than taken from the
+documentation.
 
-**Self-authorisation** is the short path. You authorise your own application
-against your own account from inside Seller Central, and Amazon hands you a
-refresh token. It is meant for private applications — an application your
-organisation built to manage its own business. It is capped: Amazon's docs
-state a *"maximum of 10 authorizations per application."* [[1]](#sources)
+**Self-authorisation** is the route for a **private application** — one your
+organisation built to manage its own business. You authorise your own
+application from the Solution Provider Portal and Amazon hands you a refresh
+token. Amazon caps it at a *"maximum of 10 authorizations per
+application."* [[1]](#sources)
 
-**The website (OAuth) workflow** is the long path. Your application sends a
-seller to a consent page on Amazon, the seller approves, and Amazon sends
-them back to your application with a code it exchanges for a refresh token.
-This is what a hosted service has to use, because the 10-authorisation cap
-would stop the eleventh customer.
+**The website (OAuth) workflow** is the route for an application that other
+sellers use. Your application sends a seller to a consent page, they
+approve, and your application exchanges a code for a refresh token.
 
-**Biryar implements the website workflow for both**, which is why the
-self-hosted install asks you to register a redirect URI even though you are
-the only seller who will ever use it. One code path, exercised by everyone,
-is worth more than a shortcut that only the author's install ever runs.
+**If you are self-hosting Biryar, you are on the first route, and the second
+one is not merely unnecessary — it does not work.** A private application in
+Draft has no OAuth configuration to speak of: the registration form has no
+redirect URI field anywhere on it, and the portal says so plainly.
+
+![The portal's authorisations dialog: ten self-authorisations, and
+OAuthorizations "No authorization allowed"](img/authorizations-remaining.jpg)
+
+Sending a seller to the consent URL for such an application answers this,
+with or without `version=beta`:
+
+![Seller Central answering MD9100, "this app does not have the right
+application details"](img/consent-md9100.jpg)
+
+So Biryar accepts a self-authorisation token directly. Both routes end in
+the same sealed row, so nothing downstream behaves differently.
 
 ## What you end up with
 
-Four values, which are properties of the **application** — not of you as a
-seller:
+**Self-hosting.** Two values, and you get them in step 3. Neither goes in a
+configuration file — you paste them into Biryar once and it seals them:
+
+| Value | What it is |
+|---|---|
+| Merchant token | Your selling-partner id, shown with the authorisation |
+| Refresh token | The `Atzr|...` string self-authorisation produces |
+
+Biryar seals the refresh token with your `BIRYAR_SECRET_KEY` before storing
+it and never shows it again — not in the interface, not in a log, not in an
+API response. There is a test that holds it to that.
+
+**Hosting Biryar for other sellers.** Then you need an application others
+can authorise, and four settings describe it:
 
 | Setting | What it is |
 |---|---|
 | `BIRYAR_AMAZON_APPLICATION_ID` | Public. It identifies your application in the consent URL |
 | `BIRYAR_LWA_CLIENT_ID` | The Login with Amazon client id |
 | `BIRYAR_LWA_CLIENT_SECRET` | The matching secret. This one is a credential |
-| `BIRYAR_AMAZON_REDIRECT_URI` | Where Amazon sends a seller back, e.g. `http://localhost:8000/v1/amazon/callback` |
+| `BIRYAR_AMAZON_REDIRECT_URI` | Where Amazon sends a seller back |
 
-Your **refresh token is not in that list, and you never paste one.** It is
-produced per seller by the authorisation round trip, sealed with your
-`BIRYAR_SECRET_KEY` before it is stored, and never shown again — not in the UI,
-not in a log, not in an API response. Your selling-partner id arrives the
-same way. If a guide or a screenshot anywhere tells you to copy a refresh
-token into a configuration file, it is describing an older design.
+Leave all four empty for a self-hosted install. Biryar then says the OAuth
+button is unavailable instead of offering a flow that cannot complete.
 
 ## Step 1 — register as a developer
 
@@ -99,8 +120,17 @@ Solution Provider Portal](img/developer-console-redirect.jpg)
 
 So the practical route is: **go to
 <https://solutionproviderportal.amazon.com> and sign in there.** It is a
-separate sign-in from Seller Central even though it uses the same Amazon
-account. Then **Settings → Developer Profile**. [[2]](#sources)
+separate sign-in even though it is the same Amazon account, and if you have
+more than one selling account it asks which to use first.
+
+Once you are through, the portal's front page is the whole working area —
+your developer profile's status at the top, and your applications below it:
+
+![The Solution Provider Portal front page, with the developer profile
+reviewed and one application in Draft](img/solution-provider-portal-apps.jpg)
+
+If you have never registered, this is where you complete the developer
+profile first. [[2]](#sources)
 
 This is the single most common reason people get stuck on step 1, and it is
 worth knowing that the tutorials are not wrong so much as old: they describe
@@ -127,77 +157,80 @@ rejected. Nothing in Biryar can shorten it.
 
 ## Step 2 — create the application
 
-Once you are a registered developer, create an application and give it:
+In the portal, **Add new app client**. The whole form is four questions:
 
-- **The Finance and Accounting role.** Just that one. `listTransactions`
-  accepts it and requires at least one role from its list; calling without
-  it returns `403`. [[3]](#sources)
-- **An OAuth redirect URI** exactly equal to what Biryar will send. For a
-  local install that is `http://localhost:8000/v1/amazon/callback`; for a
-  server, the same path on your own domain over HTTPS. It has to match
-  character for character, including the scheme and any trailing slash. When
-  it does not match, Amazon refuses the exchange with a message that does
-  not tell you which end is wrong — so check this one twice. It is the most
-  expensive typo available on this page.
+![The app registration form: name, API type, business entities and
+roles](img/app-roles.jpg)
+
+- **App name** — anything; it is shown to you, not to buyers.
+- **API Type** — SP API.
+- **Business entities** — Sellers.
+- **Roles** — **Finance and Accounting**, and for Biryar 0.1 nothing else.
+  `listTransactions` requires at least one role from its list and accepts
+  that one; calling without it returns `403`. [[3]](#sources)
+
+> The screenshot is from an account whose application also drives a
+> repricer, so it has Pricing, Inventory, Fulfilment and Listing ticked too.
+> You do not need them. Every extra role widens what a leaked credential
+> reaches, and Biryar 0.1 calls exactly one operation.
+
+Answer **no** to delegating PII access to another developer's application.
+
+Note what is *not* on this form: there is no OAuth redirect URI field, no
+login URI, no OAuth section at all. That is not an oversight in this guide —
+it is why the consent flow cannot work for a private application, and why
+step 3 does not use it.
 
 Leave the application in **Draft**. There is no reason to publish a private
-application. [[1]](#sources)
+application [[1]](#sources), and publishing is a review process you do not
+need.
 
-Copy the application id, the LWA client id and the LWA client secret into
-your `.env` (see [the install guide](install.md)), and because the application is
-in Draft, leave:
+## Step 3 — authorise, and bring the token to Biryar
 
-```
-BIRYAR_AMAZON_APPLICATION_IS_DRAFT=true
-```
+In the portal, open the app's **Action** menu. For a private application it
+has exactly one entry:
 
-That flag adds `version=beta` to the consent URL, which Amazon **requires**
-while an application is in Draft and **rejects** once it is published.
-[[4]](#sources) It is a setting rather than a constant for exactly that
-reason: if you ever publish the application, flip it to `false` in the same
-change.
+![The app row's action menu, offering only Authorize](img/app-actions-authorize.jpg)
 
-`version=beta` also has a second effect worth knowing: a Draft application
-and its published version can carry different role sets, and only
-`version=beta` picks up the roles you most recently added. [[4]](#sources)
-So if you add a role later and the new permission does not seem to take
-effect, this flag is the first thing to check.
+Choose **Authorize**. Amazon authorises the application against your own
+account and shows you a **refresh token** — a long string beginning
+`Atzr|`. It is shown once.
 
-## Step 3 — authorise
+> Each of these uses one of ten. The dialog in the earlier screenshot is
+> where you check how many you have left, and re-authorising to get a fresh
+> token spends another. There is no way to raise the limit, so do not spend
+> them exploring.
 
-Start Biryar, sign in, and use **Connect Amazon**. Biryar builds the consent
-URL, sends you to Seller Central, you approve, and Amazon returns you to the
-redirect URI with the authorisation code. Biryar exchanges it for a refresh
-token, seals it, and stores it.
+Then, in Biryar: sign in, open **Self-hosting? Paste a refresh token
+instead** under the Amazon card, and enter your merchant token and the
+refresh token. Biryar seals it immediately. You will not see it again, and
+nor will anyone reading your logs.
 
-Three things about that round trip are worth knowing because they explain
-most of its failures:
+Two things worth knowing, because they explain most later confusion:
 
-- **The code is short-lived.** Amazon's authorisation code is good for about
-  five minutes. Biryar's `state` lasts ten, deliberately longer, so that an
-  expired flow reports an expired *code* rather than a mysterious state
-  mismatch.
-- **`state` is signed, not stored.** It is bound to your tenant and to a
-  ten-minute window, so a link someone else hands you cannot complete an
-  authorisation into your account, and a used link cannot be replayed later.
 - **The region is derived, not configured.** A refresh token works against
-  one regional endpoint only. Biryar picks the host from the marketplace you
-  chose, because sending a European seller's token to the North American
-  host fails in a way that reads exactly like a bad credential.
+  one regional endpoint only. Biryar picks the host from the marketplace,
+  because sending a European seller's token to the North American host
+  fails in a way that reads exactly like a bad credential.
+- **Revoking is yours.** Withdraw the authorisation in the portal and
+  Biryar's next job marks the connection as needing re-authorisation and
+  stops, rather than retrying against a dead token.
 
-After that, the settlement fetch is a queued job. The first run backfills;
-later runs re-fetch an overlapping window, which is free because rows are
-keyed on Amazon's own transaction id.
+After that the settlement fetch is a queued job. The first run backfills;
+later runs re-fetch an overlapping window, which costs nothing because rows
+are keyed on Amazon's own transaction id.
 
 ## When it goes wrong
 
 | What you see | What it means |
 |---|---|
-| `MD1000` | A Draft application was authorised through the production OAuth flow. Set `BIRYAR_AMAZON_APPLICATION_IS_DRAFT=true` so the consent URL carries `version=beta`. [[4]](#sources) |
+| `MD9100` | You sent a seller to the consent URL for a **private** application. It has no OAuth configuration, so there is nothing to fix on the application — use self-authorisation instead (step 3). Verified on a live account; `version=beta` does not help. |
+| `MD1000` | A Draft application authorised through the production OAuth flow, on an application that *does* have OAuth configured. Set `BIRYAR_AMAZON_APPLICATION_IS_DRAFT=true` so the consent URL carries `version=beta`. [[4]](#sources) |
 | `403` from the Finances call | The application does not have the Finance and Accounting role, or it has it in the published version but not the Draft one. [[3]](#sources)[[4]](#sources) |
 | Amazon refuses the exchange, vaguely | The redirect URI Biryar sent is not character-for-character one of the registered ones. |
 | `SPSA2043` | A **vendor** account whose group lacks the `SPDS-VC-MYA` role, which is required to reach the self-authorisation page. Your vendor manager has to add it. [[1]](#sources) |
-| Biryar says the authorisation needs renewing | The refresh token was revoked — a password change or a withdrawn authorisation on Amazon's side. Biryar distinguishes this from a bad day at Amazon and stops retrying instead of hammering the endpoint. Re-run **Connect Amazon**. |
+| Biryar says the authorisation needs renewing | The refresh token was revoked — a password change, or an authorisation withdrawn in the portal. Biryar tells this apart from a bad day at Amazon and stops retrying rather than hammering the endpoint. Authorise again and paste the new token. |
+| The portal shows fewer authorisations than you expected | Each self-authorisation spends one of ten, including the ones you did while finding your way around. The count is in the Authorizations remaining dialog. |
 
 ## Rotating and revoking
 
@@ -211,14 +244,25 @@ Rotating the **sealing** key is separate and does not involve Amazon:
 key and let stored tokens re-seal as they are read, rather than in one
 transaction that rewrites every row.
 
+## About the screenshots
+
+They are from a real German seller account, taken in November 2026. Account
+names are blurred and the application id is replaced with a placeholder of
+the same shape; both were done in the page before the image was captured,
+so no unblurred copy exists anywhere.
+
+Amazon reorganises this area often, so treat them as evidence that a screen
+existed in this shape on that date rather than as a promise about what you
+will see. Where they and your screen disagree, your screen is right — and
+an issue saying so is welcome, because that is the only way this page stays
+true.
+
 ## Still missing from this page
 
-**Screenshots.** The console changes often enough that prose alone goes
-stale, and this guide would be better with a picture of every screen. They
-have to come from an account created for the purpose: the maintainer's own
-developer console contains their business, and this is a public repository.
-Until then, the words above are written to be followable without pictures,
-and the error table is the fallback when a screen does not match.
+**A published-application walkthrough.** Everything above is the private
+application path. Publishing — which a hosted deployment needs, and which
+is what makes the OAuth flow available — is a review process this guide has
+not been through and will not describe from documentation alone.
 
 **A non-EU/NA marketplace walkthrough.** Biryar's regional hosts cover NA
 and EU today. A seller in `FE` would need the endpoint and timezone maps

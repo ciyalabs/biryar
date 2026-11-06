@@ -15,6 +15,30 @@ is exchanged or stored.
 That is the whole reason state is signed rather than merely random: a random
 token would need a table to mean anything, and the table would be read on an
 unauthenticated route.
+
+## Why there are two ways in
+
+The OAuth round trip above is the only way a *hosted* deployment can work:
+one application, many sellers, none of whom can be asked to paste a secret.
+
+It is also, for a self-hosted install, unusable — which was established the
+expensive way, by trying it. A private SP-API application in Draft has no
+OAuth configuration at all: the registration form offers a name, an API
+type, the business entities and the roles, and no redirect URI anywhere. The
+Solution Provider Portal states it outright, "OAuthorizations: no
+authorization allowed", and sending a seller to the consent URL for such an
+application answers ``MD9100`` — *this app does not have the right
+application details* — with or without ``version=beta``.
+
+What a private application does have is **self-authorisation**: the owner
+authorises their own application from the portal and is handed a refresh
+token, up to ten times. That is the path ``POST /credentials`` exists for.
+It is not a lesser path or a convenience; for everyone who self-hosts it is
+the only one that works.
+
+Both end in the same row, sealed by the same keyring, so nothing downstream
+— the worker, resealing, the needs-reauth transition — knows or cares which
+way a token arrived.
 """
 
 from __future__ import annotations
@@ -22,14 +46,14 @@ from __future__ import annotations
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from ...amazon.lwa import AuthorisationRevoked, LwaError
 from ...amazon.oauth import OAuthStateError, begin, verify_state
 from ...db.models.credentials import Marketplace
 from ...db.session import tenant_session
 from ...repositories import active_credential, store_credential
-from ..deps import CurrentSession, Factory, Lwa, Settings_, TenantDb
+from ..deps import CurrentSession, Factory, Lwa, OwnerSession, Settings_, TenantDb
 
 router = APIRouter(prefix="/amazon", tags=["amazon"])
 
@@ -160,4 +184,59 @@ def connection_status(
         status=credential.status.value,
         selling_partner_id=credential.selling_partner_id,
         last_error=credential.last_error,
+    )
+
+
+class SelfAuthorisation(BaseModel):
+    """A refresh token the owner obtained by authorising their own app.
+
+    The token is write-only: it is sealed on arrival and no route ever
+    returns it, so this model has no response counterpart carrying it back.
+    """
+
+    marketplace: Marketplace = Marketplace.DE
+    selling_partner_id: str = Field(
+        min_length=1,
+        description="Your merchant token, shown beside the authorisation.",
+    )
+    refresh_token: str = Field(
+        min_length=1,
+        description=(
+            "The Atzr|... token the Solution Provider Portal showed after "
+            "you authorised the application against your own account."
+        ),
+    )
+
+
+@router.post("/credentials", response_model=ConnectionStatus)
+async def store_self_authorisation(
+    db: TenantDb,
+    session: OwnerSession,
+    config: Settings_,
+    body: SelfAuthorisation,
+) -> ConnectionStatus:
+    """Accept a refresh token from the portal's self-authorisation.
+
+    Owner-only: this is the credential that reads the seller's finances.
+
+    Deliberately permissive about the token's shape beyond being non-empty.
+    Amazon's refresh tokens have looked like ``Atzr|...`` for years, but
+    rejecting anything else here would turn a format change into "Biryar is
+    broken" rather than a clear error from Amazon on first use — and the
+    first use is seconds away, in the settlement job.
+    """
+    credential = store_credential(
+        db,
+        session.tenant_id,
+        marketplace=body.marketplace,
+        selling_partner_id=body.selling_partner_id,
+        refresh_token=body.refresh_token,
+        keyring=config.keyring(),
+        scopes="self-authorisation",
+    )
+    return ConnectionStatus(
+        marketplace=body.marketplace,
+        connected=True,
+        status=credential.status.value,
+        selling_partner_id=credential.selling_partner_id,
     )

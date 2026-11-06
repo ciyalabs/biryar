@@ -47,6 +47,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/amazon/credentials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Store Self Authorisation
+         * @description Accept a refresh token from the portal's self-authorisation.
+         *
+         *     Owner-only: this is the credential that reads the seller's finances.
+         *
+         *     Deliberately permissive about the token's shape beyond being non-empty.
+         *     Amazon's refresh tokens have looked like ``Atzr|...`` for years, but
+         *     rejecting anything else here would turn a format change into "Biryar is
+         *     broken" rather than a clear error from Amazon on first use — and the
+         *     first use is seconds away, in the settlement job.
+         */
+        post: operations["store_self_authorisation_v1_amazon_credentials_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/amazon/status": {
         parameters: {
             query?: never;
@@ -449,6 +477,27 @@ export interface components {
          * @enum {string}
          */
         Role: "owner" | "assistant";
+        /**
+         * SelfAuthorisation
+         * @description A refresh token the owner obtained by authorising their own app.
+         *
+         *     The token is write-only: it is sealed on arrival and no route ever
+         *     returns it, so this model has no response counterpart carrying it back.
+         */
+        SelfAuthorisation: {
+            /** @default A1PA6795UKMFR9 */
+            marketplace: components["schemas"]["Marketplace"];
+            /**
+             * Refresh Token
+             * @description The Atzr|... token the Solution Provider Portal showed after you authorised the application against your own account.
+             */
+            refresh_token: string;
+            /**
+             * Selling Partner Id
+             * @description Your merchant token, shown beside the authorisation.
+             */
+            selling_partner_id: string;
+        };
         /** SignInRequest */
         SignInRequest: {
             /**
@@ -585,6 +634,39 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConnectionStatus"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    store_self_authorisation_v1_amazon_credentials_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SelfAuthorisation"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

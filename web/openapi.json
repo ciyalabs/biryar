@@ -336,6 +336,33 @@
         "title": "Role",
         "type": "string"
       },
+      "SelfAuthorisation": {
+        "description": "A refresh token the owner obtained by authorising their own app.\n\nThe token is write-only: it is sealed on arrival and no route ever\nreturns it, so this model has no response counterpart carrying it back.",
+        "properties": {
+          "marketplace": {
+            "$ref": "#/components/schemas/Marketplace",
+            "default": "A1PA6795UKMFR9"
+          },
+          "refresh_token": {
+            "description": "The Atzr|... token the Solution Provider Portal showed after you authorised the application against your own account.",
+            "minLength": 1,
+            "title": "Refresh Token",
+            "type": "string"
+          },
+          "selling_partner_id": {
+            "description": "Your merchant token, shown beside the authorisation.",
+            "minLength": 1,
+            "title": "Selling Partner Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "selling_partner_id",
+          "refresh_token"
+        ],
+        "title": "SelfAuthorisation",
+        "type": "object"
+      },
       "SignInRequest": {
         "properties": {
           "email": {
@@ -690,6 +717,53 @@
           }
         },
         "summary": "Callback",
+        "tags": [
+          "amazon"
+        ]
+      }
+    },
+    "/v1/amazon/credentials": {
+      "post": {
+        "description": "Accept a refresh token from the portal's self-authorisation.\n\nOwner-only: this is the credential that reads the seller's finances.\n\nDeliberately permissive about the token's shape beyond being non-empty.\nAmazon's refresh tokens have looked like ``Atzr|...`` for years, but\nrejecting anything else here would turn a format change into \"Biryar is\nbroken\" rather than a clear error from Amazon on first use \u2014 and the\nfirst use is seconds away, in the settlement job.",
+        "operationId": "store_self_authorisation_v1_amazon_credentials_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SelfAuthorisation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Store Self Authorisation",
         "tags": [
           "amazon"
         ]

@@ -153,6 +153,8 @@ export type Connection =
   paths["/v1/amazon/status"]["get"]["responses"]["200"]["content"]["application/json"];
 export type AuthorisationStart =
   paths["/v1/amazon/authorize"]["post"]["responses"]["200"]["content"]["application/json"];
+export type SelfAuthorisation =
+  paths["/v1/amazon/credentials"]["post"]["requestBody"]["content"]["application/json"];
 export type PeriodProfit =
   paths["/v1/profit/period"]["get"]["responses"]["200"]["content"]["application/json"];
 export type SkuProfits =
@@ -209,6 +211,18 @@ export const api = {
       `/v1/amazon/authorize${marketplace ? `?marketplace=${marketplace}` : ""}`,
       { method: "POST" },
     ),
+
+  /**
+   * Store a refresh token obtained by self-authorising in the portal.
+   *
+   * The path a self-hosted install uses, because a private application in
+   * Draft has no OAuth configuration and its consent URL answers MD9100.
+   */
+  storeCredential: (body: SelfAuthorisation) =>
+    request<Connection>("/v1/amazon/credentials", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 
   profit: (window?: Window) =>
     request<PeriodProfit>(`/v1/profit/period${windowQuery(window)}`),

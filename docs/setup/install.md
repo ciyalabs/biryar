@@ -43,10 +43,19 @@ fails halfway is not something to find out about from a restart loop.
 
 ## Connecting Amazon
 
-Until `BIRYAR_AMAZON_APPLICATION_ID` and the LWA credentials are set, Biryar
-runs but no account can be connected, and the connect button says so rather
-than failing partway through. See [Getting your SP-API
-keys](/setup/sp-api/).
+For a self-hosted install there is **nothing to put in `.env`**. You
+register a private application, authorise it against your own account in
+the Solution Provider Portal, and paste the refresh token it gives you into
+Biryar, which seals it.
+
+The OAuth settings (`BIRYAR_AMAZON_APPLICATION_ID` and the LWA credentials)
+are for running Biryar *for other sellers*. Leave them empty: a private
+application has no OAuth configuration, so that route answers `MD9100` no
+matter what you put there. Biryar says the button is unavailable rather
+than offering a flow that cannot finish.
+
+See [Getting your SP-API keys](sp-api.md), which walks the private-
+application path with screenshots.
 
 ## Getting to a profit figure
 

@@ -18,6 +18,7 @@ from sqlalchemy import Engine, text
 from biryar.amazon import LwaApplication, LwaClient
 from biryar.amazon.oauth import sign_state
 from biryar.api.deps import get_lwa_client
+from biryar.db.models.credentials import Marketplace
 from biryar.db.models.tenancy import Role
 from biryar.db.session import SessionFactory, tenant_session
 from biryar.repositories import create_user
@@ -333,3 +334,103 @@ def test_the_refresh_token_never_comes_back_out(
 
     logged = "\n".join(record.getMessage() for record in caplog.records)
     assert secret not in logged, "the refresh token was written to a log"
+
+
+# -- the path a self-hosted install actually uses ------------------------------------
+
+def test_an_owner_can_store_a_self_authorisation_token(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    """The only route that works for a private Draft application.
+
+    Such an application has no OAuth configuration — the registration form
+    has no redirect URI field, and the consent URL answers MD9100 — so the
+    owner self-authorises in the Solution Provider Portal and brings the
+    refresh token here. Verified against a live account, which is the only
+    reason this route exists.
+    """
+    a, _ = two_tenants
+    auth = _signed_in(client, admin_engine, factory, a)
+
+    response = client.post(
+        "/v1/amazon/credentials",
+        json={
+            "marketplace": Marketplace.DE.value,
+            "selling_partner_id": "A1SELLERPARTNER",
+            "refresh_token": "Atzr|from-the-portal",
+        },
+        headers=auth,
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["connected"] is True
+    assert response.json()["selling_partner_id"] == "A1SELLERPARTNER"
+    # Never echoed back, by the same rule the OAuth path follows.
+    assert "from-the-portal" not in response.text
+
+    with admin_engine.connect() as conn:
+        sealed = conn.execute(
+            text("SELECT refresh_token_sealed FROM amazon_credentials")
+        ).scalar_one()
+    assert b"Atzr" not in bytes(sealed)
+    assert b"from-the-portal" not in bytes(sealed)
+
+
+def test_storing_a_credential_is_owner_only(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    """It is the credential that reads the seller's finances."""
+    a, _ = two_tenants
+    with tenant_session(factory, a) as s:
+        create_user(
+            s, a, email="assistant@example.com", display_name="Assistant",
+            role=Role.ASSISTANT, password="correct horse",
+        )
+    with admin_engine.connect() as conn:
+        slug = conn.execute(
+            text("SELECT slug FROM tenants WHERE id = :id"), {"id": a},
+        ).scalar_one()
+    token = client.post(
+        "/v1/auth/sign-in",
+        json={"email": "assistant@example.com", "password": "correct horse"},
+        headers={"X-Biryar-Tenant": slug},
+    ).json()["token"]
+
+    response = client.post(
+        "/v1/amazon/credentials",
+        json={
+            "marketplace": Marketplace.DE.value,
+            "selling_partner_id": "A1SELLERPARTNER",
+            "refresh_token": "Atzr|nope",
+        },
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 403
+    with admin_engine.connect() as conn:
+        assert conn.execute(
+            text("SELECT count(*) FROM amazon_credentials")
+        ).scalar_one() == 0
+
+
+def test_an_empty_refresh_token_is_refused(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    """Storing nothing would read as connected and fail at the next fetch."""
+    a, _ = two_tenants
+    auth = _signed_in(client, admin_engine, factory, a)
+
+    response = client.post(
+        "/v1/amazon/credentials",
+        json={
+            "marketplace": Marketplace.DE.value,
+            "selling_partner_id": "A1SELLERPARTNER",
+            "refresh_token": "",
+        },
+        headers=auth,
+    )
+
+    assert response.status_code == 422
