@@ -81,14 +81,30 @@ token into a configuration file, it is describing an older design.
 Amazon has to know who is building the application before it will let you
 create one.
 
-Sign in to Seller Central, open the main menu, and go to **Apps and
-Services → Develop Apps**. [[2]](#sources)
+Amazon's documentation says to sign in to Seller Central, open the main
+menu, and go to **Apps and Services → Develop Apps**, and to use the
+**Solution Provider Portal** instead if your account has been migrated to
+it. [[2]](#sources)
 
-**If that menu is not there**, your account has been migrated to the
-**Solution Provider Portal**. Sign in to the portal instead and go to
-**Settings → Developer Profile**. [[2]](#sources) This is the single most
-common reason people get stuck on step 1: the path in most tutorials, and
-the path in older Amazon documentation, is the pre-migration one.
+**On a current account, expect the second path.** Checked against a live
+German seller account in November 2026: there is no "Apps and Services" in
+the menu at all — the section is called **Programs and apps**, and it
+contains Explore programmes, Selling partner appstore and Explore services.
+No Develop Apps. Going to the old Developer Central URL
+(`/sellingpartner/developerconsole`) does not 404 either; it shows this and
+then forwards you:
+
+![Seller Central announcing that Developer Central now forwards to the
+Solution Provider Portal](img/developer-console-redirect.jpg)
+
+So the practical route is: **go to
+<https://solutionproviderportal.amazon.com> and sign in there.** It is a
+separate sign-in from Seller Central even though it uses the same Amazon
+account. Then **Settings → Developer Profile**. [[2]](#sources)
+
+This is the single most common reason people get stuck on step 1, and it is
+worth knowing that the tutorials are not wrong so much as old: they describe
+the menu as it was before the migration.
 
 The registration form asks for contact information, data access details,
 your use cases, and your security controls, and ends with a checkbox
