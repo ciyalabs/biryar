@@ -157,17 +157,24 @@ parsed was only logged, so thirty dropped lines meant thirty unpriced SKUs
 and no sign of it. Invoice lines now carry an optional `sku`, and the import
 reports both the skipped rows and the costs that cannot be matched.
 
+**First run.** A clean install produced a database, a healthy API and a
+sign-in screen nobody could satisfy: nothing seeded a tenant, no route
+created one, and sign-in needs a user. `python -m biryar.init` makes the
+tenant and owner. The worker now also schedules the work that is due —
+previously the only caller of the scheduler was a flag nothing invoked, so
+the queue stayed empty forever — and connecting an account queues its first
+fetch directly rather than waiting for the next pass.
+
 ## Next
 
-1. **The settlement flat-file adapter**, described below — the free
-   on-ramp that needs no Amazon application at all. Now the most valuable
-   item on this list: the authorisation work above shortened the path to a
-   first number, but it did not remove the developer registration that
-   precedes it, and that is still a review with a human on the other end.
+1. **The settlement flat-file adapter**, described below. Now clearly the
+   most valuable item left: everything between `docker compose up` and a
+   real number works, and what remains in front of a stranger is Amazon's
+   developer registration, which is a review with a human on the other end.
+   The V2 report removes it entirely for a first look.
 2. **A published-application walkthrough.** Everything documented is the
-   private path. Publishing is what makes OAuth available and a hosted
-   deployment possible, and it is a review process that has not been
-   gone through.
+   private path. Publishing is what makes OAuth and a hosted deployment
+   real, and it is a review that has not been gone through.
 
 ## Still carried over from the private codebase
 
