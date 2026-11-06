@@ -105,6 +105,27 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Before trying to serve: prove the image contains what it should.
+      # An exited container with empty logs says the command never ran, and
+      # that is not something a second attempt at `docker run` tells you.
+      - name: The image contains a working installation
+        run: |
+          set -euo pipefail
+          docker run --rm --entrypoint sh biryar:ci -c '
+            set -e
+            echo "PATH=$PATH"
+            echo "--- /opt/venv/bin ---"
+            ls /opt/venv/bin | head -20
+            echo "--- resolving ---"
+            command -v python || echo "no python on PATH"
+            command -v uvicorn || echo "no uvicorn on PATH"
+            echo "--- importing ---"
+            python -c "import biryar, uvicorn; print(biryar.__version__, uvicorn.__version__)"
+            echo "--- the app builds ---"
+            BIRYAR_DATABASE_URL=postgresql+psycopg://x:x@127.0.0.1:1/x \
+              python -c "from biryar.api.app import create_app; create_app(); print(\"ok\")"
+          '
+
       - name: The image runs and serves
         run: |
           set -euo pipefail
@@ -114,11 +135,14 @@ jobs:
             -e BIRYAR_SECRET_KEY="v1:$(python3 -c 'import base64,os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())')" \
             biryar:ci
 
-          # Print what the container said whatever happens. A container that
-          # fails to start and takes its logs with it is a failure nobody can
-          # act on, which is how the first version of this step wasted a
-          # build.
-          trap 'echo "--- container logs ---"; docker logs biryar-ci 2>&1 | tail -40; docker rm -f biryar-ci >/dev/null 2>&1 || true' EXIT
+          report() {
+            echo "--- state ---"
+            docker inspect -f 'exit={{.State.ExitCode}} error={{.State.Error}} oom={{.State.OOMKilled}}' biryar-ci || true
+            echo "--- logs ---"
+            docker logs biryar-ci 2>&1 | tail -40 || true
+            docker rm -f biryar-ci >/dev/null 2>&1 || true
+          }
+          trap report EXIT
 
           for _ in $(seq 30); do
             if curl -fsS http://127.0.0.1:8000/v1/health >/dev/null 2>&1; then
