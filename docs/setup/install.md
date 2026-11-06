@@ -1,7 +1,3 @@
----
-title: Install
----
-
 # Install
 
 Biryar runs as two processes against one PostgreSQL: an API, which also
@@ -51,6 +47,32 @@ Until `BIRYAR_AMAZON_APPLICATION_ID` and the LWA credentials are set, Biryar
 runs but no account can be connected, and the connect button says so rather
 than failing partway through. See [Getting your SP-API
 keys](/setup/sp-api/).
+
+## Getting to a profit figure
+
+Connecting Amazon gets you **gross contribution** — revenue less what Amazon
+and the carrier took. That needs nothing from you and appears as soon as the
+first fetch finishes.
+
+**Net profit needs one more thing from you: what the units cost.** Amazon
+does not know, so Biryar will not guess. Import a cost file — one CSV row
+per invoice line — and the figure appears:
+
+```
+vendor,doc_number,doc_date,name,qty,unit_price,sku,shipping,prices_include_vat,vat_rate
+acme,INV-1001,2026-09-30,Widget Blue,5,8.40,MY-SKU-1,3.95,false,0.19
+```
+
+The `sku` column is your own Amazon SKU, and it is the one that matters:
+Amazon's financial records name your SKU and nothing your supplier prints,
+so a cost filed under an EAN is a correct number that no sale will find. The
+import tells you about any row it could not read and any cost it could not
+key to a SKU, rather than leaving you to wonder why a figure did not move.
+
+Until every sold unit has a cost, net profit is left blank rather than
+counting the unpriced ones as free, and the screen names the SKUs that are
+missing one. See [How the fees are measured](../methodology/fees.md) for why
+that distinction is the whole point.
 
 ## Upgrading
 
