@@ -42,7 +42,10 @@ WORKDIR /app
 
 RUN uv venv /opt/venv
 
-COPY pyproject.toml README.md ./
+# LICENSE is not optional here: pyproject declares it, so the wheel build
+# reads it and fails without it. The error names the file rather than the
+# packaging metadata that asks for it, which is a confusing place to start.
+COPY pyproject.toml README.md LICENSE ./
 COPY src/ ./src/
 RUN uv pip install --python /opt/venv/bin/python --no-cache .
 
