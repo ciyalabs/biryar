@@ -43,8 +43,12 @@ whole point of this codebase is to stop guessing.
 that has been running a live Amazon business since September 2026. See
 [MANIFEST.md](MANIFEST.md) for exactly what has migrated and what has not.
 
-Release 0.1 is planned as a read-only, self-hosted application. It never
-writes to your Amazon account.
+Release 0.1 is read-only: it never writes to your Amazon account.
+
+What runs today is the spine — tenancy, Amazon authorisation, the settlement
+fetch, the cost basis, and the profit figures those produce, with an
+interface for them. The table below is the shape of the release, not a list
+of finished pages; [MANIFEST.md](MANIFEST.md) is the honest one.
 
 ---
 
@@ -63,9 +67,15 @@ Design constraints, all deliberate:
 
 - **Read-only.** No price writes, no listing edits, no messages sent. The
   configuration default `dry_run: true` stays true.
-- **Your keys, your machine.** You register your own SP-API application
-  against your own seller account. Nothing is sent to Ciya Labs, and there is
-  no Biryar server to send it to.
+- **Your keys, your account.** You register your own SP-API application
+  against your own seller account, and Biryar holds the refresh token sealed
+  with a key you generate and keep.
+- **Self-hosting sends nothing anywhere.** Run it yourself and your data
+  stays on your machine; there is no call home and nothing reaches Ciya
+  Labs. A hosted deployment is planned and is the same program with more
+  than one tenant — on it, your data is on that server rather than yours.
+  The distinction is the deployment, not a different product, so this is
+  stated plainly rather than discovered later.
 - **One container.** No GPU, no second machine, no background cloud workers.
 
 ---
