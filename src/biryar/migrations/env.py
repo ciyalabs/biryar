@@ -7,6 +7,7 @@ version control.
 
 from __future__ import annotations
 
+import logging
 from logging.config import fileConfig
 
 from alembic import context
@@ -18,8 +19,24 @@ from biryar.db.base import Base
 
 config = context.config
 
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+# Logging is Alembic's to configure only when nobody else has.
+#
+# ``fileConfig`` is global: it switches off every existing logger unless told
+# otherwise, and it replaces the root handlers with the ones in alembic.ini.
+# That is right for `alembic upgrade head` at a shell, where Alembic is the
+# whole program. It is wrong in-process — the test fixtures upgrade a real
+# database, and an operator may call ``command.upgrade`` from a script — where
+# it reaches out of Alembic and reconfigures the host application: `biryar.*`
+# loggers go quiet and their output stops reaching the handlers the host
+# installed, with nothing to say why.
+#
+# How this was found: a test asserting a secret was never logged passed while
+# the code deliberately logged it, because by then there was nothing left to
+# log with. A silenced logger and a correct program look identical from
+# outside, so the condition is checked rather than assumed, and
+# ``disable_existing_loggers`` is pinned even on the CLI path.
+if config.config_file_name is not None and not logging.getLogger().handlers:
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 config.set_main_option("sqlalchemy.url", str(settings().database_url))
 
