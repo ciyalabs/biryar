@@ -107,20 +107,34 @@ jobs:
 
       - name: The image runs and serves
         run: |
+          set -euo pipefail
+
           docker run -d --name biryar-ci -p 8000:8000 \
             -e BIRYAR_DATABASE_URL=postgresql+psycopg://x:x@127.0.0.1:1/x \
-            -e BIRYAR_SECRET_KEY=v1:$(openssl rand -base64 32 | tr '+/' '-_') \
+            -e BIRYAR_SECRET_KEY="v1:$(python3 -c 'import base64,os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())')" \
             biryar:ci
-          for _ in $(seq 20); do
+
+          # Print what the container said whatever happens. A container that
+          # fails to start and takes its logs with it is a failure nobody can
+          # act on, which is how the first version of this step wasted a
+          # build.
+          trap 'echo "--- container logs ---"; docker logs biryar-ci 2>&1 | tail -40; docker rm -f biryar-ci >/dev/null 2>&1 || true' EXIT
+
+          for _ in $(seq 30); do
             if curl -fsS http://127.0.0.1:8000/v1/health >/dev/null 2>&1; then
               break
             fi
+            if [ "$(docker inspect -f '{{.State.Running}}' biryar-ci)" != "true" ]; then
+              echo "the container exited before it served anything"
+              exit 1
+            fi
             sleep 1
           done
-          # The database is deliberately unreachable, so health reports
-          # degraded rather than ok — which is the answer that proves it
-          # actually checked rather than assuming.
-          curl -fsS http://127.0.0.1:8000/v1/health | tee /dev/stderr | grep -q '"database":"unreachable"'
-          # And the front end was built into the image.
+
+          # The database is deliberately unreachable, so health must report
+          # degraded rather than ok — the answer that proves it looked.
+          curl -fsS http://127.0.0.1:8000/v1/health | tee /dev/stderr \
+            | grep -q '"database":"unreachable"'
+
+          # And the front end is actually inside the image.
           curl -fsS http://127.0.0.1:8000/ | grep -qi "biryar"
-          docker rm -f biryar-ci
