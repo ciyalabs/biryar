@@ -131,11 +131,27 @@ and CI regenerates that document and fails if it differs from what is
 committed — so a route that changes shape breaks the type check instead of
 breaking a page in front of someone.
 
+**Packaging.** One image carries the API, the worker and the built front
+end; `docker compose up` plus one migration is the whole install. A third CI
+job builds that image and runs it, asserting that health reports the database
+*unreachable* rather than `ok` — the answer that proves it looked — and that
+the front end is served from inside the image. `tests/test_packaging.py`
+closes the two ways this broke: a dependency declared only under the dev
+extras (present on every development machine, absent from the image, first
+noticed as a container exiting with empty logs), and a licence file the wheel
+build reads but the build context did not carry.
+
 ## Next
 
-Release 0.1 needs packaging rather than more features: a container, a
-first-run setup screen so credentials stop coming from the environment, and
-the SP-API guide written properly. See *Known structural work* below.
+Two items, both about the first ten minutes a stranger spends with this:
+
+1. **A first-run setup screen.** Credentials still come from the
+   environment, which is fine for a self-host and wrong for a hosted tenant.
+2. **The SP-API guide written properly.** `docs/setup/sp-api.md` is an
+   outline. It is the step most likely to lose someone, and it is the one
+   place where getting a detail wrong wastes a stranger's afternoon.
+
+See *Known structural work* below for what is deliberately deferred.
 
 ## Still carried over from the private codebase
 
