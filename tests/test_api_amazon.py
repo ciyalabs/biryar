@@ -291,3 +291,45 @@ def test_status_reflects_a_completed_authorisation(
 
     assert body["connected"] is True
     assert body["selling_partner_id"] == "A1SELLER"
+
+
+# -- the promise the setup guide makes in print --------------------------------------
+
+def test_the_refresh_token_never_comes_back_out(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """docs/setup/sp-api.md tells a seller the token is never shown again.
+
+    That sentence is the reason someone is willing to paste a client secret
+    into this at all, so it is checked rather than asserted: the plaintext
+    must appear in no response body and no log record anywhere along the
+    flow that produces it. Storage is covered separately by
+    ``test_a_completed_authorisation_is_stored_sealed``; this is about
+    everything that is not storage.
+    """
+    secret = "Atzr|the-sellers-refresh-token"       # what _granted hands back
+    a, _ = two_tenants
+    auth = _signed_in(client, admin_engine, factory, a)
+    state = _state_for(client, auth)
+    _answer_lwa(client, _granted)
+
+    with caplog.at_level("DEBUG", logger="biryar"):
+        callback = client.get(
+            "/v1/amazon/callback",
+            params={
+                "state": state,
+                "spapi_oauth_code": "the-code",
+                "selling_partner_id": "A1SELLERPARTNER",
+            },
+        )
+        status = client.get("/v1/amazon/status", headers=auth)
+
+    assert callback.status_code == 200 and status.status_code == 200
+
+    for name, body in (("callback", callback.text), ("status", status.text)):
+        assert secret not in body, f"the refresh token is in the {name} response"
+
+    logged = "\n".join(record.getMessage() for record in caplog.records)
+    assert secret not in logged, "the refresh token was written to a log"

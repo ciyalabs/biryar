@@ -147,9 +147,10 @@ Two items, both about the first ten minutes a stranger spends with this:
 
 1. **A first-run setup screen.** Credentials still come from the
    environment, which is fine for a self-host and wrong for a hosted tenant.
-2. **The SP-API guide written properly.** `docs/setup/sp-api.md` is an
-   outline. It is the step most likely to lose someone, and it is the one
-   place where getting a detail wrong wastes a stranger's afternoon.
+2. **Screenshots for the SP-API guide.** The prose is written and cited
+   ([docs/setup/sp-api.md](docs/setup/sp-api.md)); Amazon's console changes
+   often enough that it wants pictures, and they have to come from an
+   account created for the purpose rather than the maintainer's own.
 
 See *Known structural work* below for what is deliberately deferred.
 
