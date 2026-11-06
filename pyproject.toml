@@ -17,13 +17,17 @@ dependencies = [
     "argon2-cffi>=23.1",
     "cryptography>=44.0",
     "python-dateutil>=2.9",
+    # Runtime, not just for tests: biryar.amazon talks to Amazon with it.
+    # It lived in the dev extras for a while, which meant every development
+    # install had it and the built image did not — the kind of gap that is
+    # invisible exactly where you would look for it.
+    "httpx>=0.28",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest==9.0.3",
     "pytest-asyncio==1.3.0",
-    "httpx==0.28.1",
     # Pinned exactly, not floated. A new ruff release adds rules, so a
     # floating pin means CI can fail on a commit that changed nothing.
     "ruff==0.17.3",
