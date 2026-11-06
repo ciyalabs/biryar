@@ -159,16 +159,15 @@ reports both the skipped rows and the costs that cannot be matched.
 
 ## Next
 
-1. **A first-run setup screen.** The Amazon application credentials are
-   per-deployment rather than per-tenant, so the environment is the right
-   place for them — but a self-hoster should not have to edit a file to
-   start, and a hosted operator should not have to restart to rotate one.
-2. **Screenshots for the SP-API guide.** The prose is written and cited
-   ([docs/setup/sp-api.md](docs/setup/sp-api.md)); Amazon's console changes
-   often enough that it wants pictures, and they have to come from an
-   account created for the purpose rather than the maintainer's own.
-3. **The settlement flat-file adapter**, described below — the free
-   on-ramp that needs no Amazon application at all.
+1. **The settlement flat-file adapter**, described below — the free
+   on-ramp that needs no Amazon application at all. Now the most valuable
+   item on this list: the authorisation work above shortened the path to a
+   first number, but it did not remove the developer registration that
+   precedes it, and that is still a review with a human on the other end.
+2. **A published-application walkthrough.** Everything documented is the
+   private path. Publishing is what makes OAuth available and a hosted
+   deployment possible, and it is a review process that has not been
+   gone through.
 
 ## Still carried over from the private codebase
 
