@@ -434,3 +434,62 @@ def test_an_empty_refresh_token_is_refused(
     )
 
     assert response.status_code == 422
+
+
+def test_status_says_whether_the_oauth_button_can_work(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    """A button that cannot work should not be offered.
+
+    The shared test app is configured for OAuth, so this is the true case;
+    the test below is the self-hosted default, which is the one that
+    matters — there the consent URL would answer MD9100.
+    """
+    a, _ = two_tenants
+    auth = _signed_in(client, admin_engine, factory, a)
+
+    assert client.get("/v1/amazon/status", headers=auth).json()["oauth_available"] is True
+
+
+def test_a_self_hosted_install_does_not_offer_the_oauth_button(
+    app_engine: Engine, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    """No Amazon application configured is the self-hosting default.
+
+    A private application has no OAuth configuration, so the consent URL
+    answers MD9100 whatever is put in these settings. The interface asks
+    this field before drawing the button, and /authorize refuses besides —
+    the button is not the gate.
+    """
+    from biryar.api import create_app
+
+    from .conftest import settings_for_tests
+
+    config = settings_for_tests(
+        amazon_application_id="",
+        lwa_client_id="",
+        lwa_client_secret="",
+        amazon_redirect_uri="",
+    )
+    a, _ = two_tenants
+    with TestClient(create_app(config, engine=app_engine)) as client:
+        auth = _signed_in(client, admin_engine, factory, a)
+
+        assert client.get("/v1/amazon/status", headers=auth).json()[
+            "oauth_available"
+        ] is False
+        # And the route refuses, so hiding the button is a courtesy.
+        assert client.post("/v1/amazon/authorize", headers=auth).status_code == 503
+
+        # The route that does work for this install is unaffected.
+        assert client.post(
+            "/v1/amazon/credentials",
+            json={
+                "marketplace": Marketplace.DE.value,
+                "selling_partner_id": "A1SELLERPARTNER",
+                "refresh_token": "Atzr|from-the-portal",
+            },
+            headers=auth,
+        ).status_code == 200

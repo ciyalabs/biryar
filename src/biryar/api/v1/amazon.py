@@ -73,6 +73,16 @@ class ConnectionStatus(BaseModel):
     status: str | None = None
     selling_partner_id: str | None = None
     last_error: str | None = None
+    oauth_available: bool = Field(
+        default=False,
+        description=(
+            "Whether this installation has an Amazon application configured, "
+            "and so can send a seller through the consent flow. False on a "
+            "self-hosted install, where a private application has no OAuth "
+            "configuration and the consent URL answers MD9100 — the interface "
+            "offers self-authorisation instead of a button that cannot work."
+        ),
+    )
 
 
 @router.post("/authorize", response_model=AuthorisationStart)
@@ -166,6 +176,7 @@ def callback(
 def connection_status(
     session: CurrentSession,
     db: TenantDb,
+    config: Settings_,
     marketplace: MarketplaceQuery = Marketplace.DE,
 ) -> ConnectionStatus:
     """Whether this tenant can currently reach Amazon.
@@ -176,7 +187,11 @@ def connection_status(
     """
     credential = active_credential(db, session.tenant_id, marketplace)
     if credential is None:
-        return ConnectionStatus(marketplace=marketplace, connected=False)
+        return ConnectionStatus(
+            marketplace=marketplace,
+            connected=False,
+            oauth_available=config.amazon_is_configured,
+        )
 
     return ConnectionStatus(
         marketplace=marketplace,
@@ -184,6 +199,7 @@ def connection_status(
         status=credential.status.value,
         selling_partner_id=credential.selling_partner_id,
         last_error=credential.last_error,
+        oauth_available=config.amazon_is_configured,
     )
 
 

@@ -91,24 +91,35 @@ export function Home({ user }: { user: User }) {
               No Amazon account is connected yet, so there is nothing to
               measure.
             </p>
-            <button
-              onClick={() => connect.mutate()}
-              disabled={connect.isPending}
-            >
-              {connect.isPending ? "Opening Amazon…" : "Connect Amazon"}
-            </button>
-            {connect.error && (
-              <p className="error" role="alert">
-                {connect.error instanceof ApiError
-                  ? connect.error.message
-                  : "Could not start the connection."}
-              </p>
+
+            {/* Only when this installation has an Amazon application of
+                its own. A private application has none, and its consent
+                URL answers MD9100 — offering the button there sends
+                someone to Amazon to be told the developer made a mistake. */}
+            {connection.data.oauth_available && (
+              <>
+                <button
+                  onClick={() => connect.mutate()}
+                  disabled={connect.isPending}
+                >
+                  {connect.isPending ? "Opening Amazon…" : "Connect Amazon"}
+                </button>
+                {connect.error && (
+                  <p className="error" role="alert">
+                    {connect.error instanceof ApiError
+                      ? connect.error.message
+                      : "Could not start the connection."}
+                  </p>
+                )}
+              </>
             )}
 
             {user.role === "owner" && (
-              <details>
+              <details open={!connection.data.oauth_available}>
                 <summary className="small">
-                  Self-hosting? Paste a refresh token instead
+                  {connection.data.oauth_available
+                    ? "Self-hosting? Paste a refresh token instead"
+                    : "Connect with a refresh token"}
                 </summary>
                 <p className="small muted">
                   A private application in Draft has no OAuth setup, so the

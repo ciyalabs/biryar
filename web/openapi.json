@@ -38,6 +38,12 @@
           "marketplace": {
             "$ref": "#/components/schemas/Marketplace"
           },
+          "oauth_available": {
+            "default": false,
+            "description": "Whether this installation has an Amazon application configured, and so can send a seller through the consent flow. False on a self-hosted install, where a private application has no OAuth configuration and the consent URL answers MD9100 \u2014 the interface offers self-authorisation instead of a button that cannot work.",
+            "title": "Oauth Available",
+            "type": "boolean"
+          },
           "selling_partner_id": {
             "anyOf": [
               {

@@ -314,6 +314,12 @@ export interface components {
             /** Last Error */
             last_error?: string | null;
             marketplace: components["schemas"]["Marketplace"];
+            /**
+             * Oauth Available
+             * @description Whether this installation has an Amazon application configured, and so can send a seller through the consent flow. False on a self-hosted install, where a private application has no OAuth configuration and the consent URL answers MD9100 — the interface offers self-authorisation instead of a button that cannot work.
+             * @default false
+             */
+            oauth_available: boolean;
             /** Selling Partner Id */
             selling_partner_id?: string | null;
             /** Status */
