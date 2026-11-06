@@ -137,6 +137,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/costs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Costs
+         * @description Every stored cost for this tenant. Either role may read.
+         */
+        get: operations["list_costs_v1_costs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/costs/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import Costs
+         * @description Read a cost file and store the landed unit costs it implies.
+         *
+         *     Re-importing the same file is safe: a cost for a SKU on a date replaces
+         *     the one held for that date rather than adding a second lot. That matters
+         *     because an import is exactly the kind of thing someone runs twice when
+         *     they are not sure the first one worked.
+         */
+        post: operations["import_costs_v1_costs_import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/costs/{sku}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Forget
+         * @description Remove one dated cost entry.
+         *
+         *     One entry, not a SKU's history: a cost is dated, and dropping the lot
+         *     would silently reprice every past sale of that SKU.
+         */
+        delete: operations["forget_v1_costs__sku__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/health": {
         parameters: {
             query?: never;
@@ -153,6 +221,46 @@ export interface paths {
          *     that returns ok regardless is how that goes unnoticed through a deploy.
          */
         get: operations["health_v1_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/profit/period": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Period Profit
+         * @description Profit for a date window. Both bounds inclusive, both optional.
+         */
+        get: operations["period_profit_v1_profit_period_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/profit/skus": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Profit By Sku
+         * @description One row per SKU, richest contribution first, unpriced SKUs last.
+         */
+        get: operations["profit_by_sku_v1_profit_skus_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -183,6 +291,70 @@ export interface components {
             /** Status */
             status?: string | null;
         };
+        /** CostBasisResponse */
+        CostBasisResponse: {
+            /** Rows */
+            rows: components["schemas"]["CostRow"][];
+            /** Skus */
+            skus: number;
+        };
+        /**
+         * CostImportResponse
+         * @description What an import did, including what it could not read.
+         *
+         *     ``skipped`` is the field that matters. Parsing continues past a bad row
+         *     so that one typo does not cost the other two hundred lines, which means
+         *     the only way a seller learns that thirty rows were dropped is if the
+         *     response says so. Thirty dropped rows are thirty SKUs with no cost, and
+         *     an unpriced SKU does not raise anything — it quietly leaves `net_profit`
+         *     unanswerable and the floor for that SKU unknown.
+         */
+        CostImportResponse: {
+            /** Invoices */
+            invoices: number;
+            /**
+             * Recorded
+             * @description Cost entries written or corrected.
+             */
+            recorded: number;
+            /** Skipped */
+            skipped: components["schemas"]["SkippedRowResponse"][];
+            /**
+             * Unmatchable
+             * @description Keys stored from a line with no sku column. The Finances feed reports your seller SKU and never a supplier's EAN or article number, so a cost keyed on one of those is kept but will not be found by any sale. Add a sku column and import again.
+             */
+            unmatchable?: string[];
+        };
+        /**
+         * CostRow
+         * @description One unit cost in force from a date.
+         */
+        CostRow: {
+            /**
+             * Effective From
+             * Format: date
+             */
+            effective_from: string;
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+            /** Sku */
+            sku: string;
+            /**
+             * Source
+             * @default
+             */
+            source: string;
+            /** Unit Cost */
+            unit_cost: string;
+        };
+        /** ForgetResponse */
+        ForgetResponse: {
+            /** Forgotten */
+            forgotten: boolean;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -208,6 +380,64 @@ export interface components {
          * @enum {string}
          */
         Marketplace: "A1PA6795UKMFR9" | "A1F83G8C2ARO7P" | "A13V1IB3VIYZZH" | "APJ6JRA9NG5V4" | "A1RKKUPIHCS9HS" | "A1805IZSGTT6HS" | "ATVPDKIKX0DER";
+        /**
+         * PeriodResponse
+         * @description The bottom line for a window.
+         */
+        PeriodResponse: {
+            /**
+             * Cogs
+             * @description Negative. Null while nothing sold has a cost on record.
+             */
+            cogs: string | null;
+            /**
+             * End
+             * Format: date
+             */
+            end: string;
+            /**
+             * Gross Contribution
+             * @description Revenue less Amazon and the carrier. Always knowable.
+             */
+            gross_contribution: string;
+            /** Latency Ms */
+            latency_ms: number;
+            /**
+             * Net Profit
+             * @description Null while any sold unit is unpriced, rather than counting that unit as free.
+             */
+            net_profit: string | null;
+            /** Orders */
+            orders: number;
+            /**
+             * Overhead
+             * @description Negative. Subscription and inbound freight, kept as period cost rather than pushed onto whichever SKUs happened to sell.
+             */
+            overhead: string;
+            /**
+             * Postage
+             * @description Negative: what the carrier kept.
+             */
+            postage: string;
+            /** Revenue */
+            revenue: string;
+            /**
+             * Selling Fees
+             * @description Negative: what Amazon kept.
+             */
+            selling_fees: string;
+            /** Skus Missing Cost */
+            skus_missing_cost: string[];
+            /**
+             * Start
+             * Format: date
+             */
+            start: string;
+            /** Units */
+            units: number;
+            /** Units Without Cost */
+            units_without_cost: number;
+        };
         /**
          * Role
          * @description What a user may do inside their tenant.
@@ -239,6 +469,45 @@ export interface components {
             /** Token */
             token: string;
             user: components["schemas"]["UserResponse"];
+        };
+        /** SkippedRowResponse */
+        SkippedRowResponse: {
+            /** Line */
+            line: number;
+            /** Reason */
+            reason: string;
+        };
+        /** SkuResponse */
+        SkuResponse: {
+            /** Asin */
+            asin: string;
+            /** Cogs */
+            cogs: string | null;
+            /** Contribution */
+            contribution: string | null;
+            /** Orders */
+            orders: number;
+            /** Postage */
+            postage: string;
+            /** Revenue */
+            revenue: string;
+            /** Selling Fees */
+            selling_fees: string;
+            /** Sku */
+            sku: string;
+            /** Title */
+            title: string;
+            /** Units */
+            units: number;
+            /** Units Without Cost */
+            units_without_cost: number;
+        };
+        /** SkusResponse */
+        SkusResponse: {
+            /** Latency Ms */
+            latency_ms: number;
+            /** Rows */
+            rows: components["schemas"]["SkuResponse"][];
         };
         /** UserResponse */
         UserResponse: {
@@ -441,6 +710,93 @@ export interface operations {
             };
         };
     };
+    list_costs_v1_costs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CostBasisResponse"];
+                };
+            };
+        };
+    };
+    import_costs_v1_costs_import_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "text/csv": string;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CostImportResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    forget_v1_costs__sku__delete: {
+        parameters: {
+            query: {
+                /** @description The dated entry to remove. */
+                effective_from: string;
+            };
+            header?: never;
+            path: {
+                sku: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForgetResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_v1_health_get: {
         parameters: {
             query?: never;
@@ -457,6 +813,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Health"];
+                };
+            };
+        };
+    };
+    period_profit_v1_profit_period_get: {
+        parameters: {
+            query?: {
+                /** @description Inclusive first local date. */
+                start?: string | null;
+                /** @description Inclusive last local date. */
+                end?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PeriodResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    profit_by_sku_v1_profit_skus_get: {
+        parameters: {
+            query?: {
+                /** @description Inclusive first local date. */
+                start?: string | null;
+                /** @description Inclusive last local date. */
+                end?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SkusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

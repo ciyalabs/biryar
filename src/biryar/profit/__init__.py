@@ -29,13 +29,16 @@ from .growth import (
     model,
 )
 from .invoices import (
+    CostFile,
     CostFileError,
     Invoice,
     InvoiceLine,
     LandedCost,
+    SkippedRow,
     costs_from_file,
     landed_costs,
     read_cost_csv,
+    read_cost_rows,
 )
 from .ledger import OrderLine, Overhead, Settlement, build_settlement
 from .report import (
@@ -53,6 +56,7 @@ __all__ = [
     "ChannelProfit",
     "CostBasis",
     "CostEntry",
+    "CostFile",
     "CostFileError",
     "GrowthModel",
     "Invoice",
@@ -64,6 +68,7 @@ __all__ = [
     "Projection",
     "ResolvedCost",
     "Settlement",
+    "SkippedRow",
     "SkuPosition",
     "SkuProfit",
     "Spread",
@@ -78,5 +83,6 @@ __all__ = [
     "overhead_by_kind",
     "period",
     "read_cost_csv",
+    "read_cost_rows",
     "summarise",
 ]

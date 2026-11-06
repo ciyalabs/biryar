@@ -162,6 +162,24 @@ def create_user(
     return user
 
 
+def role_of(session: Session, user_id: uuid.UUID) -> Role | None:
+    """The signed-in user's role, or ``None`` if the row is not visible.
+
+    Read inside the tenant transaction rather than returned by the session
+    resolver. The resolver is ``SECURITY DEFINER`` and runs with no tenant in
+    scope, so everything it returns is readable before any policy applies;
+    the less it carries, the smaller that hole is. A role is only ever needed
+    once a tenant is established, where an ordinary query answers it under
+    row-level security.
+
+    ``None`` means revoked or deleted between signing in and this request,
+    which callers must treat as "not permitted" rather than as a default.
+    """
+    return session.execute(
+        select(User.role).where(User.id == user_id)
+    ).scalar_one_or_none()
+
+
 def normalise_email(email: str) -> str:
     """Lowercased and stripped.
 

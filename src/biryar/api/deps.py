@@ -39,8 +39,15 @@ from sqlalchemy.orm import Session
 
 from ..amazon import LwaApplication, LwaClient
 from ..config import Settings
+from ..db.models.tenancy import Role
 from ..db.session import SessionFactory, admin_session, tenant_session
-from ..repositories.auth import ResolvedSession, resolve_session, sole_tenant, tenant_by_slug
+from ..repositories.auth import (
+    ResolvedSession,
+    resolve_session,
+    role_of,
+    sole_tenant,
+    tenant_by_slug,
+)
 
 #: auto_error=False so a missing header becomes our own 401 with a body the
 #: front end can read, rather than FastAPI's bare one.
@@ -137,6 +144,31 @@ def tenant_db(
         yield db
 
 
+def require_owner(
+    db: Annotated[Session, Depends(tenant_db)],
+    session: Annotated[ResolvedSession, Depends(current_session)],
+) -> ResolvedSession:
+    """403 unless the signed-in user is an owner of this tenant.
+
+    The two roles exist for one distinction: an owner may do the things that
+    cannot be taken back, an assistant may prepare them. A cost basis is on
+    the owner's side of that line even though it writes no money, because
+    every price floor is derived from it — a wrong unit cost sells stock
+    below cost and reports a profit while doing it.
+
+    The role is read from the database on each request, not from the
+    session. A session issued this morning says nothing about a role revoked
+    at noon.
+    """
+    role = role_of(db, session.user_id)
+    if role is not Role.OWNER:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This action is owner-only.",
+        )
+    return session
+
+
 Settings_ = Annotated[Settings, Depends(get_settings)]
 def get_lwa_client(
     config: Annotated[Settings, Depends(get_settings)],
@@ -157,6 +189,7 @@ def get_lwa_client(
 
 
 CurrentSession = Annotated[ResolvedSession, Depends(current_session)]
+OwnerSession = Annotated[ResolvedSession, Depends(require_owner)]
 TenantDb = Annotated[Session, Depends(tenant_db)]
 TenantId = Annotated[uuid.UUID, Depends(resolve_tenant_id)]
 Lwa = Annotated[LwaClient, Depends(get_lwa_client)]

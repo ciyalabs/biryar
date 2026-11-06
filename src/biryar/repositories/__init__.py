@@ -19,6 +19,7 @@ from .auth import (
     resolve_session,
     revoke_all_sessions,
     revoke_session,
+    role_of,
     sole_tenant,
     tenant_by_slug,
 )
@@ -68,6 +69,7 @@ __all__ = [
     "resolve_session",
     "revoke_all_sessions",
     "revoke_session",
+    "role_of",
     "settlement_rows",
     "sole_tenant",
     "store_credential",

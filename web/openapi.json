@@ -68,6 +68,111 @@
         "title": "ConnectionStatus",
         "type": "object"
       },
+      "CostBasisResponse": {
+        "properties": {
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/CostRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "skus": {
+            "title": "Skus",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rows",
+          "skus"
+        ],
+        "title": "CostBasisResponse",
+        "type": "object"
+      },
+      "CostImportResponse": {
+        "description": "What an import did, including what it could not read.\n\n``skipped`` is the field that matters. Parsing continues past a bad row\nso that one typo does not cost the other two hundred lines, which means\nthe only way a seller learns that thirty rows were dropped is if the\nresponse says so. Thirty dropped rows are thirty SKUs with no cost, and\nan unpriced SKU does not raise anything \u2014 it quietly leaves `net_profit`\nunanswerable and the floor for that SKU unknown.",
+        "properties": {
+          "invoices": {
+            "title": "Invoices",
+            "type": "integer"
+          },
+          "recorded": {
+            "description": "Cost entries written or corrected.",
+            "title": "Recorded",
+            "type": "integer"
+          },
+          "skipped": {
+            "items": {
+              "$ref": "#/components/schemas/SkippedRowResponse"
+            },
+            "title": "Skipped",
+            "type": "array"
+          },
+          "unmatchable": {
+            "description": "Keys stored from a line with no sku column. The Finances feed reports your seller SKU and never a supplier's EAN or article number, so a cost keyed on one of those is kept but will not be found by any sale. Add a sku column and import again.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Unmatchable",
+            "type": "array"
+          }
+        },
+        "required": [
+          "recorded",
+          "invoices",
+          "skipped"
+        ],
+        "title": "CostImportResponse",
+        "type": "object"
+      },
+      "CostRow": {
+        "description": "One unit cost in force from a date.",
+        "properties": {
+          "effective_from": {
+            "format": "date",
+            "title": "Effective From",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "title": "Note",
+            "type": "string"
+          },
+          "sku": {
+            "title": "Sku",
+            "type": "string"
+          },
+          "source": {
+            "default": "",
+            "title": "Source",
+            "type": "string"
+          },
+          "unit_cost": {
+            "title": "Unit Cost",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sku",
+          "effective_from",
+          "unit_cost"
+        ],
+        "title": "CostRow",
+        "type": "object"
+      },
+      "ForgetResponse": {
+        "properties": {
+          "forgotten": {
+            "title": "Forgotten",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "forgotten"
+        ],
+        "title": "ForgetResponse",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -117,6 +222,110 @@
         ],
         "title": "Marketplace",
         "type": "string"
+      },
+      "PeriodResponse": {
+        "description": "The bottom line for a window.",
+        "properties": {
+          "cogs": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Negative. Null while nothing sold has a cost on record.",
+            "title": "Cogs"
+          },
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "gross_contribution": {
+            "description": "Revenue less Amazon and the carrier. Always knowable.",
+            "title": "Gross Contribution",
+            "type": "string"
+          },
+          "latency_ms": {
+            "title": "Latency Ms",
+            "type": "number"
+          },
+          "net_profit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null while any sold unit is unpriced, rather than counting that unit as free.",
+            "title": "Net Profit"
+          },
+          "orders": {
+            "title": "Orders",
+            "type": "integer"
+          },
+          "overhead": {
+            "description": "Negative. Subscription and inbound freight, kept as period cost rather than pushed onto whichever SKUs happened to sell.",
+            "title": "Overhead",
+            "type": "string"
+          },
+          "postage": {
+            "description": "Negative: what the carrier kept.",
+            "title": "Postage",
+            "type": "string"
+          },
+          "revenue": {
+            "title": "Revenue",
+            "type": "string"
+          },
+          "selling_fees": {
+            "description": "Negative: what Amazon kept.",
+            "title": "Selling Fees",
+            "type": "string"
+          },
+          "skus_missing_cost": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skus Missing Cost",
+            "type": "array"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          },
+          "units": {
+            "title": "Units",
+            "type": "integer"
+          },
+          "units_without_cost": {
+            "title": "Units Without Cost",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "units",
+          "orders",
+          "revenue",
+          "selling_fees",
+          "postage",
+          "cogs",
+          "overhead",
+          "gross_contribution",
+          "net_profit",
+          "units_without_cost",
+          "skus_missing_cost",
+          "latency_ms"
+        ],
+        "title": "PeriodResponse",
+        "type": "object"
       },
       "Role": {
         "description": "What a user may do inside their tenant.\n\nDeliberately two. The platform has exactly one dangerous category of\naction \u2014 anything that reaches Amazon, a buyer, a supplier or money \u2014 and\na role system with five tiers invites the question of which tier may do\nhalf of it. An owner may approve; an assistant may prepare.",
@@ -168,6 +377,122 @@
           "user"
         ],
         "title": "SignInResponse",
+        "type": "object"
+      },
+      "SkippedRowResponse": {
+        "properties": {
+          "line": {
+            "title": "Line",
+            "type": "integer"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "line",
+          "reason"
+        ],
+        "title": "SkippedRowResponse",
+        "type": "object"
+      },
+      "SkuResponse": {
+        "properties": {
+          "asin": {
+            "title": "Asin",
+            "type": "string"
+          },
+          "cogs": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cogs"
+          },
+          "contribution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contribution"
+          },
+          "orders": {
+            "title": "Orders",
+            "type": "integer"
+          },
+          "postage": {
+            "title": "Postage",
+            "type": "string"
+          },
+          "revenue": {
+            "title": "Revenue",
+            "type": "string"
+          },
+          "selling_fees": {
+            "title": "Selling Fees",
+            "type": "string"
+          },
+          "sku": {
+            "title": "Sku",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "units": {
+            "title": "Units",
+            "type": "integer"
+          },
+          "units_without_cost": {
+            "title": "Units Without Cost",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sku",
+          "asin",
+          "title",
+          "units",
+          "orders",
+          "revenue",
+          "selling_fees",
+          "postage",
+          "cogs",
+          "contribution",
+          "units_without_cost"
+        ],
+        "title": "SkuResponse",
+        "type": "object"
+      },
+      "SkusResponse": {
+        "properties": {
+          "latency_ms": {
+            "title": "Latency Ms",
+            "type": "number"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/SkuResponse"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rows",
+          "latency_ms"
+        ],
+        "title": "SkusResponse",
         "type": "object"
       },
       "UserResponse": {
@@ -525,6 +850,142 @@
         ]
       }
     },
+    "/v1/costs": {
+      "get": {
+        "description": "Every stored cost for this tenant. Either role may read.",
+        "operationId": "list_costs_v1_costs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostBasisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "List Costs",
+        "tags": [
+          "costs"
+        ]
+      }
+    },
+    "/v1/costs/import": {
+      "post": {
+        "description": "Read a cost file and store the landed unit costs it implies.\n\nRe-importing the same file is safe: a cost for a SKU on a date replaces\nthe one held for that date rather than adding a second lot. That matters\nbecause an import is exactly the kind of thing someone runs twice when\nthey are not sure the first one worked.",
+        "operationId": "import_costs_v1_costs_import_post",
+        "requestBody": {
+          "content": {
+            "text/csv": {
+              "schema": {
+                "description": "The cost file, as CSV text. Required columns: vendor, doc_number, doc_date, name, qty, unit_price. Optional: sku (your Amazon SKU \u2014 without it a cost cannot be matched to a sale), ean, article_no, shipping, prices_include_vat, vat_rate.",
+                "title": "Csv Text",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostImportResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Import Costs",
+        "tags": [
+          "costs"
+        ]
+      }
+    },
+    "/v1/costs/{sku}": {
+      "delete": {
+        "description": "Remove one dated cost entry.\n\nOne entry, not a SKU's history: a cost is dated, and dropping the lot\nwould silently reprice every past sale of that SKU.",
+        "operationId": "forget_v1_costs__sku__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sku",
+            "required": true,
+            "schema": {
+              "title": "Sku",
+              "type": "string"
+            }
+          },
+          {
+            "description": "The dated entry to remove.",
+            "in": "query",
+            "name": "effective_from",
+            "required": true,
+            "schema": {
+              "description": "The dated entry to remove.",
+              "format": "date",
+              "title": "Effective From",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForgetResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Forget",
+        "tags": [
+          "costs"
+        ]
+      }
+    },
     "/v1/health": {
       "get": {
         "description": "Whether this instance can serve.\n\nThe database is actually queried rather than assumed. A process that is\nup but cannot reach PostgreSQL serves nothing useful, and a health check\nthat returns ok regardless is how that goes unnoticed through a deploy.",
@@ -544,6 +1005,160 @@
         "summary": "Health",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/v1/profit/period": {
+      "get": {
+        "description": "Profit for a date window. Both bounds inclusive, both optional.",
+        "operationId": "period_profit_v1_profit_period_get",
+        "parameters": [
+          {
+            "description": "Inclusive first local date.",
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Inclusive first local date.",
+              "title": "Start"
+            }
+          },
+          {
+            "description": "Inclusive last local date.",
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Inclusive last local date.",
+              "title": "End"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Period Profit",
+        "tags": [
+          "profit"
+        ]
+      }
+    },
+    "/v1/profit/skus": {
+      "get": {
+        "description": "One row per SKU, richest contribution first, unpriced SKUs last.",
+        "operationId": "profit_by_sku_v1_profit_skus_get",
+        "parameters": [
+          {
+            "description": "Inclusive first local date.",
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Inclusive first local date.",
+              "title": "Start"
+            }
+          },
+          {
+            "description": "Inclusive last local date.",
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Inclusive last local date.",
+              "title": "End"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkusResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Profit By Sku",
+        "tags": [
+          "profit"
         ]
       }
     }

@@ -126,9 +126,12 @@ the fact that it passes is the misleading part — it looks like a check.
 
 This is why Biryar will not derive a cost from a price. It reads unit costs
 from a cost file you maintain — one CSV row per invoice line, with the
-vendor, document number, quantity and printed unit price, so every cost in
-the system traces to a document you can hold up against it. A unit cost is
-the one number Amazon never reports, every
+vendor, document number, quantity, printed unit price and your own SKU, so
+every cost in the system traces to a document you can hold up against it.
+The SKU is what makes it usable: Amazon's financial records name your SKU
+and nothing your supplier prints, so a cost filed under an EAN is a correct
+number that no sale will ever find. A unit cost is the one number Amazon
+never reports, every
 margin depends on it, and the only thing that can confirm it is a document
 with a quantity and a printed unit price on it. An invented number and a
 real one are the same shape.
