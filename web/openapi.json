@@ -369,6 +369,173 @@
         "title": "SelfAuthorisation",
         "type": "object"
       },
+      "SettlementFileReport": {
+        "description": "What one downloaded settlement report says.\n\nDeliberately stateless: nothing is stored. A settlement file and the\nFinances feed describe the same money in different shapes, and merging\nthem would risk counting a period twice \u2014 the exact failure the ledger\nwas once wrong about. So this answers a question and keeps nothing.\n\nThat also makes it the thing to try first: it needs no Amazon\napplication, no developer registration and no connected account.",
+        "properties": {
+          "cogs": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cogs"
+          },
+          "counted_total": {
+            "description": "Every amount in the file, added up.",
+            "title": "Counted Total",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "deposit_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deposit Date"
+          },
+          "difference": {
+            "title": "Difference",
+            "type": "string"
+          },
+          "gross_contribution": {
+            "title": "Gross Contribution",
+            "type": "string"
+          },
+          "latency_ms": {
+            "title": "Latency Ms",
+            "type": "number"
+          },
+          "net_profit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Profit"
+          },
+          "orders": {
+            "title": "Orders",
+            "type": "integer"
+          },
+          "overhead": {
+            "title": "Overhead",
+            "type": "string"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "period_start": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start"
+          },
+          "reconciles": {
+            "description": "Whether the two agree. False means the file was read wrong and the figures below should not be trusted \u2014 not that a fee is unrecognised, since unrecognised amounts are still counted.",
+            "title": "Reconciles",
+            "type": "boolean"
+          },
+          "revenue": {
+            "title": "Revenue",
+            "type": "string"
+          },
+          "rows_read": {
+            "title": "Rows Read",
+            "type": "integer"
+          },
+          "selling_fees": {
+            "title": "Selling Fees",
+            "type": "string"
+          },
+          "settlement_id": {
+            "title": "Settlement Id",
+            "type": "string"
+          },
+          "skus_missing_cost": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skus Missing Cost",
+            "type": "array"
+          },
+          "stated_total": {
+            "description": "The payout Amazon states in the file's summary row.",
+            "title": "Stated Total",
+            "type": "string"
+          },
+          "units": {
+            "title": "Units",
+            "type": "integer"
+          },
+          "units_without_cost": {
+            "title": "Units Without Cost",
+            "type": "integer"
+          },
+          "unmapped": {
+            "description": "Amazon publishes this report's column names but not the values of amount-type and amount-description, so some fees will be unfamiliar. They are listed rather than dropped.",
+            "items": {
+              "$ref": "#/components/schemas/UnmappedAmount"
+            },
+            "title": "Unmapped",
+            "type": "array"
+          }
+        },
+        "required": [
+          "settlement_id",
+          "period_start",
+          "period_end",
+          "deposit_date",
+          "currency",
+          "stated_total",
+          "counted_total",
+          "reconciles",
+          "difference",
+          "rows_read",
+          "units",
+          "orders",
+          "revenue",
+          "selling_fees",
+          "cogs",
+          "overhead",
+          "gross_contribution",
+          "net_profit",
+          "units_without_cost",
+          "skus_missing_cost",
+          "unmapped",
+          "latency_ms"
+        ],
+        "title": "SettlementFileReport",
+        "type": "object"
+      },
       "SignInRequest": {
         "properties": {
           "email": {
@@ -526,6 +693,25 @@
           "latency_ms"
         ],
         "title": "SkusResponse",
+        "type": "object"
+      },
+      "UnmappedAmount": {
+        "description": "A fee this does not recognise, and what it came to.",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "total"
+        ],
+        "title": "UnmappedAmount",
         "type": "object"
       },
       "UserResponse": {
@@ -1160,6 +1346,55 @@
           }
         ],
         "summary": "Period Profit",
+        "tags": [
+          "profit"
+        ]
+      }
+    },
+    "/v1/profit/settlement-file": {
+      "post": {
+        "description": "Figures from a downloaded settlement report. Nothing is stored.",
+        "operationId": "read_settlement_report_v1_profit_settlement_file_post",
+        "requestBody": {
+          "content": {
+            "text/tab-separated-values": {
+              "schema": {
+                "description": "A settlement report downloaded from Seller Central: Reports \u2192 Payments \u2192 All Statements \u2192 Flat File V2.",
+                "title": "Report",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettlementFileReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "Session token": []
+          }
+        ],
+        "summary": "Read Settlement Report",
         "tags": [
           "profit"
         ]

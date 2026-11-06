@@ -68,6 +68,32 @@ than offering a flow that cannot finish.
 See [Getting your SP-API keys](sp-api.md), which walks the private-
 application path with screenshots.
 
+## Seeing real figures before registering anything
+
+You do not need an Amazon application to find out whether this is worth
+your time. Sign in, and on the front page drop in a settlement report:
+**Reports → Payments → All Statements** in Seller Central, downloaded as
+**Flat File V2**.
+
+Biryar reads it and shows you the period's revenue, what Amazon kept, and —
+once you have loaded costs — what was actually left. **Nothing is stored.**
+The file is read, the figures are shown, and none of it is kept, which also
+means it cannot be double-counted against the feed later.
+
+Two things it will tell you that are worth understanding:
+
+- **Whether the file adds up.** The report states the payout Amazon made.
+  Biryar adds up every amount in the file and compares. If they disagree it
+  says so and tells you not to trust the figures, rather than showing a
+  confident number read from a file it misunderstood.
+- **Which fees it did not recognise.** Amazon publishes this report's
+  column names but not the vocabulary of its fee descriptions, so a seller
+  in an unfamiliar category will have some Biryar has never seen. They are
+  listed, and they are still counted in the total — never silently dropped.
+
+This is the fastest route to a real number, and it is the only one that
+needs nothing from Amazon but a download.
+
 ## Getting to a profit figure
 
 Connecting Amazon gets you **gross contribution** — revenue less what Amazon

@@ -159,6 +159,8 @@ export type PeriodProfit =
   paths["/v1/profit/period"]["get"]["responses"]["200"]["content"]["application/json"];
 export type SkuProfits =
   paths["/v1/profit/skus"]["get"]["responses"]["200"]["content"]["application/json"];
+export type SettlementFileReport =
+  paths["/v1/profit/settlement-file"]["post"]["responses"]["200"]["content"]["application/json"];
 export type CostBasis =
   paths["/v1/costs"]["get"]["responses"]["200"]["content"]["application/json"];
 export type CostImport =
@@ -229,6 +231,20 @@ export const api = {
 
   profitBySku: (window?: Window) =>
     request<SkuProfits>(`/v1/profit/skus${windowQuery(window)}`),
+
+  /**
+   * Figures from a downloaded settlement report. Nothing is stored.
+   *
+   * The one path that needs no Amazon application, so it is what someone
+   * can try before deciding whether this is worth a developer
+   * registration.
+   */
+  readSettlementFile: (tsv: string) =>
+    request<SettlementFileReport>("/v1/profit/settlement-file", {
+      method: "POST",
+      body: tsv,
+      contentType: "text/tab-separated-values",
+    }),
 
   costs: () => request<CostBasis>("/v1/costs"),
 

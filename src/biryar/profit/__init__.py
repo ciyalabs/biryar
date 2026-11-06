@@ -51,6 +51,11 @@ from .report import (
     period,
     summarise,
 )
+from .settlement_file import (
+    SettlementFile,
+    SettlementFileError,
+    read_settlement_file,
+)
 
 __all__ = [
     "ChannelProfit",
@@ -68,6 +73,8 @@ __all__ = [
     "Projection",
     "ResolvedCost",
     "Settlement",
+    "SettlementFile",
+    "SettlementFileError",
     "SkippedRow",
     "SkuPosition",
     "SkuProfit",
@@ -84,5 +91,6 @@ __all__ = [
     "period",
     "read_cost_csv",
     "read_cost_rows",
+    "read_settlement_file",
     "summarise",
 ]

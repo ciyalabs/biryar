@@ -14,6 +14,7 @@ import { useState } from "react";
 import { api, ApiError, type User } from "../api/client";
 import { marketplaceName } from "../marketplaces";
 import { Profit } from "./Profit";
+import { SettlementFile } from "./SettlementFile";
 
 export function Home({ user }: { user: User }) {
   const queries = useQueryClient();
@@ -191,6 +192,11 @@ export function Home({ user }: { user: User }) {
           nothing for it to measure and the empty state would be confusing
           rather than informative. */}
       {connection.data?.connected && <Profit user={user} />}
+
+      {/* Shown while there is no connection, because that is exactly when
+          someone needs a way to see real figures without committing to a
+          developer registration first. */}
+      {connection.data && !connection.data.connected && <SettlementFile />}
 
       <p className="muted small">
         Signed in as {user.email} · {user.role}

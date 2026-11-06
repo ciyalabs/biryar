@@ -277,6 +277,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/profit/settlement-file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Read Settlement Report
+         * @description Figures from a downloaded settlement report. Nothing is stored.
+         */
+        post: operations["read_settlement_report_v1_profit_settlement_file_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/profit/skus": {
         parameters: {
             query?: never;
@@ -504,6 +524,76 @@ export interface components {
              */
             selling_partner_id: string;
         };
+        /**
+         * SettlementFileReport
+         * @description What one downloaded settlement report says.
+         *
+         *     Deliberately stateless: nothing is stored. A settlement file and the
+         *     Finances feed describe the same money in different shapes, and merging
+         *     them would risk counting a period twice — the exact failure the ledger
+         *     was once wrong about. So this answers a question and keeps nothing.
+         *
+         *     That also makes it the thing to try first: it needs no Amazon
+         *     application, no developer registration and no connected account.
+         */
+        SettlementFileReport: {
+            /** Cogs */
+            cogs: string | null;
+            /**
+             * Counted Total
+             * @description Every amount in the file, added up.
+             */
+            counted_total: string;
+            /** Currency */
+            currency: string;
+            /** Deposit Date */
+            deposit_date: string | null;
+            /** Difference */
+            difference: string;
+            /** Gross Contribution */
+            gross_contribution: string;
+            /** Latency Ms */
+            latency_ms: number;
+            /** Net Profit */
+            net_profit: string | null;
+            /** Orders */
+            orders: number;
+            /** Overhead */
+            overhead: string;
+            /** Period End */
+            period_end: string | null;
+            /** Period Start */
+            period_start: string | null;
+            /**
+             * Reconciles
+             * @description Whether the two agree. False means the file was read wrong and the figures below should not be trusted — not that a fee is unrecognised, since unrecognised amounts are still counted.
+             */
+            reconciles: boolean;
+            /** Revenue */
+            revenue: string;
+            /** Rows Read */
+            rows_read: number;
+            /** Selling Fees */
+            selling_fees: string;
+            /** Settlement Id */
+            settlement_id: string;
+            /** Skus Missing Cost */
+            skus_missing_cost: string[];
+            /**
+             * Stated Total
+             * @description The payout Amazon states in the file's summary row.
+             */
+            stated_total: string;
+            /** Units */
+            units: number;
+            /** Units Without Cost */
+            units_without_cost: number;
+            /**
+             * Unmapped
+             * @description Amazon publishes this report's column names but not the values of amount-type and amount-description, so some fees will be unfamiliar. They are listed rather than dropped.
+             */
+            unmapped: components["schemas"]["UnmappedAmount"][];
+        };
         /** SignInRequest */
         SignInRequest: {
             /**
@@ -563,6 +653,16 @@ export interface components {
             latency_ms: number;
             /** Rows */
             rows: components["schemas"]["SkuResponse"][];
+        };
+        /**
+         * UnmappedAmount
+         * @description A fee this does not recognise, and what it came to.
+         */
+        UnmappedAmount: {
+            /** Name */
+            name: string;
+            /** Total */
+            total: string;
         };
         /** UserResponse */
         UserResponse: {
@@ -926,6 +1026,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PeriodResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_settlement_report_v1_profit_settlement_file_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "text/tab-separated-values": string;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SettlementFileReport"];
                 };
             };
             /** @description Validation Error */

@@ -299,3 +299,127 @@ def test_by_sku_reports_a_row_per_sku(
 def test_reading_profit_needs_a_session(client: TestClient) -> None:
     assert client.get("/v1/profit/period").status_code == 401
     assert client.get("/v1/costs").status_code == 401
+
+
+# -- the on-ramp that needs no Amazon application ------------------------------------
+
+SETTLEMENT_COLUMNS = [
+    "settlement-id", "settlement-start-date", "settlement-end-date",
+    "deposit-date", "total-amount", "currency", "transaction-type",
+    "order-id", "merchant-order-id", "adjustment-id", "shipment-id",
+    "marketplace-name", "amount-type", "amount-description", "amount",
+    "fulfillment-id", "posted-date", "posted-date-time", "order-item-code",
+    "merchant-order-item-id", "merchant-adjustment-item-id", "sku",
+    "quantity-purchased", "promotion-id",
+]
+
+
+def _settlement_file() -> str:
+    """One sale and its commission, plus the payout total they come to."""
+    def row(**values: str) -> str:
+        return "\t".join(values.get(name, "") for name in SETTLEMENT_COLUMNS)
+
+    return (
+        "\t".join(SETTLEMENT_COLUMNS) + "\n"
+        + row(**{
+            "settlement-id": "555", "settlement-start-date": "2026-09-01",
+            "settlement-end-date": "2026-09-15", "deposit-date": "2026-09-17",
+            "total-amount": "16.43", "currency": "EUR",
+        }) + "\n"
+        + row(**{
+            "transaction-type": "Order", "order-id": "O-1", "sku": "SKU-1",
+            "amount-type": "ItemPrice", "amount-description": "Principal",
+            "amount": "20.00", "quantity-purchased": "1",
+            "posted-date": "2026-09-10",
+        }) + "\n"
+        + row(**{
+            "transaction-type": "Order", "order-id": "O-1", "sku": "SKU-1",
+            "amount-type": "ItemFees", "amount-description": "Commission",
+            "amount": "-3.57", "posted-date": "2026-09-10",
+        }) + "\n"
+    )
+
+
+def test_a_settlement_file_produces_figures_without_any_amazon_connection(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    """The whole point: real numbers before registering as a developer.
+
+    No credential, no queued job, no stored transaction — just a file a
+    seller can download today.
+    """
+    a, _ = two_tenants
+    auth = _signed_in(client, admin_engine, factory, a)
+
+    response = client.post(
+        "/v1/profit/settlement-file", content=_settlement_file(), headers=auth
+    )
+
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["settlement_id"] == "555"
+    assert body["reconciles"] is True
+    assert Decimal(body["gross_contribution"]) == Decimal("16.43")
+    # Unpriced, so the honest answer is still null rather than a profit.
+    assert body["net_profit"] is None
+    assert body["skus_missing_cost"] == ["SKU-1"]
+
+
+def test_the_settlement_file_uses_this_tenants_costs(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    """A cost basis already loaded turns net profit on for an upload too."""
+    a, _ = two_tenants
+    auth = _signed_in(client, admin_engine, factory, a)
+    client.post("/v1/costs/import", content=COST_CSV, headers=auth)
+
+    body = client.post(
+        "/v1/profit/settlement-file", content=_settlement_file(), headers=auth
+    ).json()
+
+    assert body["units_without_cost"] == 0
+    assert Decimal(body["net_profit"]) == Decimal("8.43")
+
+
+def test_nothing_from_the_file_is_stored(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    """A file and the feed describe the same money in different shapes.
+
+    Storing both would risk counting a period twice, which the ledger has
+    been wrong about before, so the upload answers and keeps nothing.
+    """
+    a, _ = two_tenants
+    auth = _signed_in(client, admin_engine, factory, a)
+
+    client.post("/v1/profit/settlement-file", content=_settlement_file(), headers=auth)
+
+    with admin_engine.connect() as conn:
+        assert conn.execute(
+            text("SELECT count(*) FROM amazon_transactions")
+        ).scalar_one() == 0
+    assert client.get("/v1/profit/period", headers=auth).json()["units"] == 0
+
+
+def test_a_file_that_is_not_a_settlement_report_is_refused(
+    client: TestClient, admin_engine: Engine, factory: SessionFactory,
+    two_tenants: tuple[uuid.UUID, uuid.UUID],
+) -> None:
+    a, _ = two_tenants
+    auth = _signed_in(client, admin_engine, factory, a)
+
+    response = client.post(
+        "/v1/profit/settlement-file", content="a\tb\n1\t2\n", headers=auth
+    )
+
+    assert response.status_code == 422
+    assert "Flat File V2" in response.json()["detail"]
+
+
+def test_reading_a_settlement_file_needs_a_session(client: TestClient) -> None:
+    assert client.post(
+        "/v1/profit/settlement-file", content=_settlement_file()
+    ).status_code == 401
