@@ -141,18 +141,34 @@ extras (present on every development machine, absent from the image, first
 noticed as a container exiting with empty logs), and a licence file the wheel
 build reads but the build context did not carry.
 
+**Costs and profit, end to end.** `/v1/costs` and `/v1/profit/*`, and the
+screen that reads them. Gross contribution is always answered because it
+needs nothing the seller supplies; net profit stays `null` while any sold
+unit has no cost on record, and the response names the SKUs that would turn
+it on. Writing a cost is owner-only — it moves no money, but every price
+floor is derived from it.
+
+Two defects surfaced while wiring it up, both of which would have shipped as
+confident wrong answers rather than failures. A cost file could not produce a
+key that matches a sale: the Finances feed reports the seller SKU and an
+invoice carries an EAN or an article number, so an import would have stored
+correct costs that no sale could ever find. And a row that could not be
+parsed was only logged, so thirty dropped lines meant thirty unpriced SKUs
+and no sign of it. Invoice lines now carry an optional `sku`, and the import
+reports both the skipped rows and the costs that cannot be matched.
+
 ## Next
 
-Two items, both about the first ten minutes a stranger spends with this:
-
-1. **A first-run setup screen.** Credentials still come from the
-   environment, which is fine for a self-host and wrong for a hosted tenant.
+1. **A first-run setup screen.** The Amazon application credentials are
+   per-deployment rather than per-tenant, so the environment is the right
+   place for them — but a self-hoster should not have to edit a file to
+   start, and a hosted operator should not have to restart to rotate one.
 2. **Screenshots for the SP-API guide.** The prose is written and cited
    ([docs/setup/sp-api.md](docs/setup/sp-api.md)); Amazon's console changes
    often enough that it wants pictures, and they have to come from an
    account created for the purpose rather than the maintainer's own.
-
-See *Known structural work* below for what is deliberately deferred.
+3. **The settlement flat-file adapter**, described below — the free
+   on-ramp that needs no Amazon application at all.
 
 ## Still carried over from the private codebase
 
