@@ -165,16 +165,30 @@ previously the only caller of the scheduler was a flag nothing invoked, so
 the queue stayed empty forever — and connecting an account queues its first
 fetch directly rather than waiting for the next pass.
 
+**The settlement flat-file adapter.** A downloaded report now produces
+figures with no Amazon application, no developer registration and no
+connected account — the only route to a real number that needs nothing from
+Amazon but a download. Stateless, because a file and the feed describe the
+same money and storing both risks counting a period twice.
+
+Two properties it turns on. Amazon publishes the report's column names and
+not its fee vocabulary, so the map is incomplete by construction and an
+unrecognised amount is reported rather than dropped — still counted, so it
+cannot quietly improve a figure. And the file states the payout Amazon
+made, so the adapter checks itself against it and says when it does not
+reconcile, which nothing in the API path can do.
+
 ## Next
 
-1. **The settlement flat-file adapter**, described below. Now clearly the
-   most valuable item left: everything between `docker compose up` and a
-   real number works, and what remains in front of a stranger is Amazon's
-   developer registration, which is a review with a human on the other end.
-   The V2 report removes it entirely for a first look.
-2. **A published-application walkthrough.** Everything documented is the
+1. **A published-application walkthrough.** Everything documented is the
    private path. Publishing is what makes OAuth and a hosted deployment
-   real, and it is a review that has not been gone through.
+   real, and it is a review that has not been gone through — so it stays
+   unwritten rather than written from documentation.
+2. **The fee vocabulary, against real files.** The settlement reader's map
+   of `amount-type` / `amount-description` is reasoned from public sources,
+   not from a corpus. It is safe while incomplete, because what it does not
+   know it reports; it gets better by someone running real reports through
+   it and seeing what lands in `unmapped`.
 
 ## Still carried over from the private codebase
 
