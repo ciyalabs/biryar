@@ -95,11 +95,17 @@ const BASE = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
 
 async function request<T>(
   path: string,
-  init: RequestInit & { tenant?: string } = {},
+  init: RequestInit & { tenant?: string; contentType?: string } = {},
 ): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");
-  if (init.body !== undefined) headers.set("Content-Type", "application/json");
+  // JSON unless the caller says otherwise. A cost file is uploaded as the
+  // CSV itself rather than wrapped in a form or a JSON string, so that what
+  // goes over the wire is the file the seller exported from their
+  // spreadsheet, byte for byte.
+  if (init.body !== undefined) {
+    headers.set("Content-Type", init.contentType ?? "application/json");
+  }
   if (token !== null) headers.set("Authorization", `Bearer ${token}`);
   if (init.tenant) headers.set("X-Biryar-Tenant", init.tenant);
 
@@ -147,6 +153,25 @@ export type Connection =
   paths["/v1/amazon/status"]["get"]["responses"]["200"]["content"]["application/json"];
 export type AuthorisationStart =
   paths["/v1/amazon/authorize"]["post"]["responses"]["200"]["content"]["application/json"];
+export type PeriodProfit =
+  paths["/v1/profit/period"]["get"]["responses"]["200"]["content"]["application/json"];
+export type SkuProfits =
+  paths["/v1/profit/skus"]["get"]["responses"]["200"]["content"]["application/json"];
+export type CostBasis =
+  paths["/v1/costs"]["get"]["responses"]["200"]["content"]["application/json"];
+export type CostImport =
+  paths["/v1/costs/import"]["post"]["responses"]["200"]["content"]["application/json"];
+
+/** Inclusive date bounds, both optional, as the endpoints take them. */
+export type Window = { start?: string; end?: string };
+
+function windowQuery({ start, end }: Window = {}): string {
+  const query = new URLSearchParams();
+  if (start) query.set("start", start);
+  if (end) query.set("end", end);
+  const rendered = query.toString();
+  return rendered ? `?${rendered}` : "";
+}
 
 export const api = {
   health: () => request<Health>("/v1/health"),
@@ -184,4 +209,20 @@ export const api = {
       `/v1/amazon/authorize${marketplace ? `?marketplace=${marketplace}` : ""}`,
       { method: "POST" },
     ),
+
+  profit: (window?: Window) =>
+    request<PeriodProfit>(`/v1/profit/period${windowQuery(window)}`),
+
+  profitBySku: (window?: Window) =>
+    request<SkuProfits>(`/v1/profit/skus${windowQuery(window)}`),
+
+  costs: () => request<CostBasis>("/v1/costs"),
+
+  /** Upload a cost file. The body is the CSV itself, not a form. */
+  importCosts: (csv: string) =>
+    request<CostImport>("/v1/costs/import", {
+      method: "POST",
+      body: csv,
+      contentType: "text/csv",
+    }),
 };

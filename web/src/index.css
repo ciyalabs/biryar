@@ -104,3 +104,13 @@ button.link {
 .facts { display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 1rem; margin: 0; }
 .facts dt { color: var(--ink-soft); font-size: 0.85rem; }
 .facts dd { margin: 0; }
+
+/* Figures are read by eye and compared down a column, so numbers are right
+   aligned and tabular: proportional digits make 11 look narrower than 88 and
+   a column of prices stops lining up. */
+table { width: 100%; border-collapse: collapse; margin: 0.75rem 0 0; font-size: 0.9rem; }
+th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--line); }
+th { color: var(--ink-soft); font-weight: 500; font-size: 0.8rem; }
+td + td, th + th { text-align: right; font-variant-numeric: tabular-nums; }
+
+code { font-size: 0.85em; word-break: break-all; }

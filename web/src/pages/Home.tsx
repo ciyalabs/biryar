@@ -1,16 +1,18 @@
 /**
  * What a seller sees first.
  *
- * Right now that is one question: can Biryar reach your Amazon account? It
- * is the only thing that matters before any number exists, and it is the
- * thing a seller has to be told about on their own screen rather than
- * discovering because the figures quietly stopped moving.
+ * The first question is whether Biryar can reach their Amazon account: it is
+ * the only thing that matters before any number exists, and it is the thing
+ * a seller has to be told about on their own screen rather than discovering
+ * because the figures quietly stopped moving. The profit figures follow it,
+ * and only once it is answered.
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api, ApiError, type User } from "../api/client";
 import { marketplaceName } from "../marketplaces";
+import { Profit } from "./Profit";
 
 export function Home({ user }: { user: User }) {
   const queries = useQueryClient();
@@ -101,6 +103,11 @@ export function Home({ user }: { user: User }) {
           </dl>
         )}
       </section>
+
+      {/* Below the connection, because until Amazon is connected there is
+          nothing for it to measure and the empty state would be confusing
+          rather than informative. */}
+      {connection.data?.connected && <Profit user={user} />}
 
       <p className="muted small">
         Signed in as {user.email} · {user.role}
